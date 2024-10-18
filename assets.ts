@@ -1,4 +1,4 @@
-namespace microdata {
+namespace micromusic {
     let extraImage: Bitmap = null
 
     //% shim=TD_NOOP

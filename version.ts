@@ -1,6 +1,6 @@
 
 // Auto-generated file: do not edit.
-namespace microdata {
+namespace micromusic {
     /**
      * Version of the package 
      */

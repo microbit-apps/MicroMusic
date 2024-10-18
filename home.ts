@@ -1,4 +1,4 @@
-namespace microdata {
+namespace micromusic {
     import Screen = user_interface_base.Screen
     import CursorScene = user_interface_base.CursorScene
     import Button = user_interface_base.Button

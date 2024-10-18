@@ -1,4 +1,4 @@
-namespace microdata {
+namespace micromusic {
     import AppInterface = user_interface_base.AppInterface
     import Scene  = user_interface_base.Scene
     import SceneManager = user_interface_base.SceneManager
