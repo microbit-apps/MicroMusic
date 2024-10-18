@@ -119,7 +119,7 @@ namespace micromusic {
             )
 
             if (!this.yOffset) {
-                const tagline = resolveTooltip("Data Science!")
+                const tagline = resolveTooltip("More Music!")
                 Screen.print(
                     tagline,
                     Screen.LEFT_EDGE +
