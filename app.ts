@@ -1,6 +1,6 @@
 namespace micromusic {
     import AppInterface = user_interface_base.AppInterface
-    import Scene  = user_interface_base.Scene
+    import Scene = user_interface_base.Scene
     import SceneManager = user_interface_base.SceneManager
 
     // Auto-save slot
@@ -20,20 +20,26 @@ namespace micromusic {
      *      It will show a :) on its LEDs and try to become a Target - where it will receive radio commands from a Commander Microbit (one with an Arcade Shield)
      */
     export class App implements AppInterface {
-        sceneManager: SceneManager 
+        sceneManager: SceneManager
 
         constructor() {
             // One interval delay to ensure all static constructors have executed.
             basic.pause(10)
-            // reportEvent("app.start")
 
             this.sceneManager = new SceneManager()
             datalogger.includeTimestamp(FlashLogTimeStampFormat.None)
 
             // if (shieldhelpers.shieldPresent())
-                this.pushScene(new Home(this))
-            // else
-            //    new DistributedLoggingProtocol(this, false);
+            this.pushScene(new Home(this))
+        }
+
+
+        public save(slot: string, buffer: Buffer): boolean {
+            return true;
+        }
+
+        public load(slot: string): Buffer {
+            return Buffer.create(0)
         }
 
         public pushScene(scene: Scene) {

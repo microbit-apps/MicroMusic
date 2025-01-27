@@ -1,13 +1,13 @@
 {
     "name": "MicroMusic",
-    "version": "1.0.00",
+    "version": "0.0.01",
     "description": "Making music with micro:bit v2",
     "dependencies": {
         "core": "*",
         "radio": "*",
         "microphone": "*",
         "datalogger": "*",
-        "user-interface-base": "github:microbit-apps/user-interface-base#v0.0.3"
+        "user-interface-base": "github:microbit-apps/user-interface-base#v0.0.11"
     },
     "files": [
         "main.ts",
