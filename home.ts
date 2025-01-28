@@ -12,9 +12,11 @@ namespace micromusic {
         private liveDataBtn: Button
         private recordDataBtn: Button
         private distributedLoggingBtn: Button
-        private viewBtn: Button
+        // private viewBtn: Button
 
-        constructor(app: AppInterface) {super(app)}
+        constructor(app: AppInterface) {
+            super(app)
+        }
 
         /* override */ startup() {
             super.startup()
@@ -24,21 +26,21 @@ namespace micromusic {
             this.liveDataBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "linear_graph_1",
-                ariaId: "Real-time Data",
+                icon: "linear_graph_1", // TODO: Change this
+                ariaId: "New Song",
                 x: -58,
                 y,
                 onClick: () => {
                     this.app.popScene()
-                    // this.app.pushScene(new SensorSelect(this.app, CursorSceneEnum.LiveDataViewer))
+                    this.app.pushScene(new SoundTrackerScreen(this.app))
                 },
             })
 
             this.recordDataBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "edit_program",
-                ariaId: "Log Data",
+                icon: "edit_program", // TODO: Saved songs
+                ariaId: "Saved Songs",
                 x: -20,
                 y,
                 onClick: () => {
@@ -50,8 +52,8 @@ namespace micromusic {
             this.distributedLoggingBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "radio_set_group",
-                ariaId: "Command Mode",
+                icon: "radio_set_group", // TODO: Change
+                ariaId: "Options",
                 x: 20,
                 y,
                 onClick: () => {
@@ -60,28 +62,32 @@ namespace micromusic {
                 },
             })
 
-            this.viewBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "largeDisk",
-                ariaId: "View Data",
-                x: 58,
-                y,
-                onClick: () => {
-                    this.app.popScene()
-                    // this.app.pushScene(new DataViewSelect(this.app))
-                },
-            })
+            // this.viewBtn = new Button({
+            //     parent: null,
+            //     style: ButtonStyles.Transparent,
+            //     icon: "largeDisk",
+            //     ariaId: "View Data",
+            //     x: 58,
+            //     y,
+            //     onClick: () => {
+            //         this.app.popScene()
+            //         // this.app.pushScene(new DataViewSelect(this.app))
+            //     },
+            // })
 
-            const btns: Button[] = [this.liveDataBtn, this.recordDataBtn, this.distributedLoggingBtn, this.viewBtn]
+            const btns: Button[] = [
+                this.liveDataBtn,
+                this.recordDataBtn,
+                this.distributedLoggingBtn,
+            ] //, this.viewBtn]
             this.navigator.addButtons(btns)
         }
 
         private drawVersion() {
             const font = bitmaps.font5
             Screen.print(
-                "v1.5",
-                Screen.RIGHT_EDGE - font.charWidth * "v1.5".length,
+                "v0.1",
+                Screen.RIGHT_EDGE - font.charWidth * "v0.1".length,
                 Screen.BOTTOM_EDGE - font.charHeight - 2,
                 0xb,
                 font
@@ -106,15 +112,14 @@ namespace micromusic {
             const y = Screen.TOP_EDGE + OFFSET //+ dy
             Screen.drawTransparentImage(
                 wordLogo,
-                Screen.LEFT_EDGE + ((Screen.WIDTH - wordLogo.width) >> 1)// + dy
-                ,
+                Screen.LEFT_EDGE + ((Screen.WIDTH - wordLogo.width) >> 1), // + dy
                 y + this.yOffset
             )
             Screen.drawTransparentImage(
                 microbitLogo,
                 Screen.LEFT_EDGE +
-                    ((Screen.WIDTH - microbitLogo.width) >> 1) + dy
-                    ,
+                    ((Screen.WIDTH - microbitLogo.width) >> 1) +
+                    dy,
                 y - wordLogo.height + this.yOffset + margin
             )
 
@@ -123,9 +128,8 @@ namespace micromusic {
                 Screen.print(
                     tagline,
                     Screen.LEFT_EDGE +
-                        ((Screen.WIDTH + wordLogo.width) >> 1) 
-                        + dy
-                        -
+                        ((Screen.WIDTH + wordLogo.width) >> 1) +
+                        dy -
                         font.charWidth * tagline.length,
                     Screen.TOP_EDGE +
                         OFFSET +
@@ -141,7 +145,7 @@ namespace micromusic {
             this.liveDataBtn.draw()
             this.recordDataBtn.draw()
             this.distributedLoggingBtn.draw()
-            this.viewBtn.draw()
+            // this.viewBtn.draw()
 
             this.drawVersion()
             super.draw()

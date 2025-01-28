@@ -2,9 +2,7 @@ namespace micromusic {
     let extraImage: Bitmap = null
 
     //% shim=TD_NOOP
-    function extraSamples(name: string) {
-
-    }
+    function extraSamples(name: string) {}
 
     // All unused assets have been cut since the flash storage limit has been approached
 
@@ -39,7 +37,8 @@ namespace micromusic {
 
             if (name == "radio_set_group") return icondb.radio_set_group
             if (name == "largeSettingsGear") return icondb.largeSettingsGear
-            if (name == "microbitLogoWhiteBackground") return icondb.microbitLogoWhiteBackground
+            if (name == "microbitLogoWhiteBackground")
+                return icondb.microbitLogoWhiteBackground
 
             extraImage = null
             extraSamples(name) // only for web app
@@ -49,33 +48,32 @@ namespace micromusic {
         }
     }
 
-
-export const wordLogo = bmp`
-    ....111111.......111111...1111................................................1111111.......111111.....................................................
-    ...11bbbbbb.....11bbbbbb.11bbbb...............................................11bbbbbb.....11bbbbbb....................................................
-    ...1bbbbbbbb...11bbbbbbbf1bbbbbf..............................................1bbbbbbbb...11bbbbbbb....................................................
-    ...1bbbbbbbbb.11bbbbbbbbf1bbbbbf..............................................1bbbbbbbbb.11bbbbbbbb....................................................
-    ...1bbbbbbbbbb1bbbbbbbbbf1bbbbbf..............................................1bbbbbbbbbb1bbbbbbbbb....................................................
-    ...1bbbbbbbbbbbbbbbbbbbbf.bbbbff..............................................1bbbbbbbbbbbbbbbbbbbb....................................................
-    ...1bbbbbbbbbbbbbbbbbbbbf..ffff.....1111111......1111...111.......1111111.....1bbbbbbbbbbbbbbbbbbbb....................................................
-    ...1bbbbbbbbbbbbbbbbbbbbf.1111....111bbbbbbb1...11bbbb.11bbb....111bbbbbbb1...1bbbbbbbbbbbbbbbbbbbb....................................................
-    ...1bbbbbbbbbbbbbbbbbbbbf11bbbb..11bbbbbbbbbbb..1bbbbbb1bbbbb..11bbbbbbbbbbb..1bbbbbbbbbbbbbbbbbbbb....................................................
-    ...1bbbbbbfbbbbbfbbbbbbbf1bbbbbf.1bbbbbbbbbbbbf.1bbbbbbbbbbbbf.1bbbbbbbbbbbbf.1bbbbbbfbbbbbfbbbbbbb....................................................
-    ...1bbbbbbf.bbbff1bbbbbbf1bbbbbf11bbbbbbbbbbbbb.1bbbbbbbbbbbbf11bbbbbbbbbbbbb.1bbbbbbf.bbbff1bbbbbb....................................................
-    ...1bbbbbbf..fff.1bbbbbbf1bbbbbf1bbbbbfffbbbbbbf1bbbbbfffbbbff1bbbbbfffbbbbbbf1bbbbbbf..fff.1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf1bbbbff...bbbbff1bbbbbf...fff.1bbbbff...bbbbbf1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf1bbbbf.....ffff.1bbbbbf.......1bbbbf....1bbbbf1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf1bbbbf....1111..1bbbbbf.......1bbbbf....1bbbbf1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf1bbbbb...11bbbb.1bbbbbf.......1bbbbb...11bbbbf1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf1bbbbbb111bbbbbf1bbbbbf.......1bbbbbb111bbbbbf1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf.bbbbbbbbbbbbbff1bbbbbf........bbbbbbbbbbbbbff1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf.1bbbbbbbbbbbbf.1bbbbbf........1bbbbbbbbbbbbf.1bbbbbbf......1bbbbbb....................................................
-    ...1bbbbbbf......1bbbbbbf1bbbbbf..bbbbbbbbbbbff.1bbbbbf.........bbbbbbbbbbbff.1bbbbbbf......1bbbbbb....................................................
-    ....bbbbbff.......bbbbbff.bbbbff...fbbbbbbbfff...bbbbff..........fbbbbbbbfff..bbbbbbff.......bbbbbf....................................................
-    .....fffff.........fffff...ffff......fffffff......ffff.............fffffff....fffffff.........fffff....................................................
+    export const wordLogo = bmp`
+    ..111111.......111111...1111.................................................111111.......111111................................1111...................
+    .11bbbbbb.....11bbbbbb.11bbbb...............................................11bbbbbb.....11bbbbbb..............................11bbbb..................
+    .1bbbbbbbb...11bbbbbbbf1bbbbbf..............................................1bbbbbbbb...11bbbbbbbf.............................1bbbbbf.................
+    .1bbbbbbbbb.11bbbbbbbbf1bbbbbf..............................................1bbbbbbbbb.11bbbbbbbbf.............................1bbbbbf.................
+    .1bbbbbbbbbb1bbbbbbbbbf1bbbbbf..............................................1bbbbbbbbbb1bbbbbbbbbf.............................1bbbbbf.................
+    .1bbbbbbbbbbbbbbbbbbbbf.bbbbff..............................................1bbbbbbbbbbbbbbbbbbbbf..............................bbbbff.................
+    .1bbbbbbbbbbbbbbbbbbbbf..ffff.....1111111......1111...111.......1111111.....1bbbbbbbbbbbbbbbbbbbbf...............................ffff.....1111111......
+    .1bbbbbbbbbbbbbbbbbbbbf.1111....111bbbbbbb1...11bbbb.11bbb....111bbbbbbb1...1bbbbbbbbbbbbbbbbbbbbf.111.......111b...............1111....111bbbbbbb1....
+    .1bbbbbbbbbbbbbbbbbbbbf11bbbb..11bbbbbbbbbbb..1bbbbbb1bbbbb..11bbbbbbbbbbb..1bbbbbbbbbbbbbbbbbbbbf1bbbbf....1bbbbf.............11bbbb..11bbbbbbbbbbb...
+    .1bbbbbbfbbbbbfbbbbbbbf1bbbbbf.1bbbbbbbbbbbbf.1bbbbbbbbbbbbf.1bbbbbbbbbbbbf.1bbbbbbfbbbbbfbbbbbbbf1bbbbf....1bbbbf.............1bbbbbf.1bbbbbbbbbbbbf..
+    .1bbbbbbf.bbbff1bbbbbbf1bbbbbf11bbbbbbbbbbbbb.1bbbbbbbbbbbbf11bbbbbbbbbbbbb.1bbbbbbf.bbbff1bbbbbbf1bbbbf....1bbbbf.............1bbbbbf11bbbbbbbbbbbbb..
+    .1bbbbbbf..fff.1bbbbbbf1bbbbbf1bbbbbfffbbbbbbf1bbbbbfffbbbff1bbbbbfffbbbbbbf1bbbbbbf..fff.1bbbbbbf1bbbbf....1bbbbf.............1bbbbbf1bbbbbfffbbbbbbf.
+    .1bbbbbbf......1bbbbbbf1bbbbbf1bbbbff...bbbbff1bbbbbf...fff.1bbbbff...bbbbbf1bbbbbbf......1bbbbbbf1bbbbf....1bbbbf.............1bbbbbf1bbbbff...bbbbff.
+    .1bbbbbbf......1bbbbbbf1bbbbbf1bbbbf.....ffff.1bbbbbf.......1bbbbf....1bbbbf1bbbbbbf......1bbbbbbf1bbbbf....1bbbbf.............1bbbbbf1bbbbf.....ffff..
+    .1bbbbbbf......1bbbbbbf1bbbbbf1bbbbf....1111..1bbbbbf.......1bbbbf....1bbbbf1bbbbbbf......1bbbbbbf1bbbbf....1bbbbf.............1bbbbbf1bbbbf....1111...
+    .1bbbbbbf......1bbbbbbf1bbbbbf1bbbbb...11bbbb.1bbbbbf.......1bbbbb...11bbbbf1bbbbbbf......1bbbbbbf1bbbbb...11bbbbf.............1bbbbbf1bbbbb...11bbbb..
+    .1bbbbbbf......1bbbbbbf1bbbbbf1bbbbbb111bbbbbf1bbbbbf.......1bbbbbb111bbbbbf1bbbbbbf......1bbbbbbf1bbbbbb111bbbbbf.............1bbbbbf1bbbbbb111bbbbbf.
+    .1bbbbbbf......1bbbbbbf1bbbbbf.bbbbbbbbbbbbbff1bbbbbf........bbbbbbbbbbbbbff1bbbbbbf......1bbbbbbf.bbbbbbbbbbbbbff.............1bbbbbf.bbbbbbbbbbbbbff.
+    .1bbbbbbf......1bbbbbbf1bbbbbf.1bbbbbbbbbbbbf.1bbbbbf. .......1bbbbbbbbbbbbf.1bbbbbbf......1bbbbbbf.1bbbbbbbbbbbbf..............1bbbbbf.1bbbbbbbbbbbbf..
+    .1bbbbbbf......1bbbbbbf1bbbbbf..bbbbbbbbbbbff.1bbbbbf.........bbbbbbbbbbbff.1bbbbbbf......1bbbbbbf..bbbbbbbbbbbff..............1bbbbbf..bbbbbbbbbbbff..
+    ..bbbbbff.......bbbbbff.bbbbff...fbbbbbbbfff...bbbbff..........fbbbbbbbfff..bbbbbbff.......bbbbbff...fbbbbbbbfff................bbbbff...fbbbbbbbfff...
+    ...fffff.........fffff...ffff......fffffff......ffff.............fffffff....fffffff.........fffff......fffffff...................ffff......fffffff.....
 `
 
-export const microbitLogo = bmp`
+    export const microbitLogo = bmp`
     ............................
     ......5555555555555555......
     ....55555555555555555555....
@@ -94,7 +92,7 @@ export const microbitLogo = bmp`
     .......4444444444444444.....
 `
 
-export const editorBackground = bmp`
+    export const editorBackground = bmp`
     8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
     8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
     8888888888888888888888188888881888888888881888888888888888888888888888888888888888888888888888888888885888888888888888888881888888888888888888818888888888888188
@@ -165,11 +163,9 @@ namespace icondb {
         console.log(`\nimg\`\n${r}\``)
     }
 
-
     //-------------
     // SMALL ICONS:
     //-------------
-
 
     export const microbitLogoWhiteBackground = bmp`
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -307,7 +303,6 @@ namespace icondb {
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
     `
 
-
     export const pin_2 = bmp`
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -385,22 +380,22 @@ namespace icondb {
     `
 
     // export const microbit_logo = bmp`
-    //     . . . . . . . . . . . . . . . . 
-    //     . . . . . . . . . . . . . . . . 
-    //     . . . . . . . . . . . . . . . . 
-    //     . . . . . . . . . . . . . . . . 
-    //     . . . . 4 4 4 4 4 4 4 4 d . . . 
-    //     . . . 4 d 5 5 5 5 5 5 5 4 d . . 
-    //     . . 4 d . . . . . . . . 5 4 d . 
-    //     . . 4 d 4 4 d . . . 4 4 d 4 d . 
-    //     . . 4 d 4 4 d . . . 4 4 d 4 d . 
-    //     . . 4 d . 5 5 . . . . 5 5 4 d . 
-    //     . . . 4 d . . . . . . . 4 d . . 
-    //     . . . . 4 4 4 4 4 4 4 4 d . . . 
-    //     . . . . . 5 5 5 5 5 5 5 . . . . 
-    //     . . . . . . . . . . . . . . . . 
-    //     . . . . . . . . . . . . . . . . 
-    //     . . . . . . . . . . . . . . . . 
+    //     . . . . . . . . . . . . . . . .
+    //     . . . . . . . . . . . . . . . .
+    //     . . . . . . . . . . . . . . . .
+    //     . . . . . . . . . . . . . . . .
+    //     . . . . 4 4 4 4 4 4 4 4 d . . .
+    //     . . . 4 d 5 5 5 5 5 5 5 4 d . .
+    //     . . 4 d . . . . . . . . 5 4 d .
+    //     . . 4 d 4 4 d . . . 4 4 d 4 d .
+    //     . . 4 d 4 4 d . . . 4 4 d 4 d .
+    //     . . 4 d . 5 5 . . . . 5 5 4 d .
+    //     . . . 4 d . . . . . . . 4 d . .
+    //     . . . . 4 4 4 4 4 4 4 4 d . . .
+    //     . . . . . 5 5 5 5 5 5 5 . . . .
+    //     . . . . . . . . . . . . . . . .
+    //     . . . . . . . . . . . . . . . .
+    //     . . . . . . . . . . . . . . . .
     // `
 
     export const finger_press = bmp`
