@@ -13,15 +13,11 @@ namespace micromusic {
             if (name == "MISSING") return icondb.MISSING
             if (name == "largeDisk") return icondb.largeDisk
 
-            if (name == "linear_graph_1") return icondb.linearGraph1
+            if (name == "stop") return icondb.stop
+            if (name == "pause") return icondb.pause
 
-            if (name == "led_light_sensor") return icondb.led_light_sensor
-            if (name == "thermometer") return icondb.thermometer
-            if (name == "accelerometer") return icondb.accelerometer
-            if (name == "finger_press") return icondb.finger_press
             if (name == "green_tick") return icondb.green_tick
 
-            if (name == "magnet") return icondb.magnet
             if (name == "pin_0") return icondb.pin_0
             if (name == "pin_1") return icondb.pin_1
             if (name == "pin_2") return icondb.pin_2
@@ -341,6 +337,30 @@ namespace icondb {
         1 1 1 1 5 5 5 5 5 5 5 1 1 1 1
     `
 
+    export const stop = bmp`
+        f f f f f f f f f 
+        f f f f f f f f f 
+        f f f f f f f f f 
+        f f f f f f f f f 
+        f f f f f f f f f 
+        f f f f f f f f f 
+        f f f f f f f f f 
+        f f f f f f f f f
+        f f f f f f f f f
+        `
+
+    export const pause = bmp`
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+        f f f c c f f f 
+    `
+
     export const car_right_turn = bmp`
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
         1 1 1 1 1 1 1 1 c c c 1 1 1 1 1
@@ -398,82 +418,6 @@ namespace icondb {
     //     . . . . . . . . . . . . . . . .
     // `
 
-    export const finger_press = bmp`
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 f 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 f 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 f 1 1 1 1 1 1 1 1
-        1 1 1 1 1 f 1 f 1 f 1 1 1 1 1 1
-        1 1 1 1 1 1 f f f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 f 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 1 1 1 1 4 4 4 4 4 1 1 1 1 1 1
-        1 1 1 1 4 4 4 4 4 4 4 d 1 1 1 1
-        1 1 1 e 4 4 4 4 4 4 4 e d 1 1 1
-        1 1 1 e 2 4 4 4 4 4 2 e d 1 1 1
-        1 1 1 e e 2 2 2 2 2 e e d 1 1 1
-        1 1 1 1 e e e e e e e d 1 1 1 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-    `
-
-    export const magnet = bmp`
-        1 1 1 1 1 1 1 1 1 1 1 1 6 1 1 1 
-        1 1 1 1 1 1 1 1 1 1 6 1 1 1 6 1 
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-        1 1 1 8 8 8 8 8 f f 1 1 6 1 1 1 
-        1 1 8 8 8 8 8 8 f f 1 1 1 1 1 6 
-        1 8 8 8 b b b b b b 1 1 6 1 1 1 
-        1 8 8 b 1 1 1 1 1 1 1 1 1 1 6 1 
-        1 8 8 1 1 1 1 1 1 1 1 6 1 1 1 1 
-        1 2 2 1 1 1 1 1 1 1 1 1 1 6 1 1 
-        1 2 2 1 1 1 1 1 1 1 1 6 1 1 1 1 
-        1 2 2 2 1 1 1 1 1 1 1 1 1 1 6 1 
-        1 b 2 2 2 2 2 2 f f 1 1 6 1 1 1 
-        1 1 b 2 2 2 2 2 f f 1 1 1 5 5 5 
-        1 1 1 b b b b b b b 1 1 6 5 5 5 
-        1 1 1 1 1 1 1 1 1 1 1 1 1 5 5 4 
-        1 1 1 1 1 1 1 1 1 1 6 1 1 4 4 1 
-    `
-
-    export const thermometer = bmp`
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 f 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f d f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f d f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f d f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f d f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f 2 f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f 2 f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f 2 f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 f 2 f 1 1 1 1 1 1 1
-        1 1 1 1 1 f 2 2 2 f 1 1 1 1 1 1
-        1 1 1 1 f 2 2 2 2 2 f 1 1 1 1 1
-        1 1 1 1 f 2 2 2 2 2 f 1 1 1 1 1
-        1 1 1 1 1 f 2 2 2 f 1 1 1 1 1 1
-        1 1 1 1 1 1 f f f 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-    `
-
-    export const led_light_sensor = bmp`
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 1 8 8 8 8 5 5 5 8 8 8 8 1 1 1
-        1 1 8 8 8 5 4 4 4 5 8 8 8 1 1 1
-        1 1 8 8 8 5 4 4 4 5 8 8 8 1 1 1
-        1 1 8 8 8 5 4 4 4 5 8 8 8 1 1 1
-        1 1 8 8 8 8 5 5 5 8 8 8 8 1 1 1
-        1 1 8 8 5 8 8 8 8 8 5 8 8 1 1 1
-        1 1 8 5 8 8 8 5 8 8 8 5 8 1 1 1
-        1 1 8 8 8 5 8 8 8 5 8 8 8 1 1 1
-        1 1 8 8 5 8 8 5 8 8 5 8 8 1 1 1
-        1 1 8 5 8 8 8 8 8 8 8 5 8 1 1 1
-        1 1 8 8 8 8 8 5 8 8 8 8 8 1 1 1
-        1 1 8 8 8 8 8 8 8 8 8 8 8 1 1 1
-        1 1 8 8 8 2 2 2 2 2 8 8 8 1 1 1
-        1 1 8 f f f f f f f f f 8 1 1 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-    `
-
     export const microphone = bmp`
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -490,25 +434,6 @@ namespace icondb {
         1 1 1 1 1 1 1 f f 1 1 1 1 1 1 1
         1 1 1 1 1 1 1 f f 1 1 1 1 1 1 1
         1 1 1 1 1 f f f f f f 1 1 1 1 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-    `
-
-    export const accelerometer = bmp`
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 1 8 1 1 1 1 1 1 1
-        1 1 1 1 1 1 1 8 8 8 1 1 1 1 1 1
-        1 1 1 1 1 1 8 8 8 8 8 1 1 1 1 1
-        1 1 1 1 1 1 6 6 8 6 6 1 1 1 1 1
-        1 1 1 1 1 1 1 1 8 1 1 1 1 1 1 1
-        1 1 8 6 1 1 f f f f f 1 1 1 1 1
-        1 8 8 6 1 f 1 1 1 1 1 f 1 1 1 1
-        8 8 8 8 8 f 1 f 1 f 1 f 1 1 1 1
-        1 8 8 6 1 f 1 1 1 1 1 f 1 1 1 1
-        1 1 8 6 1 1 f f f f f 8 1 1 6 1
-        1 1 1 1 1 1 1 1 1 1 1 1 8 6 8 1
-        1 1 1 1 1 1 1 1 1 1 1 1 6 8 8 1
-        1 1 1 1 1 1 1 1 1 1 1 6 8 8 8 1
-        1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
     `
 
@@ -585,42 +510,6 @@ namespace icondb {
         666666666666666cc666666666666666
         66666666666666666666666666666666
         66666666666666666666666666666666
-    `
-
-    export const linearGraph1 = bmp`
-        .111111111111111111111111111111.
-        11111111111111111111111111111111
-        11ff1111111111111111111111111111
-        11ff1111111111111111111111141111
-        11ff1111111111111111111111441111
-        11ff1111111111111111111114411888
-        11ff1111111111111111111144188881
-        11ff1111111111111111111448881111
-        11ff1111111111111111114888111111
-        11ff1111111111111111888111111111
-        11ff1111111111111188441111111111
-        11ff1111111111118884411111111111
-        11ff1111111111188144111111111111
-        11ff1111111118811441111111111111
-        11ff1111111188114411111111111111
-        11ff1111111881144111111111111111
-        11ff1111118811441111111111111111
-        11ff1111188114411111111111111111
-        11ff1111881144111111111111111111
-        11ff1118811441111111111111111111
-        11ff1188114411111111111111111111
-        11ff1881144111111111111111111111
-        11ff1811441111111111111111111111
-        11ff8814411111111111111111111111
-        11ff8844111111111111111111111111
-        11ff8441111111111111111111111111
-        11ff8441111111111111111111111111
-        11ff4411111111111111111111111111
-        11ff4111111111111111111111111111
-        11ffffffffffffffffffffffffffff11
-        11ffffffffffffffffffffffffffff11
-        1111111111111111111111111111111b
-        .bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.
     `
 
     export const radio_set_group = bmp`
