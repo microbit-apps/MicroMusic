@@ -26,7 +26,7 @@ namespace micromusic {
             this.liveDataBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "linear_graph_1", // TODO: Change this
+                icon: "edit_program",
                 ariaId: "New Song",
                 x: -58,
                 y,
@@ -39,7 +39,7 @@ namespace micromusic {
             this.recordDataBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "edit_program", // TODO: Saved songs
+                icon: "largeDisk",
                 ariaId: "Saved Songs",
                 x: -20,
                 y,
@@ -52,7 +52,7 @@ namespace micromusic {
             this.distributedLoggingBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "radio_set_group", // TODO: Change
+                icon: "largeSettingsGear",
                 ariaId: "Options",
                 x: 20,
                 y,
