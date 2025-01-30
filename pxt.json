@@ -7,22 +7,21 @@
         "radio": "*",
         "microphone": "*",
         "datalogger": "*",
-        "user-interface-base": "github:microbit-apps/user-interface-base#v0.0.11"
+        "user-interface-base": "github:rthom6/user-interface-base#80d5b6158e66f1377bf9d48a4e7947fcd1c2f6b0"
     },
     "files": [
         "main.ts",
         "assets.ts",
         "app.ts",
         "home.ts",
-        "version.ts"
+        "version.ts",
+        "songComposer.ts"
     ],
     "testFiles": [],
     "targetVersions": {
         "target": "7.1.13",
         "targetId": "microbit"
     },
-    "supportedTargets": [
-        "microbit"
-    ],
+    "supportedTargets": ["microbit"],
     "preferredEditor": "tsprj"
 }
