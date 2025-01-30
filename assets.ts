@@ -13,8 +13,11 @@ namespace micromusic {
             if (name == "MISSING") return icondb.MISSING
             if (name == "largeDisk") return icondb.largeDisk
 
+            if (name == "play") return icondb.play
             if (name == "stop") return icondb.stop
             if (name == "pause") return icondb.pause
+            if (name == "fast_forward") return icondb.fast_forward
+            if (name == "rewind") return icondb.rewind
 
             if (name == "green_tick") return icondb.green_tick
 
@@ -347,7 +350,19 @@ namespace icondb {
         f f f f f f f f f 
         f f f f f f f f f
         f f f f f f f f f
-        `
+    `
+
+    export const play = bmp`
+        c c f f c c c c c 
+        c c f f f c c c c
+        c c f f f f c c c
+        c c f f f f f c c
+        c c f f f f f f c
+        c c f f f f f c c
+        c c f f f f c c c
+        c c f f f c c c c
+        c c f f c c c c c
+    `
 
     export const pause = bmp`
         f f f c c f f f 
@@ -359,6 +374,29 @@ namespace icondb {
         f f f c c f f f 
         f f f c c f f f 
         f f f c c f f f 
+    `
+    export const fast_forward = bmp`
+        f f c c f f c c c c  
+        f f f c f f f c c c 
+        f f f f f f f f c c 
+        f f f f f f f f f c 
+        f f f f f f f f f f 
+        f f f f f f f f f c 
+        f f f f f f f f c c 
+        f f f c f f f c c c 
+        f f c c f f c c c c 
+    `
+
+    export const rewind = bmp`
+        c c c c f f c c f f
+        c c c f f f c f f f
+        c c f f f f f f f f
+        c f f f f f f f f f
+        f f f f f f f f f f
+        c f f f f f f f f f
+        c c f f f f f f f f
+        c c c f f f c f f f
+        c c c c f f c c f f
     `
 
     export const car_right_turn = bmp`
@@ -435,6 +473,10 @@ namespace icondb {
         1 1 1 1 1 1 1 f f 1 1 1 1 1 1 1
         1 1 1 1 1 f f f f f f 1 1 1 1 1
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+    `
+
+    export const settingsGear = bmp`
+        
     `
 
     //-------------
