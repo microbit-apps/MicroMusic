@@ -28,7 +28,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "edit_program",
                 ariaId: "New Song",
-                x: -58,
+                x: -40,
                 y,
                 onClick: () => {
                     this.app.popScene()
@@ -41,7 +41,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "largeDisk",
                 ariaId: "Saved Songs",
-                x: -20,
+                x: 0,
                 y,
                 onClick: () => {
                     this.app.popScene()
@@ -54,7 +54,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "largeSettingsGear",
                 ariaId: "Options",
-                x: 20,
+                x: 40,
                 y,
                 onClick: () => {
                     this.app.popScene()

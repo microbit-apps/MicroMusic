@@ -214,7 +214,7 @@ namespace micromusic {
             this.prevStepBtn.draw()
 
             this.drawGrid()
-            // this.drawControls()
+            this.drawControls()
             super.draw()
         }
 
@@ -243,14 +243,15 @@ namespace micromusic {
                 cellWidth - 4,
                 cellHeight,
                 0xf
-            ) // White border
+            ) // Black border
         }
 
-        // private drawControls() {
-        //     this.drawText(5, 5, `Play`)
-        //     this.drawText(35, 5, `Stop`)
-        //     this.drawText(65, 5, `Step: ${this.currentStep + 1}`)
-        // }
+        private drawControls() {
+            this.drawText(0, Screen.HEIGHT * 0.234 + 30, `Drum 1`)
+            this.drawText(0, Screen.HEIGHT * 0.234 + 40, `String`)
+            this.drawText(0, Screen.HEIGHT * 0.234 + 50, `Drum 2`)
+            this.drawText(0, Screen.HEIGHT * 0.234 + 60, `Bass`)
+        }
 
         private drawText(x: number, y: number, text: string) {
             screen().print(text, x, y, 0xb, font)
