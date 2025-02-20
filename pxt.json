@@ -7,7 +7,7 @@
         "radio": "*",
         "microphone": "*",
         "datalogger": "*",
-        "user-interface-base": "github:rthom6/user-interface-base#80d5b6158e66f1377bf9d48a4e7947fcd1c2f6b0"
+        "user-interface-base": "github:rthom6/user-interface-base#3edec6136f38c15fb708715aaefc30452fadc71d"
     },
     "files": [
         "main.ts",

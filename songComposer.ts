@@ -1,13 +1,17 @@
 namespace micromusic {
-    import CursorScene = user_interface_base.CursorScene
+    import CursorScene = user_interface_base.CursorSceneWithPriorPage
+    import GridNavigator = user_interface_base.GridNavigator
     import AppInterface = user_interface_base.AppInterface
     import Screen = user_interface_base.Screen
     import Bounds = user_interface_base.Bounds
+    import RowNavigator = user_interface_base.RowNavigator
+    import getIcon = user_interface_base.getIcon
+    import CustomButton = user_interface_base.CustomButton
     import Button = user_interface_base.Button
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 
-    const NUM_TRACKS = 4
+    const NUM_TRACKS = 2
     const NUM_STEPS = 8
     const NOTES = ["C", "D", "E", "F", "G", "A", "B"]
 
@@ -15,19 +19,29 @@ namespace micromusic {
         private currentStep: number
         private currentTrack: number
         private trackData: string[][]
+        private controlBtns: Button[]
         private playBtn: Button
         private stopBtn: Button
         private pauseBtn: Button
         private fastFordwardBtn: Button
         private rewindBtn: Button
-        private nextNoteBtn: Button
-        private prevNoteBtn: Button
-        private nextStepBtn: Button
-        private prevStepBtn: Button
+        private clickThroughBtn: CustomButton
+        private sampleSelectBtn: Button
+        private noteSelectBtn: Button
+        private icon: Bitmap
+        private sampleSelectBtn1: Button
+        private controlSelectBtn: Button
         private stepOffset: number
 
         constructor(app: AppInterface) {
-            super(app)
+            super(
+                app,
+                function () {
+                    this.app.popScene()
+                    this.app.pushScene(new Home(this.app))
+                },
+                new GridNavigator(3, 1)
+            )
 
             this.trackData = []
 
@@ -47,51 +61,28 @@ namespace micromusic {
             this.currentStep = 0
             this.currentTrack = 0
 
+            this.icon = getIcon("placeholder", true)
+                .doubled()
+                .doubled()
+                .doubled()
+                .doubledY()
+
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
 
-            this.nextNoteBtn = new Button({
+            this.clickThroughBtn = new CustomButton({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "arrow_up",
-                ariaId: "next note",
-                tooltipEnabled: true,
-                x: -20,
-                y: y - 60,
-                onClick: () => this.changeNote(1),
+                icon: "placeholder",
+                ariaId: "placeholder",
+                tooltipEnabled: false,
+                x: -24,
+                y: y - 80,
+                onClick: () => {},
+                height: 200,
+                width: 200,
             })
 
-            this.prevNoteBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "arrow_down",
-                ariaId: "prev note",
-                tooltipEnabled: true,
-                x: -40,
-                y: y - 60,
-                onClick: () => this.changeNote(-1),
-            })
-
-            this.nextStepBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "arrow_right",
-                ariaId: "next step",
-                tooltipEnabled: true,
-                x: 40,
-                y: y - 60,
-                onClick: () => this.changeStep(1),
-            })
-
-            this.prevStepBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "arrow_left",
-                ariaId: "prev step",
-                tooltipEnabled: true,
-                x: 20,
-                y: y - 60,
-                onClick: () => this.changeStep(-1),
-            })
+            this.clickThroughBtn.bounds.right = 200
 
             this.playBtn = new Button({
                 parent: null,
@@ -99,7 +90,7 @@ namespace micromusic {
                 icon: "play",
                 ariaId: "play",
                 tooltipEnabled: false,
-                x: -18,
+                x: -14,
                 y: y - 80,
                 onClick: () => {
                     this.app.popScene()
@@ -113,7 +104,7 @@ namespace micromusic {
                 icon: "fast_forward",
                 ariaId: "fast forward",
                 tooltipEnabled: false,
-                x: 20,
+                x: 24,
                 y: y - 80,
                 onClick: () => {
                     this.app.popScene()
@@ -127,7 +118,7 @@ namespace micromusic {
                 icon: "rewind",
                 ariaId: "rewind",
                 tooltipEnabled: false,
-                x: -28,
+                x: -24,
                 y: y - 80,
                 onClick: () => {
                     this.app.popScene()
@@ -138,10 +129,10 @@ namespace micromusic {
             this.stopBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "stop", // TODO: Change this
+                icon: "stop",
                 ariaId: "stop",
                 tooltipEnabled: false,
-                x: 6,
+                x: 10,
                 y: y - 80,
                 onClick: () => {
                     this.app.popScene()
@@ -152,10 +143,10 @@ namespace micromusic {
             this.pauseBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
-                icon: "pause", // TODO: Change this
+                icon: "pause",
                 ariaId: "",
                 tooltipEnabled: false,
-                x: -6,
+                x: -2,
                 y: y - 80,
                 onClick: () => {
                     this.app.popScene()
@@ -163,16 +154,91 @@ namespace micromusic {
                 },
             })
 
-            const btns: Button[] = [
+            this.sampleSelectBtn1 = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: "sample_button",
+                ariaId: "",
+                tooltipEnabled: false,
+                x: -42,
+                y: y - 60,
+                onClick: () => {
+                    // this.app.popScene()
+                    // this.app.pushScene(new Home(this.app))
+                },
+            })
+
+            this.controlSelectBtn = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: "section_select",
+                ariaId: "ctrl",
+                tooltipEnabled: false,
+                x: 0,
+                y: y - 80,
+                onClick: () => {
+                    this.setNavigator(1, 5, [this.playBtn])
+                    // control.onEvent(
+                    //     ControllerButtonEvent.Pressed,
+                    //     controller.B.id,
+                    //     () => {}
+                    // )
+                    // this.app.popScene()
+                    // this.app.pushScene(new Home(this.app))
+                },
+            })
+
+            this.sampleSelectBtn = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: "sample_section_select",
+                ariaId: "",
+                tooltipEnabled: false,
+                x: 0,
+                y: y - 64,
+                onClick: () => {
+                    // this.app.popScene()
+                    // this.app.pushScene(new Home(this.app))
+                },
+            })
+
+            this.noteSelectBtn = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: this.icon,
+                ariaId: "",
+                tooltipEnabled: false,
+                x: 0,
+                y: 14,
+                onClick: () => {
+                    // this.app.popScene()
+                    // this.app.pushScene(new Home(this.app))
+                },
+            })
+
+            this.controlBtns = [
                 this.rewindBtn,
                 this.playBtn,
                 this.pauseBtn,
                 this.stopBtn,
                 this.fastFordwardBtn,
-                this.prevNoteBtn,
-                this.nextNoteBtn,
-                this.prevStepBtn,
-                this.nextStepBtn,
+            ]
+
+            const btns: Button[] = [
+                this.controlSelectBtn,
+                this.sampleSelectBtn,
+                this.noteSelectBtn,
+                // this.sampleSelectBtn1,
+                // this.clickThroughBtn,
+                // this.rewindBtn,
+                // this.playBtn,
+                // this.pauseBtn,
+                // this.stopBtn,
+                // this.fastFordwardBtn,
+                // this.prevNoteBtn,
+                // this.nextNoteBtn,
+                // this.prevStepBtn,
+                // this.nextStepBtn,
             ]
 
             this.navigator.addButtons(btns)
@@ -208,42 +274,42 @@ namespace micromusic {
             this.pauseBtn.draw()
             this.fastFordwardBtn.draw()
             this.rewindBtn.draw()
-            this.nextNoteBtn.draw()
-            this.prevNoteBtn.draw()
-            this.nextStepBtn.draw()
-            this.prevStepBtn.draw()
+            this.clickThroughBtn.draw()
+            // this.nextNoteBtn.draw()
+            // this.prevNoteBtn.draw()
+            // this.nextStepBtn.draw()
+            // this.prevStepBtn.draw()
 
             this.drawGrid()
-            this.drawControls()
+            // this.drawControls()
             super.draw()
         }
 
         private drawGrid() {
             const startX = -40
-            const startY = Screen.HEIGHT * 0.234 - 30
-            const cellWidth = 15
+            const startY = Screen.HEIGHT * 0.234 - 50
+            const cellWidth = 70
             const cellHeight = 10
 
             for (let track = 0; track < NUM_TRACKS; track++) {
                 for (let step = 0; step < NUM_STEPS; step++) {
-                    const x = startX + step * cellWidth
-                    const y = startY + track * cellHeight
+                    const x = startX + track * cellWidth
+                    const y = startY + step * cellHeight
 
                     const note = this.trackData[track][step]
                     Screen.print(note, x, y, 0xb, font)
                 }
             }
+        }
 
-            // Highlight current step
-            const cursorX = startX + this.currentStep * cellWidth
-            const cursorY = startY + this.currentTrack * cellHeight
-            Screen.drawRect(
-                cursorX - 3,
-                cursorY - 1,
-                cellWidth - 4,
-                cellHeight,
-                0xf
-            ) // Black border
+        private setNavigator(rows: number, cols: number, btns: Button[]) {
+            // this.navigator.clear()
+            // console.log("1: " + this.navigator)
+            // this.navigator = null
+            console.log("2: " + this.navigator)
+            this.navigator = new RowNavigator()
+            this.navigator.addButtons(btns)
+            console.log("3: " + this.navigator)
         }
 
         private drawControls() {

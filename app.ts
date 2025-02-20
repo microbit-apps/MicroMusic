@@ -12,7 +12,7 @@ namespace micromusic {
     }
 
     // application configuration
-    user_interface_base.getIcon = (id) => icons.get(id)
+    user_interface_base.getIcon = id => icons.get(id)
     user_interface_base.resolveTooltip = (ariaId: string) => ariaId
 
     /**
@@ -30,12 +30,11 @@ namespace micromusic {
             datalogger.includeTimestamp(FlashLogTimeStampFormat.None)
 
             // if (shieldhelpers.shieldPresent())
-            this.pushScene(new Home(this))
+            this.pushScene(new SoundTrackerScreen(this))
         }
 
-
         public save(slot: string, buffer: Buffer): boolean {
-            return true;
+            return true
         }
 
         public load(slot: string): Buffer {
