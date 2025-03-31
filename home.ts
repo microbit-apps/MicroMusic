@@ -80,7 +80,7 @@ namespace micromusic {
                 this.recordDataBtn,
                 this.distributedLoggingBtn,
             ] //, this.viewBtn]
-            this.navigator.addButtons(btns)
+            // this.navigator.addButtons(btns)
         }
 
         private drawVersion() {

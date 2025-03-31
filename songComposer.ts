@@ -3,11 +3,11 @@ namespace micromusic {
     import GridNavigator = user_interface_base.GridNavigator
     import AppInterface = user_interface_base.AppInterface
     import Screen = user_interface_base.Screen
-    import Bounds = user_interface_base.Bounds
-    import RowNavigator = user_interface_base.RowNavigator
+    import GUIComponentScene = microgui.GUIComponentScene
     import getIcon = user_interface_base.getIcon
-    import CustomButton = user_interface_base.CustomButton
+    import ButtonCollection = microgui.ButtonCollection
     import Button = user_interface_base.Button
+    import GUIComponentAlignment = microgui.GUIComponentAlignment
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 
@@ -20,12 +20,13 @@ namespace micromusic {
         private currentTrack: number
         private trackData: string[][]
         private controlBtns: Button[]
+        private temp: ButtonCollection
         private playBtn: Button
         private stopBtn: Button
         private pauseBtn: Button
         private fastFordwardBtn: Button
         private rewindBtn: Button
-        private clickThroughBtn: CustomButton
+        private clickThroughBtn: Button
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
         private icon: Bitmap
@@ -39,8 +40,8 @@ namespace micromusic {
                 function () {
                     this.app.popScene()
                     this.app.pushScene(new Home(this.app))
-                },
-                new GridNavigator(3, 1)
+                }
+                // new GridNavigator(2, 3)
             )
 
             this.trackData = []
@@ -69,27 +70,23 @@ namespace micromusic {
 
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
 
-            this.clickThroughBtn = new CustomButton({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "placeholder",
-                ariaId: "placeholder",
-                tooltipEnabled: false,
-                x: -24,
-                y: y - 80,
-                onClick: () => {},
-                height: 200,
-                width: 200,
-            })
-
-            this.clickThroughBtn.bounds.right = 200
+            // this.clickThroughBtn = new Button({
+            //     parent: null,
+            //     style: ButtonStyles.Transparent,
+            //     icon: "placeholder",
+            //     ariaId: "placeholder",
+            //     // tooltipEnabled: false,
+            //     x: -24,
+            //     y: y - 80,
+            //     onClick: () => {},
+            // })
 
             this.playBtn = new Button({
                 parent: null,
                 style: ButtonStyles.Transparent,
                 icon: "play",
                 ariaId: "play",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: -14,
                 y: y - 80,
                 onClick: () => {
@@ -103,7 +100,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "fast_forward",
                 ariaId: "fast forward",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: 24,
                 y: y - 80,
                 onClick: () => {
@@ -117,7 +114,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "rewind",
                 ariaId: "rewind",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: -24,
                 y: y - 80,
                 onClick: () => {
@@ -131,7 +128,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "stop",
                 ariaId: "stop",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: 10,
                 y: y - 80,
                 onClick: () => {
@@ -145,7 +142,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "pause",
                 ariaId: "",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: -2,
                 y: y - 80,
                 onClick: () => {
@@ -159,7 +156,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "sample_button",
                 ariaId: "",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: -42,
                 y: y - 60,
                 onClick: () => {
@@ -172,10 +169,10 @@ namespace micromusic {
                 parent: null,
                 style: ButtonStyles.Transparent,
                 icon: "section_select",
-                ariaId: "ctrl",
-                tooltipEnabled: false,
-                x: 0,
-                y: y - 80,
+                ariaId: "",
+                // tooltipEnabled: false,
+                x: 8,
+                y: 0,
                 onClick: () => {
                     this.setNavigator(1, 5, [this.playBtn])
                     // control.onEvent(
@@ -193,9 +190,9 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: "sample_section_select",
                 ariaId: "",
-                tooltipEnabled: false,
-                x: 0,
-                y: y - 64,
+                // tooltipEnabled: false,
+                x: -28,
+                y: 16,
                 onClick: () => {
                     // this.app.popScene()
                     // this.app.pushScene(new Home(this.app))
@@ -207,7 +204,7 @@ namespace micromusic {
                 style: ButtonStyles.Transparent,
                 icon: this.icon,
                 ariaId: "",
-                tooltipEnabled: false,
+                // tooltipEnabled: false,
                 x: 0,
                 y: 14,
                 onClick: () => {
@@ -224,6 +221,32 @@ namespace micromusic {
                 this.fastFordwardBtn,
             ]
 
+            this.temp = new ButtonCollection({
+                alignment: GUIComponentAlignment.TOP,
+                btns: [
+                    [this.controlSelectBtn],
+                    [this.sampleSelectBtn],
+                    [
+                        new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: this.icon,
+                            ariaId: "",
+                            // tooltipEnabled: false,
+                            x: 0,
+                            y: 60,
+                            onClick: () => {
+                                this.app.popScene()
+                                this.app.pushScene(new Home(this.app))
+                            },
+                        }),
+                    ],
+                ],
+                isActive: false,
+                isHidden: false,
+            })
+
+            // Broken backwards compatibility?
             const btns: Button[] = [
                 this.controlSelectBtn,
                 this.sampleSelectBtn,
@@ -241,7 +264,13 @@ namespace micromusic {
                 // this.nextStepBtn,
             ]
 
-            this.navigator.addButtons(btns)
+            // this.navigator.addButtons(btns)
+            let app = this.app
+            const window = new GUIComponentScene({
+                app,
+                components: [this.temp],
+            })
+            // this.app.pushScene(window)
         }
 
         private changeStep(direction: number) {
@@ -274,7 +303,7 @@ namespace micromusic {
             this.pauseBtn.draw()
             this.fastFordwardBtn.draw()
             this.rewindBtn.draw()
-            this.clickThroughBtn.draw()
+            // this.clickThroughBtn.draw()
             // this.nextNoteBtn.draw()
             // this.prevNoteBtn.draw()
             // this.nextStepBtn.draw()
@@ -305,11 +334,11 @@ namespace micromusic {
         private setNavigator(rows: number, cols: number, btns: Button[]) {
             // this.navigator.clear()
             // console.log("1: " + this.navigator)
-            // this.navigator = null
-            console.log("2: " + this.navigator)
-            this.navigator = new RowNavigator()
-            this.navigator.addButtons(btns)
-            console.log("3: " + this.navigator)
+            // // this.navigator = null
+            // console.log("2: " + this.navigator)
+            // this.navigator = new RowNavigator()
+            // this.navigator.addButtons(btns)
+            // console.log("3: " + this.navigator)
         }
 
         private drawControls() {
