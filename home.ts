@@ -22,64 +22,52 @@ namespace micromusic {
             super.startup()
 
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
+            this.navigator.setBtns([
+                [
+                    (this.liveDataBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "edit_program",
+                        ariaId: "New Song",
+                        x: -40,
+                        y,
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(new SoundTrackerScreen(this.app))
+                        },
+                    })),
+                    (this.recordDataBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "largeDisk",
+                        ariaId: "Saved Songs",
+                        x: 0,
+                        y,
+                        onClick: () => {
+                            this.app.popScene()
+                            // this.app.pushScene(new SensorSelect(this.app, CursorSceneEnum.RecordingConfigSelect))
+                        },
+                    })),
+                    (this.distributedLoggingBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "largeSettingsGear",
+                        ariaId: "Options",
+                        x: 40,
+                        y,
+                        onClick: () => {
+                            this.app.popScene()
+                            // this.app.pushScene(new DistributedLoggingScreen(this.app))
+                        },
+                    })),
+                ],
+            ])
 
-            this.liveDataBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "edit_program",
-                ariaId: "New Song",
-                x: -40,
-                y,
-                onClick: () => {
-                    this.app.popScene()
-                    this.app.pushScene(new SoundTrackerScreen(this.app))
-                },
-            })
-
-            this.recordDataBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "largeDisk",
-                ariaId: "Saved Songs",
-                x: 0,
-                y,
-                onClick: () => {
-                    this.app.popScene()
-                    // this.app.pushScene(new SensorSelect(this.app, CursorSceneEnum.RecordingConfigSelect))
-                },
-            })
-
-            this.distributedLoggingBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "largeSettingsGear",
-                ariaId: "Options",
-                x: 40,
-                y,
-                onClick: () => {
-                    this.app.popScene()
-                    // this.app.pushScene(new DistributedLoggingScreen(this.app))
-                },
-            })
-
-            // this.viewBtn = new Button({
-            //     parent: null,
-            //     style: ButtonStyles.Transparent,
-            //     icon: "largeDisk",
-            //     ariaId: "View Data",
-            //     x: 58,
-            //     y,
-            //     onClick: () => {
-            //         this.app.popScene()
-            //         // this.app.pushScene(new DataViewSelect(this.app))
-            //     },
-            // })
-
-            const btns: Button[] = [
-                this.liveDataBtn,
-                this.recordDataBtn,
-                this.distributedLoggingBtn,
-            ] //, this.viewBtn]
+            // const btns: Button[] = [
+            //     this.liveDataBtn,
+            //     this.recordDataBtn,
+            //     this.distributedLoggingBtn,
+            // ] //, this.viewBtn]
             // this.navigator.addButtons(btns)
         }
 
