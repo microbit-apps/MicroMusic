@@ -71,7 +71,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "rewind",
-                    x: -24,
+                    x: -22,
                     y: y - 80,
                     onClick: () => {
                         this.app.popScene()
@@ -82,7 +82,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "play",
-                    x: -14,
+                    x: -12,
                     y: y - 80,
                     onClick: () => {
                         this.play()
@@ -92,7 +92,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "pause",
-                    x: -2,
+                    x: 0,
                     y: y - 80,
                     onClick: () => {
                         this.pause()
@@ -102,7 +102,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "stop",
-                    x: 10,
+                    x: 12,
                     y: y - 80,
                     onClick: () => {
                         // this.app.popScene()
@@ -114,7 +114,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "fast_forward",
-                    x: 24,
+                    x: 26,
                     y: y - 80,
                     onClick: () => {
                         this.app.popScene()
@@ -238,8 +238,16 @@ namespace micromusic {
                 btns.draw()
             }
 
+            this.drawSamples()
             this.drawGrid()
             super.draw()
+        }
+
+        private drawSamples() {
+            this.drawText(-60, -40, "Sample 1")
+            this.drawText(15, -40, "Sample 2")
+            Screen.drawLine(0, -40, 0, -32, 0xb)
+            Screen.drawLine(0, -20, 0, 53, 0xb)
         }
 
         private drawGrid() {
@@ -283,7 +291,7 @@ namespace micromusic {
         }
 
         private drawText(x: number, y: number, text: string) {
-            screen().print(text, x, y, 0xb, font)
+            Screen.print(text, x, y, 0xb, font)
         }
     }
 }
