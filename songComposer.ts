@@ -1,5 +1,5 @@
 namespace micromusic {
-    import CursorScene = user_interface_base.CursorSceneWithPriorPage
+    import CursorSceneWithPriorPage = user_interface_base.CursorSceneWithPriorPage
     import GridNavigator = user_interface_base.GridNavigator
     import CursorDir = user_interface_base.CursorDir
     import AppInterface = user_interface_base.AppInterface
@@ -18,7 +18,7 @@ namespace micromusic {
     const NUM_NOTES = 256
     const NOTES = ["C", "D", "E", "F", "G", "A", "B"]
 
-    export class SoundTrackerScreen extends CursorScene {
+    export class SoundTrackerScreen extends CursorSceneWithPriorPage {
         private currentStep: number
         private currentTrack: number
         private trackData: string[][]
@@ -70,12 +70,23 @@ namespace micromusic {
                 new Button({
                     parent: null,
                     style: ButtonStyles.Transparent,
+                    icon: "back_arrow",
+                    ariaId: "back_arrow_temp",
+                    x: -68,
+                    y: y - 78,
+                    onClick: () => {
+                        this.app.popScene()
+                        this.app.pushScene(new Home(this.app))
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
                     icon: "rewind",
                     x: -22,
                     y: y - 80,
                     onClick: () => {
-                        this.app.popScene()
-                        this.app.pushScene(new Home(this.app))
+                        this.rewind()
                     },
                 }),
                 new Button({
@@ -117,12 +128,29 @@ namespace micromusic {
                     x: 26,
                     y: y - 80,
                     onClick: () => {
-                        this.app.popScene()
-                        this.app.pushScene(new Home(this.app))
+                        // this.app.popScene()
+                        this.trackData[0][0] = "G"
+                        // this.app.pushScene(new Home(this.app))
+                        this.fastForward()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "small_cog",
+                    ariaId: "small_cog_temp",
+                    x: 70,
+                    y: y - 78,
+                    onClick: () => {
+                        this.app.pushScene(new SettingsScreen(this.app, this))
                     },
                 }),
             ]
 
+            this.resetNavigator()
+        }
+
+        public resetNavigator() {
             this.navigator.setBtns([
                 this.controlBtns,
                 [
@@ -183,7 +211,7 @@ namespace micromusic {
                                         style: ButtonStyles.Transparent,
                                         icon: "sample_button",
                                         x: -42,
-                                        y: y - 60,
+                                        y: -30,
                                         onClick: () => {
                                             // this.app.popScene()
                                             // this.app.pushScene(new Home(this.app))
@@ -201,11 +229,12 @@ namespace micromusic {
         private play() {
             this.playing = true
             control.inBackground(() => {
-                while (this.playing) {
+                while (this.playing && this.currentStep <= 255 - 8) {
                     this.currentStep += 1
                     this.draw()
                     basic.pause(200)
                 }
+                this.playing = false
             })
         }
 
@@ -219,9 +248,21 @@ namespace micromusic {
             this.drawGrid()
         }
 
-        private rewind() {}
+        private rewind() {
+            this.currentStep = this.currentStep - 8
+            if (this.currentStep < 0) {
+                this.currentStep = 0
+            }
+            this.drawGrid()
+        }
 
-        private fastForward() {}
+        private fastForward() {
+            this.currentStep = this.currentStep + 8
+            if (this.currentStep > 255 - 7) {
+                this.currentStep = 255 - 7
+            }
+            this.drawGrid()
+        }
 
         draw() {
             Screen.fillRect(
