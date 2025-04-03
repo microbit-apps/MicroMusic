@@ -20,7 +20,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
-
+            this.cursor.setBorderThickness(2)
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
             this.navigator.setBtns([
                 [

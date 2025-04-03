@@ -1,6 +1,7 @@
 namespace micromusic {
     import CursorScene = user_interface_base.CursorSceneWithPriorPage
     import GridNavigator = user_interface_base.GridNavigator
+    import CursorDir = user_interface_base.CursorDir
     import AppInterface = user_interface_base.AppInterface
     import Screen = user_interface_base.Screen
     import GUIComponentScene = microgui.GUIComponentScene
@@ -11,8 +12,10 @@ namespace micromusic {
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 
-    const NUM_TRACKS = 2
-    const NUM_STEPS = 8
+    const NUM_TRACKS = 4
+    const NUM_VISIBLE_TRACKS = 2
+    const NUM_VISIBLE_STEPS = 8
+    const NUM_NOTES = 256
     const NOTES = ["C", "D", "E", "F", "G", "A", "B"]
 
     export class SoundTrackerScreen extends CursorScene {
@@ -20,19 +23,10 @@ namespace micromusic {
         private currentTrack: number
         private trackData: string[][]
         private controlBtns: Button[]
-        private temp: ButtonCollection
-        private playBtn: Button
-        private stopBtn: Button
-        private pauseBtn: Button
-        private fastFordwardBtn: Button
-        private rewindBtn: Button
-        private clickThroughBtn: Button
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
         private icon: Bitmap
-        private sampleSelectBtn1: Button
-        private controlSelectBtn: Button
-        private stepOffset: number
+        private playing: boolean
 
         constructor(app: AppInterface) {
             super(
@@ -40,20 +34,20 @@ namespace micromusic {
                 function () {
                     this.app.popScene()
                     this.app.pushScene(new Home(this.app))
-                }
-                // new GridNavigator(2, 3)
+                },
+                new GridNavigator()
             )
 
             this.trackData = []
 
+            // Grid data
             for (let i = 0; i < NUM_TRACKS; i++) {
                 this.trackData[i] = []
-                for (let j = 0; j < NUM_STEPS; j++) {
-                    this.trackData[i][j] = "-"
+                for (let j = 0; j < NUM_NOTES; j++) {
+                    if (j % 2 == 0) this.trackData[i][j] = "-"
+                    else this.trackData[i][j] = "C"
                 }
             }
-
-            this.stepOffset = 0
         }
 
         /* override */ startup() {
@@ -70,225 +64,165 @@ namespace micromusic {
 
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
 
-            // this.clickThroughBtn = new Button({
-            //     parent: null,
-            //     style: ButtonStyles.Transparent,
-            //     icon: "placeholder",
-            //     ariaId: "placeholder",
-            //     // tooltipEnabled: false,
-            //     x: -24,
-            //     y: y - 80,
-            //     onClick: () => {},
-            // })
-
-            this.playBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "play",
-                ariaId: "play",
-                // tooltipEnabled: false,
-                x: -14,
-                y: y - 80,
-                onClick: () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.fastFordwardBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "fast_forward",
-                ariaId: "fast forward",
-                // tooltipEnabled: false,
-                x: 24,
-                y: y - 80,
-                onClick: () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.rewindBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "rewind",
-                ariaId: "rewind",
-                // tooltipEnabled: false,
-                x: -24,
-                y: y - 80,
-                onClick: () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.stopBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "stop",
-                ariaId: "stop",
-                // tooltipEnabled: false,
-                x: 10,
-                y: y - 80,
-                onClick: () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.pauseBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "pause",
-                ariaId: "",
-                // tooltipEnabled: false,
-                x: -2,
-                y: y - 80,
-                onClick: () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.sampleSelectBtn1 = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "sample_button",
-                ariaId: "",
-                // tooltipEnabled: false,
-                x: -42,
-                y: y - 60,
-                onClick: () => {
-                    // this.app.popScene()
-                    // this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.controlSelectBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "section_select",
-                ariaId: "",
-                // tooltipEnabled: false,
-                x: 8,
-                y: 0,
-                onClick: () => {
-                    this.setNavigator(1, 5, [this.playBtn])
-                    // control.onEvent(
-                    //     ControllerButtonEvent.Pressed,
-                    //     controller.B.id,
-                    //     () => {}
-                    // )
-                    // this.app.popScene()
-                    // this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.sampleSelectBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "sample_section_select",
-                ariaId: "",
-                // tooltipEnabled: false,
-                x: -28,
-                y: 16,
-                onClick: () => {
-                    // this.app.popScene()
-                    // this.app.pushScene(new Home(this.app))
-                },
-            })
-
-            this.noteSelectBtn = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: this.icon,
-                ariaId: "",
-                // tooltipEnabled: false,
-                x: 0,
-                y: 14,
-                onClick: () => {
-                    // this.app.popScene()
-                    // this.app.pushScene(new Home(this.app))
-                },
-            })
+            this.cursor.setBorderThickness(1)
 
             this.controlBtns = [
-                this.rewindBtn,
-                this.playBtn,
-                this.pauseBtn,
-                this.stopBtn,
-                this.fastFordwardBtn,
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "rewind",
+                    x: -24,
+                    y: y - 80,
+                    onClick: () => {
+                        this.app.popScene()
+                        this.app.pushScene(new Home(this.app))
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "play",
+                    x: -14,
+                    y: y - 80,
+                    onClick: () => {
+                        this.play()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "pause",
+                    x: -2,
+                    y: y - 80,
+                    onClick: () => {
+                        this.pause()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "stop",
+                    x: 10,
+                    y: y - 80,
+                    onClick: () => {
+                        // this.app.popScene()
+                        // this.app.pushScene(new Home(this.app))
+                        this.stop()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "fast_forward",
+                    x: 24,
+                    y: y - 80,
+                    onClick: () => {
+                        this.app.popScene()
+                        this.app.pushScene(new Home(this.app))
+                    },
+                }),
             ]
 
-            this.temp = new ButtonCollection({
-                alignment: GUIComponentAlignment.TOP,
-                btns: [
-                    [this.controlSelectBtn],
-                    [this.sampleSelectBtn],
-                    [
-                        new Button({
-                            parent: null,
-                            style: ButtonStyles.Transparent,
-                            icon: this.icon,
-                            ariaId: "",
-                            // tooltipEnabled: false,
-                            x: 0,
-                            y: 60,
-                            onClick: () => {
-                                this.app.popScene()
-                                this.app.pushScene(new Home(this.app))
-                            },
-                        }),
-                    ],
+            this.navigator.setBtns([
+                this.controlBtns,
+                [
+                    // (this.sampleSelectBtn1 = new Button({
+                    //     parent: null,
+                    //     style: ButtonStyles.Transparent,
+                    //     icon: "sample_button",
+                    //     ariaId: "1",
+                    //     x: -42,
+                    //     y: y - 60,
+                    //     onClick: () => {
+                    //         // this.app.popScene()
+                    //         // this.app.pushScene(new Home(this.app))
+                    //     },
+                    // })),
+                    // (this.controlSelectBtn = new Button({
+                    //     parent: null,
+                    //     style: ButtonStyles.Transparent,
+                    //     icon: "section_select",
+                    //     ariaId: "2",
+                    //     x: 8,
+                    //     y: 0,
+                    //     onClick: () => {
+                    //         this.setNavigator(1, 5, [this.playBtn])
+                    //         // control.onEvent(
+                    //         //     ControllerButtonEvent.Pressed,
+                    //         //     controller.B.id,
+                    //         //     () => {}
+                    //         // )
+                    //         // this.app.popScene()
+                    //         // this.app.pushScene(new Home(this.app))
+                    //     },
+                    // })),
+                    (this.sampleSelectBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_section_select",
+                        x: 0,
+                        y: -36,
+                        onClick: () => {
+                            // this.app.popScene()
+                            // this.app.pushScene(new Home(this.app))
+                        },
+                    })),
                 ],
-                isActive: false,
-                isHidden: false,
+                [
+                    (this.noteSelectBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: this.icon,
+                        x: 0,
+                        y: 16,
+                        onClick: () => {
+                            this.navigator.setBtns([
+                                [
+                                    new Button({
+                                        parent: null,
+                                        style: ButtonStyles.Transparent,
+                                        icon: "sample_button",
+                                        x: -42,
+                                        y: y - 60,
+                                        onClick: () => {
+                                            // this.app.popScene()
+                                            // this.app.pushScene(new Home(this.app))
+                                        },
+                                    }),
+                                ],
+                            ])
+                            this.moveCursor(CursorDir.Down)
+                        },
+                    })),
+                ],
+            ])
+        }
+
+        private play() {
+            this.playing = true
+            control.inBackground(() => {
+                while (this.playing) {
+                    this.currentStep += 1
+                    this.draw()
+                    basic.pause(200)
+                }
             })
-
-            // Broken backwards compatibility?
-            const btns: Button[] = [
-                this.controlSelectBtn,
-                this.sampleSelectBtn,
-                this.noteSelectBtn,
-                // this.sampleSelectBtn1,
-                // this.clickThroughBtn,
-                // this.rewindBtn,
-                // this.playBtn,
-                // this.pauseBtn,
-                // this.stopBtn,
-                // this.fastFordwardBtn,
-                // this.prevNoteBtn,
-                // this.nextNoteBtn,
-                // this.prevStepBtn,
-                // this.nextStepBtn,
-            ]
-
-            // this.navigator.addButtons(btns)
-            let app = this.app
-            const window = new GUIComponentScene({
-                app,
-                components: [this.temp],
-            })
-            // this.app.pushScene(window)
         }
 
-        private changeStep(direction: number) {
-            this.currentStep =
-                (this.currentStep + direction + NUM_STEPS) % NUM_STEPS
+        private pause() {
+            this.playing = false
         }
 
-        private changeNote(direction: number) {
-            const track = this.currentTrack
-            const step = this.currentStep
-
-            let noteIndex = NOTES.indexOf(this.trackData[track][step])
-            noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
-
-            this.trackData[track][step] = NOTES[noteIndex]
+        private stop() {
+            this.playing = false
+            this.currentStep = 0
+            this.drawGrid()
         }
 
-        private yOffset = -Screen.HEIGHT >> 1
+        private rewind() {}
+
+        private fastForward() {}
+
         draw() {
             Screen.fillRect(
                 Screen.LEFT_EDGE,
@@ -298,54 +232,54 @@ namespace micromusic {
                 0xc
             )
 
-            this.playBtn.draw()
-            this.stopBtn.draw()
-            this.pauseBtn.draw()
-            this.fastFordwardBtn.draw()
-            this.rewindBtn.draw()
-            // this.clickThroughBtn.draw()
-            // this.nextNoteBtn.draw()
-            // this.prevNoteBtn.draw()
-            // this.nextStepBtn.draw()
-            // this.prevStepBtn.draw()
+            this.navigator.drawComponents()
+
+            for (let btns of this.controlBtns) {
+                btns.draw()
+            }
 
             this.drawGrid()
-            // this.drawControls()
             super.draw()
         }
 
         private drawGrid() {
-            const startX = -40
+            const startX = -30
             const startY = Screen.HEIGHT * 0.234 - 50
-            const cellWidth = 70
+            const cellWidth = 55
             const cellHeight = 10
 
-            for (let track = 0; track < NUM_TRACKS; track++) {
-                for (let step = 0; step < NUM_STEPS; step++) {
+            for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
+                for (
+                    let step = this.currentStep;
+                    step - this.currentStep < NUM_VISIBLE_STEPS;
+                    step++
+                ) {
                     const x = startX + track * cellWidth
-                    const y = startY + step * cellHeight
+                    const y = startY + (step - this.currentStep) * cellHeight
 
                     const note = this.trackData[track][step]
                     Screen.print(note, x, y, 0xb, font)
                 }
             }
-        }
 
-        private setNavigator(rows: number, cols: number, btns: Button[]) {
-            // this.navigator.clear()
-            // console.log("1: " + this.navigator)
-            // // this.navigator = null
-            // console.log("2: " + this.navigator)
-            // this.navigator = new RowNavigator()
-            // this.navigator.addButtons(btns)
-            // console.log("3: " + this.navigator)
-        }
+            for (
+                let step = this.currentStep;
+                step < this.currentStep + 8;
+                step++
+            ) {
+                const y = startY + (step - this.currentStep) * cellHeight
 
-        private drawControls() {
-            this.drawText(0, Screen.HEIGHT * 0.234 + 30, `Drum 1`)
-            this.drawText(0, Screen.HEIGHT * 0.234 + 40, `String`)
-            this.drawText(0, Screen.HEIGHT * 0.234 + 50, `Drum 2`)
-            this.drawText(0, Screen.HEIGHT * 0.234 + 60, `Bass`)
+                // Convert step number to string
+                const stepString = step.toString()
+                const digitCount = stepString.length
+
+                // Adjust X position dynamically based on number of digits
+                const rightX = 60 - (digitCount - 1) * 3 // Move left 5 pixels per extra digit
+
+                // Print step numbers
+                Screen.print(stepString, -70, y, 0xb, font) // Left side remains the same
+                Screen.print(stepString, rightX, y, 0xb, font) // Right side adjusts
+            }
         }
 
         private drawText(x: number, y: number, text: string) {
