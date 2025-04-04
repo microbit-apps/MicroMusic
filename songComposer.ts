@@ -62,8 +62,6 @@ namespace micromusic {
                 .doubled()
                 .doubledY()
 
-            const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
-
             this.cursor.setBorderThickness(1)
 
             this.controlBtns = [
@@ -73,7 +71,7 @@ namespace micromusic {
                     icon: "back_arrow",
                     ariaId: "back_arrow_temp",
                     x: -68,
-                    y: y - 78,
+                    y: -48,
                     onClick: () => {
                         this.app.popScene()
                         this.app.pushScene(new Home(this.app))
@@ -84,7 +82,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "rewind",
                     x: -22,
-                    y: y - 80,
+                    y: -50,
                     onClick: () => {
                         this.rewind()
                     },
@@ -94,7 +92,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "play",
                     x: -12,
-                    y: y - 80,
+                    y: -50,
                     onClick: () => {
                         this.play()
                     },
@@ -104,7 +102,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "pause",
                     x: 0,
-                    y: y - 80,
+                    y: -50,
                     onClick: () => {
                         this.pause()
                     },
@@ -114,10 +112,8 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "stop",
                     x: 12,
-                    y: y - 80,
+                    y: -50,
                     onClick: () => {
-                        // this.app.popScene()
-                        // this.app.pushScene(new Home(this.app))
                         this.stop()
                     },
                 }),
@@ -126,11 +122,8 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "fast_forward",
                     x: 26,
-                    y: y - 80,
+                    y: -50,
                     onClick: () => {
-                        // this.app.popScene()
-                        this.trackData[0][0] = "G"
-                        // this.app.pushScene(new Home(this.app))
                         this.fastForward()
                     },
                 }),
@@ -140,7 +133,7 @@ namespace micromusic {
                     icon: "small_cog",
                     ariaId: "small_cog_temp",
                     x: 70,
-                    y: y - 78,
+                    y: -48,
                     onClick: () => {
                         this.app.popScene()
                         this.app.pushScene(new SettingsScreen(this.app, this))
@@ -155,46 +148,13 @@ namespace micromusic {
             this.navigator.setBtns([
                 this.controlBtns,
                 [
-                    // (this.sampleSelectBtn1 = new Button({
-                    //     parent: null,
-                    //     style: ButtonStyles.Transparent,
-                    //     icon: "sample_button",
-                    //     ariaId: "1",
-                    //     x: -42,
-                    //     y: y - 60,
-                    //     onClick: () => {
-                    //         // this.app.popScene()
-                    //         // this.app.pushScene(new Home(this.app))
-                    //     },
-                    // })),
-                    // (this.controlSelectBtn = new Button({
-                    //     parent: null,
-                    //     style: ButtonStyles.Transparent,
-                    //     icon: "section_select",
-                    //     ariaId: "2",
-                    //     x: 8,
-                    //     y: 0,
-                    //     onClick: () => {
-                    //         this.setNavigator(1, 5, [this.playBtn])
-                    //         // control.onEvent(
-                    //         //     ControllerButtonEvent.Pressed,
-                    //         //     controller.B.id,
-                    //         //     () => {}
-                    //         // )
-                    //         // this.app.popScene()
-                    //         // this.app.pushScene(new Home(this.app))
-                    //     },
-                    // })),
                     (this.sampleSelectBtn = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "sample_section_select",
                         x: 0,
                         y: -36,
-                        onClick: () => {
-                            // this.app.popScene()
-                            // this.app.pushScene(new Home(this.app))
-                        },
+                        onClick: () => {},
                     })),
                 ],
                 [
@@ -205,22 +165,22 @@ namespace micromusic {
                         x: 0,
                         y: 16,
                         onClick: () => {
-                            this.navigator.setBtns([
-                                [
-                                    new Button({
-                                        parent: null,
-                                        style: ButtonStyles.Transparent,
-                                        icon: "sample_button",
-                                        x: -42,
-                                        y: -30,
-                                        onClick: () => {
-                                            // this.app.popScene()
-                                            // this.app.pushScene(new Home(this.app))
-                                        },
-                                    }),
-                                ],
-                            ])
-                            this.moveCursor(CursorDir.Down)
+                            // this.navigator.setBtns([
+                            //     [
+                            //         new Button({
+                            //             parent: null,
+                            //             style: ButtonStyles.Transparent,
+                            //             icon: "sample_button",
+                            //             x: -42,
+                            //             y: -30,
+                            //             onClick: () => {
+                            //                 // this.app.popScene()
+                            //                 // this.app.pushScene(new Home(this.app))
+                            //             },
+                            //         }),
+                            //     ],
+                            // ])
+                            // this.moveCursor(CursorDir.Down)
                         },
                     })),
                 ],
@@ -318,17 +278,15 @@ namespace micromusic {
                 step++
             ) {
                 const y = startY + (step - this.currentStep) * cellHeight
-
-                // Convert step number to string
                 const stepString = step.toString()
                 const digitCount = stepString.length
 
                 // Adjust X position dynamically based on number of digits
-                const rightX = 60 - (digitCount - 1) * 3 // Move left 5 pixels per extra digit
+                const rightX = 60 - (digitCount - 1) * 3 // Move left 5 pixels per extra digit, helps keep number clean
 
                 // Print step numbers
-                Screen.print(stepString, -70, y, 0xb, font) // Left side remains the same
-                Screen.print(stepString, rightX, y, 0xb, font) // Right side adjusts
+                Screen.print(stepString, -70, y, 0xb, font) // Left side stays the same
+                Screen.print(stepString, rightX, y, 0xb, font) // Right side adjusts to make numbers look more natural
             }
         }
 
