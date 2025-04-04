@@ -1,5 +1,6 @@
 namespace micromusic {
     import CursorSceneWithPriorPage = user_interface_base.CursorSceneWithPriorPage
+    import CursorScene = user_interface_base.CursorScene
     import AppInterface = user_interface_base.AppInterface
     import GridNavigator = user_interface_base.GridNavigator
     import Button = user_interface_base.Button
@@ -7,14 +8,17 @@ namespace micromusic {
     import Screen = user_interface_base.Screen
 
     export class SettingsScreen extends CursorSceneWithPriorPage {
-        private previousScene: SoundTrackerScreen
+        private previousScene: CursorScene
 
-        constructor(app: AppInterface, previousScene: SoundTrackerScreen) {
+        constructor(app: AppInterface, previousScene: CursorScene) {
             super(
                 app,
                 function () {
                     this.app.popScene()
-                    this.previousScene.resetNavigator()
+                    this.previousScene.navigator = new GridNavigator()
+                    this.app.pushScene(this.previousScene)
+                    // if (previousScene instanceof SoundTrackerScreen)
+                    //     this.previousScene.resetNavigator()
                 },
                 new GridNavigator()
             )
@@ -35,6 +39,8 @@ namespace micromusic {
                         y: 0,
                         onClick: () => {
                             this.app.popScene()
+                            // Has to be given a new GridNavigator, old one stops working
+                            this.previousScene.navigator = new GridNavigator()
                             this.app.pushScene(this.previousScene)
                         },
                     }),

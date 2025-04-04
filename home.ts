@@ -57,7 +57,9 @@ namespace micromusic {
                         y,
                         onClick: () => {
                             this.app.popScene()
-                            // this.app.pushScene(new DistributedLoggingScreen(this.app))
+                            this.app.pushScene(
+                                new SettingsScreen(this.app, this)
+                            )
                         },
                     })),
                 ],

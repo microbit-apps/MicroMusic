@@ -38,6 +38,9 @@ namespace micromusic {
                 new GridNavigator()
             )
 
+            this.currentStep = 0
+            this.currentTrack = 0
+
             this.trackData = []
 
             // Grid data
@@ -52,9 +55,6 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
-
-            this.currentStep = 0
-            this.currentTrack = 0
 
             this.icon = getIcon("placeholder", true)
                 .doubled()
@@ -142,6 +142,7 @@ namespace micromusic {
                     x: 70,
                     y: y - 78,
                     onClick: () => {
+                        this.app.popScene()
                         this.app.pushScene(new SettingsScreen(this.app, this))
                     },
                 }),
