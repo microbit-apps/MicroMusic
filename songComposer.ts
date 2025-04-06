@@ -59,7 +59,6 @@ namespace micromusic {
             this.icon = getIcon("placeholder", true)
                 .doubled()
                 .doubled()
-                .doubled()
                 .doubledY()
 
             this.cursor.setBorderThickness(1)
@@ -69,9 +68,8 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "back_arrow",
-                    ariaId: "back_arrow_temp",
                     x: -68,
-                    y: -48,
+                    y: -52,
                     onClick: () => {
                         this.app.popScene()
                         this.app.pushScene(new Home(this.app))
@@ -82,7 +80,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "rewind",
                     x: -22,
-                    y: -50,
+                    y: -54,
                     onClick: () => {
                         this.rewind()
                     },
@@ -92,7 +90,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "play",
                     x: -12,
-                    y: -50,
+                    y: -54,
                     onClick: () => {
                         this.play()
                     },
@@ -102,7 +100,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "pause",
                     x: 0,
-                    y: -50,
+                    y: -54,
                     onClick: () => {
                         this.pause()
                     },
@@ -112,7 +110,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "stop",
                     x: 12,
-                    y: -50,
+                    y: -54,
                     onClick: () => {
                         this.stop()
                     },
@@ -122,7 +120,7 @@ namespace micromusic {
                     style: ButtonStyles.Transparent,
                     icon: "fast_forward",
                     x: 26,
-                    y: -50,
+                    y: -54,
                     onClick: () => {
                         this.fastForward()
                     },
@@ -131,9 +129,8 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "small_cog",
-                    ariaId: "small_cog_temp",
                     x: 70,
-                    y: -48,
+                    y: -52,
                     onClick: () => {
                         this.app.popScene()
                         this.app.pushScene(new SettingsScreen(this.app, this))
@@ -153,7 +150,7 @@ namespace micromusic {
                         style: ButtonStyles.Transparent,
                         icon: "sample_section_select",
                         x: 0,
-                        y: -36,
+                        y: -40,
                         onClick: () => {},
                     })),
                 ],
@@ -162,8 +159,33 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: this.icon,
-                        x: 0,
-                        y: 16,
+                        x: -36,
+                        y: 12,
+                        onClick: () => {
+                            // this.navigator.setBtns([
+                            //     [
+                            //         new Button({
+                            //             parent: null,
+                            //             style: ButtonStyles.Transparent,
+                            //             icon: "sample_button",
+                            //             x: -42,
+                            //             y: -30,
+                            //             onClick: () => {
+                            //                 // this.app.popScene()
+                            //                 // this.app.pushScene(new Home(this.app))
+                            //             },
+                            //         }),
+                            //     ],
+                            // ])
+                            // this.moveCursor(CursorDir.Down)
+                        },
+                    })),
+                    (this.noteSelectBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: this.icon,
+                        x: 37,
+                        y: 12,
                         onClick: () => {
                             // this.navigator.setBtns([
                             //     [
@@ -246,17 +268,17 @@ namespace micromusic {
         }
 
         private drawSamples() {
-            this.drawText(-60, -40, "Sample 1")
-            this.drawText(15, -40, "Sample 2")
-            Screen.drawLine(0, -40, 0, -32, 0xb)
-            Screen.drawLine(0, -20, 0, 53, 0xb)
+            this.drawText(-60, -44, "Sample 1")
+            this.drawText(15, -44, "Sample 2")
+            Screen.drawLine(0, -44, 0, -36, 0xb)
+            Screen.drawLine(0, -24, 0, 49, 0xb)
         }
 
         private drawGrid() {
             const startX = -30
-            const startY = Screen.HEIGHT * 0.234 - 50
+            const startY = -30
             const cellWidth = 55
-            const cellHeight = 10
+            const cellHeight = 11
 
             for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
                 for (
@@ -282,7 +304,7 @@ namespace micromusic {
                 const digitCount = stepString.length
 
                 // Adjust X position dynamically based on number of digits
-                const rightX = 60 - (digitCount - 1) * 3 // Move left 5 pixels per extra digit, helps keep number clean
+                const rightX = 65 - (digitCount - 1) * 6 // Move left 5 pixels per extra digit, helps keep number clean
 
                 // Print step numbers
                 Screen.print(stepString, -70, y, 0xb, font) // Left side stays the same
