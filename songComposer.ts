@@ -16,7 +16,22 @@ namespace micromusic {
     const NUM_VISIBLE_TRACKS = 2
     const NUM_VISIBLE_STEPS = 8
     const NUM_NOTES = 256
-    const NOTES = ["C", "D", "E", "F", "G", "A", "B"]
+    const NOTES = [
+        "C",
+        "C#",
+        "D",
+        "D#",
+        "E",
+        "E#",
+        "F",
+        "F#",
+        "G",
+        "G#",
+        "A",
+        "A#",
+        "B",
+        "B#",
+    ]
 
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
         private currentStep: number
@@ -187,6 +202,7 @@ namespace micromusic {
                         x: 37,
                         y: 12,
                         onClick: () => {
+                            this.activateNoteSelection()
                             // this.navigator.setBtns([
                             //     [
                             //         new Button({
@@ -304,7 +320,7 @@ namespace micromusic {
                 const digitCount = stepString.length
 
                 // Adjust X position dynamically based on number of digits
-                const rightX = 65 - (digitCount - 1) * 6 // Move left 5 pixels per extra digit, helps keep number clean
+                const rightX = 65 - (digitCount - 1) * 6 // Move left 6 pixels per extra digit, helps keep number clean
 
                 // Print step numbers
                 Screen.print(stepString, -70, y, 0xb, font) // Left side stays the same
@@ -314,6 +330,87 @@ namespace micromusic {
 
         private drawText(x: number, y: number, text: string) {
             Screen.print(text, x, y, 0xb, font)
+        }
+
+        private changeNote(direction: number) {
+            const track = this.currentTrack
+            const step = this.currentStep
+
+            let noteIndex = NOTES.indexOf(this.trackData[track][step])
+            noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
+
+            this.trackData[track][step] = NOTES[noteIndex]
+        }
+
+        private activateNoteSelection() {
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => {
+                    this.changeNote(1)
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.left.id,
+                () => {
+                    this.changeNote(-1)
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.up.id,
+                () => {
+                    this.currentStep =
+                        (Math.abs(this.currentStep - 1) % 256) - 1
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.down.id,
+                () => {
+                    this.currentStep = Math.abs(this.currentStep + 1) % 256
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.resetControllerEvents()
+                    // Code for setting the buttons again
+                }
+            )
+        }
+
+        private resetControllerEvents() {
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.up.id,
+                () => this.moveCursor(CursorDir.Up)
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.down.id,
+                () => this.moveCursor(CursorDir.Down)
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => this.moveCursor(CursorDir.Right)
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.left.id,
+                () => this.moveCursor(CursorDir.Left)
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.app.popScene()
+                    this.app.pushScene(new Home(this.app))
+                }
+            )
         }
     }
 }
