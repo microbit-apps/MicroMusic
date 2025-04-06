@@ -226,6 +226,7 @@ namespace micromusic {
         }
 
         private play() {
+            if (this.playing == true) return
             this.playing = true
             control.inBackground(() => {
                 while (this.playing && this.currentStep <= 255 - 8) {
@@ -296,35 +297,26 @@ namespace micromusic {
             const cellWidth = 55
             const cellHeight = 11
 
-            for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
-                for (
-                    let step = this.currentStep;
-                    step - this.currentStep < NUM_VISIBLE_STEPS;
-                    step++
-                ) {
-                    const x = startX + track * cellWidth
-                    const y = startY + (step - this.currentStep) * cellHeight
-
-                    const note = this.trackData[track][step]
-                    Screen.print(note, x, y, 0xb, font)
-                }
-            }
-
             for (
                 let step = this.currentStep;
-                step < this.currentStep + 8;
+                step < this.currentStep + NUM_VISIBLE_STEPS;
                 step++
             ) {
+                let tempStep = step - this.currentStep
+                if (this.currentStep > 4) tempStep = step - 4
                 const y = startY + (step - this.currentStep) * cellHeight
-                const stepString = step.toString()
+                const stepString = tempStep.toString()
                 const digitCount = stepString.length
+                const rightX = 65 - (digitCount - 1) * 6
 
-                // Adjust X position dynamically based on number of digits
-                const rightX = 65 - (digitCount - 1) * 6 // Move left 6 pixels per extra digit, helps keep number clean
+                Screen.print(stepString, -70, y, 0xb, font)
+                Screen.print(stepString, rightX, y, 0xb, font)
 
-                // Print step numbers
-                Screen.print(stepString, -70, y, 0xb, font) // Left side stays the same
-                Screen.print(stepString, rightX, y, 0xb, font) // Right side adjusts to make numbers look more natural
+                for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
+                    const x = startX + track * cellWidth
+                    const note = this.trackData[track][tempStep]
+                    Screen.print(note, x, y, 0xb, font)
+                }
             }
         }
 
