@@ -42,6 +42,10 @@ namespace micromusic {
         private noteSelectBtn: Button
         private icon: Bitmap
         private playing: boolean
+        private highlightHeight: number
+        private isSelectingNote: boolean
+        private selectedTrack: number
+        private leftTrack: number
 
         constructor(app: AppInterface) {
             super(
@@ -55,6 +59,9 @@ namespace micromusic {
 
             this.currentStep = 0
             this.currentTrack = 0
+            this.leftTrack = 0
+            this.highlightHeight = 0
+            this.isSelectingNote = false
 
             this.trackData = []
 
@@ -177,6 +184,8 @@ namespace micromusic {
                         x: -36,
                         y: 12,
                         onClick: () => {
+                            this.activateNoteSelection()
+                            this.selectedTrack = this.leftTrack
                             // this.navigator.setBtns([
                             //     [
                             //         new Button({
@@ -203,6 +212,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
+                            this.selectedTrack = this.leftTrack + 1
                             // this.navigator.setBtns([
                             //     [
                             //         new Button({
@@ -302,8 +312,7 @@ namespace micromusic {
                 step < this.currentStep + NUM_VISIBLE_STEPS;
                 step++
             ) {
-                let tempStep = step - this.currentStep
-                if (this.currentStep > 4) tempStep = step - 4
+                let tempStep = step - this.highlightHeight
                 const y = startY + (step - this.currentStep) * cellHeight
                 const stepString = tempStep.toString()
                 const digitCount = stepString.length
@@ -318,6 +327,23 @@ namespace micromusic {
                     Screen.print(note, x, y, 0xb, font)
                 }
             }
+
+            if (this.isSelectingNote) {
+                Screen.drawRect(
+                    startX + this.selectedTrack * (cellWidth + 20) - 42,
+                    startY + this.highlightHeight * cellHeight - 1,
+                    70,
+                    10,
+                    0x9
+                )
+            }
+            // Need to track place in note sequence, highlightHeight
+            // If highlight height == 4, scroll
+            // Else don't scroll, move the thing
+            // What causes scroll? tempstep = step - 4
+            // What doesn't scroll -> step - this.currentStep
+
+            // Screen.drawRect()
         }
 
         private drawText(x: number, y: number, text: string) {
@@ -325,7 +351,7 @@ namespace micromusic {
         }
 
         private changeNote(direction: number) {
-            const track = this.currentTrack
+            const track = this.selectedTrack
             const step = this.currentStep
 
             let noteIndex = NOTES.indexOf(this.trackData[track][step])
@@ -335,6 +361,7 @@ namespace micromusic {
         }
 
         private activateNoteSelection() {
+            this.cursor.visible = false
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.right.id,
@@ -353,14 +380,16 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.up.id,
                 () => {
-                    this.currentStep =
-                        (Math.abs(this.currentStep - 1) % 256) - 1
+                    if (this.highlightHeight > 0) this.highlightHeight--
+                    if (this.currentStep != 0)
+                        this.currentStep = (this.currentStep - 1) % 256
                 }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
                 () => {
+                    if (this.highlightHeight < 4) this.highlightHeight++
                     this.currentStep = Math.abs(this.currentStep + 1) % 256
                 }
             )
@@ -369,12 +398,15 @@ namespace micromusic {
                 controller.B.id,
                 () => {
                     this.resetControllerEvents()
+                    this.isSelectingNote = false
                     // Code for setting the buttons again
                 }
             )
+            this.isSelectingNote = true
         }
 
         private resetControllerEvents() {
+            this.cursor.visible = true
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.up.id,
