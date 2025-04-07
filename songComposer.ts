@@ -338,13 +338,6 @@ namespace micromusic {
                     0x9
                 )
             }
-            // Need to track place in note sequence, highlightHeight
-            // If highlight height == 4, scroll
-            // Else don't scroll, move the thing
-            // What causes scroll? tempstep = step - 4
-            // What doesn't scroll -> step - this.currentStep
-
-            // Screen.drawRect()
         }
 
         private drawText(x: number, y: number, text: string) {
