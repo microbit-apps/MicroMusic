@@ -22,7 +22,7 @@
 ## Note Scrolling
 
 -   [ ] Make padding visible, add some indicator as to how far down the song it is currently and have it then sit in the middle while it continues to scroll down
--   [ ] Implement the scrolling to the note selection
+-   [x] Implement the scrolling to the note selection
 -   [ ] Flesh out note selection with highlighting and making it actually change the notes that you want it to
 -   [ ] Add smooth scrolling via ticks seen in microdata
 

@@ -380,17 +380,55 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.up.id,
                 () => {
-                    if (this.highlightHeight > 0) this.highlightHeight--
-                    if (this.currentStep != 0)
-                        this.currentStep = (this.currentStep - 1) % 256
+                    let tick = true
+                    control.onEvent(
+                        ControllerButtonEvent.Released,
+                        controller.up.id,
+                        () => (tick = false)
+                    )
+
+                    // Control logic:
+                    while (tick) {
+                        if (this.highlightHeight > 0) this.highlightHeight--
+                        if (this.currentStep != 0)
+                            this.currentStep = (this.currentStep - 1) % 256
+
+                        basic.pause(100)
+                    }
+
+                    // Reset binding
+                    control.onEvent(
+                        ControllerButtonEvent.Released,
+                        controller.up.id,
+                        () => {}
+                    )
                 }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
                 () => {
-                    if (this.highlightHeight < 4) this.highlightHeight++
-                    this.currentStep = Math.abs(this.currentStep + 1) % 256
+                    let tick = true
+                    control.onEvent(
+                        ControllerButtonEvent.Released,
+                        controller.down.id,
+                        () => (tick = false)
+                    )
+
+                    // Control logic:
+                    while (tick) {
+                        if (this.highlightHeight < 3) this.highlightHeight++
+                        this.currentStep = Math.abs(this.currentStep + 1) % 256
+
+                        basic.pause(100)
+                    }
+
+                    // Reset binding
+                    control.onEvent(
+                        ControllerButtonEvent.Released,
+                        controller.down.id,
+                        () => {}
+                    )
                 }
             )
             control.onEvent(
