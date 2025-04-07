@@ -3,11 +3,11 @@
 ## General
 
 -   [x] Split grid into note sections
--   [ ] Grid current note highlighting instead of constant scrolling
+-   [x] Grid current note highlighting instead of constant scrolling
 -   [ ] Sample selection screen
 -   [ ] BPM calculation for tick speed
 -   [ ] Moving over and selecting last 2 samples
--   [ ] Way to go through the sounds
+-   [x] Way to go through the sounds
 -   [ ] Keyboard screen
 -   [x] IMPORTANT - Reloading a screen with state, need to get back or store the state somehow
 -   [ ] Octave stuff
@@ -16,8 +16,9 @@
 -   [ ] Music that repeats notes, select multiple notes at once?
 -   [ ] Copy paste stuff
 -   [ ] Anything that would make note entry easier
--   [ ] Navigate D-Pad to go down and then new page, up and down to increment through scale
--   [ ] Kind of like select a row, using the cursor, select with a button, then up and down buttons could change the pitch of the note being played - Could play the note as you select it
+-   [x] Navigate D-Pad to go down and then new page, up and down to increment through scale
+-   [x] Kind of like select a row, using the cursor, select with a button, then up and down buttons could change the pitch of the note being played
+-   [ ] Could play the note as you select it
 
 ## Note Scrolling
 
