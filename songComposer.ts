@@ -17,6 +17,7 @@ namespace micromusic {
     const NUM_VISIBLE_STEPS = 8
     const NUM_NOTES = 256
     const NOTES = [
+        "-",
         "C",
         "C#",
         "D",
@@ -386,14 +387,22 @@ namespace micromusic {
                         controller.up.id,
                         () => (tick = false)
                     )
-
+                    let counter = 0
                     // Control logic:
                     while (tick) {
                         if (this.highlightHeight > 0) this.highlightHeight--
                         if (this.currentStep != 0)
                             this.currentStep = (this.currentStep - 1) % 256
 
-                        basic.pause(100)
+                        if (counter < 10) {
+                            counter++
+                            basic.pause(150)
+                        } else if (counter < 30) {
+                            counter++
+                            basic.pause(100)
+                        } else {
+                            basic.pause(75)
+                        }
                     }
 
                     // Reset binding
@@ -414,13 +423,29 @@ namespace micromusic {
                         controller.down.id,
                         () => (tick = false)
                     )
-
+                    let counter = 0
                     // Control logic:
                     while (tick) {
                         if (this.highlightHeight < 3) this.highlightHeight++
-                        this.currentStep = Math.abs(this.currentStep + 1) % 256
+                        else if (
+                            this.currentStep > 250 &&
+                            this.currentStep < 255
+                        )
+                            this.highlightHeight++
 
-                        basic.pause(100)
+                        if (this.currentStep != 255)
+                            this.currentStep =
+                                Math.abs(this.currentStep + 1) % 256
+
+                        if (counter < 10) {
+                            counter++
+                            basic.pause(150)
+                        } else if (counter < 30) {
+                            counter++
+                            basic.pause(100)
+                        } else {
+                            basic.pause(75)
+                        }
                     }
 
                     // Reset binding
