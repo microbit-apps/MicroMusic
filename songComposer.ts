@@ -455,6 +455,8 @@ namespace micromusic {
                 () => {
                     this.resetControllerEvents()
                     this.isSelectingNote = false
+                    this.currentStep = this.currentStep - this.highlightHeight
+                    this.highlightHeight = 0
                     // Code for setting the buttons again
                 }
             )
