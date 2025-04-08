@@ -4,11 +4,8 @@ namespace micromusic {
     import CursorDir = user_interface_base.CursorDir
     import AppInterface = user_interface_base.AppInterface
     import Screen = user_interface_base.Screen
-    import GUIComponentScene = microgui.GUIComponentScene
     import getIcon = user_interface_base.getIcon
-    import ButtonCollection = microgui.ButtonCollection
     import Button = user_interface_base.Button
-    import GUIComponentAlignment = microgui.GUIComponentAlignment
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 

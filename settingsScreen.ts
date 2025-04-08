@@ -7,6 +7,9 @@ namespace micromusic {
     import ButtonStyles = user_interface_base.ButtonStyles
     import Screen = user_interface_base.Screen
 
+    const VOLUME_INCREASE = 0
+    const VOLUME_DECREASE = 1
+
     export class SettingsScreen extends CursorSceneWithPriorPage {
         private previousScene: CursorScene
 
@@ -39,14 +42,15 @@ namespace micromusic {
                         y: 0,
                         onClick: () => {
                             this.app.popScene()
-                            // Has to be given a new GridNavigator, old one stops working
-                            this.previousScene.navigator = new GridNavigator()
+                            this.previousScene.navigator = new GridNavigator() // Has to be given a new GridNavigator, old one stops working
                             this.app.pushScene(this.previousScene)
                         },
                     }),
                 ],
             ])
         }
+
+        private changeVolume(direction: number) {}
 
         draw() {
             Screen.fillRect(
@@ -56,6 +60,8 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
+
+            Screen.print("Volume", 0, 0, 0xb)
 
             this.navigator.drawComponents()
             super.draw()
