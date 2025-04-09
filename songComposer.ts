@@ -44,6 +44,9 @@ namespace micromusic {
         private isSelectingNote: boolean
         private selectedTrack: number
         private leftTrack: number
+        private volume: number
+        private bpm: number
+        private otherSetting: number
 
         constructor(app: AppInterface) {
             super(
@@ -60,6 +63,8 @@ namespace micromusic {
             this.leftTrack = 0
             this.highlightHeight = 0
             this.isSelectingNote = false
+            this.volume = 100
+            this.bpm = 100
 
             this.trackData = []
 
@@ -84,37 +89,6 @@ namespace micromusic {
             this.cursor.setBorderThickness(1)
 
             this.controlBtns = [
-                new Button({
-                    parent: null,
-                    style: ButtonStyles.Transparent,
-                    icon: "back_arrow",
-                    x: -68,
-                    y: -52,
-                    onClick: () => {
-                        this.app.popScene()
-                        this.app.pushScene(new Home(this.app))
-                    },
-                }),
-                new Button({
-                    parent: null,
-                    style: ButtonStyles.Transparent,
-                    icon: "rewind",
-                    x: -22,
-                    y: -54,
-                    onClick: () => {
-                        this.rewind()
-                    },
-                }),
-                new Button({
-                    parent: null,
-                    style: ButtonStyles.Transparent,
-                    icon: "play",
-                    x: -12,
-                    y: -54,
-                    onClick: () => {
-                        this.play()
-                    },
-                }),
                 new Button({
                     parent: null,
                     style: ButtonStyles.Transparent,
@@ -153,7 +127,45 @@ namespace micromusic {
                     y: -52,
                     onClick: () => {
                         this.app.popScene()
-                        this.app.pushScene(new SettingsScreen(this.app, this))
+                        this.app.pushScene(
+                            new SettingsScreen(
+                                this.app,
+                                this,
+                                this.volume,
+                                this.bpm
+                            )
+                        )
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "back_arrow",
+                    x: -68,
+                    y: -52,
+                    onClick: () => {
+                        this.app.popScene()
+                        this.app.pushScene(new Home(this.app))
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "rewind",
+                    x: -22,
+                    y: -54,
+                    onClick: () => {
+                        this.rewind()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "play",
+                    x: -12,
+                    y: -54,
+                    onClick: () => {
+                        this.play()
                     },
                 }),
             ]
@@ -163,15 +175,34 @@ namespace micromusic {
 
         public resetNavigator() {
             this.navigator.setBtns([
-                this.controlBtns,
                 [
+                    // (this.sampleSelectBtn = new Button({
+                    //     parent: null,
+                    //     style: ButtonStyles.Transparent,
+                    //     icon: "sample_section_select",
+                    //     x: 0,
+                    //     y: -40,
+                    //     onClick: () => {},
+                    // })),
                     (this.sampleSelectBtn = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "sample_section_select",
-                        x: 0,
+                        icon: "sample_button_small",
+                        x: -36,
                         y: -40,
-                        onClick: () => {},
+                        onClick: () => {
+                            // Open sample selection page
+                        },
+                    })),
+                    (this.sampleSelectBtn = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_button_small",
+                        x: 39,
+                        y: -40,
+                        onClick: () => {
+                            // Open sample selection page
+                        },
                     })),
                 ],
                 [
@@ -184,22 +215,6 @@ namespace micromusic {
                         onClick: () => {
                             this.activateNoteSelection()
                             this.selectedTrack = this.leftTrack
-                            // this.navigator.setBtns([
-                            //     [
-                            //         new Button({
-                            //             parent: null,
-                            //             style: ButtonStyles.Transparent,
-                            //             icon: "sample_button",
-                            //             x: -42,
-                            //             y: -30,
-                            //             onClick: () => {
-                            //                 // this.app.popScene()
-                            //                 // this.app.pushScene(new Home(this.app))
-                            //             },
-                            //         }),
-                            //     ],
-                            // ])
-                            // this.moveCursor(CursorDir.Down)
                         },
                     })),
                     (this.noteSelectBtn = new Button({
@@ -211,25 +226,10 @@ namespace micromusic {
                         onClick: () => {
                             this.activateNoteSelection()
                             this.selectedTrack = this.leftTrack + 1
-                            // this.navigator.setBtns([
-                            //     [
-                            //         new Button({
-                            //             parent: null,
-                            //             style: ButtonStyles.Transparent,
-                            //             icon: "sample_button",
-                            //             x: -42,
-                            //             y: -30,
-                            //             onClick: () => {
-                            //                 // this.app.popScene()
-                            //                 // this.app.pushScene(new Home(this.app))
-                            //             },
-                            //         }),
-                            //     ],
-                            // ])
-                            // this.moveCursor(CursorDir.Down)
                         },
                     })),
                 ],
+                this.controlBtns,
             ])
         }
 
