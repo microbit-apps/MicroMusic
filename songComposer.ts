@@ -44,11 +44,13 @@ namespace micromusic {
         private isSelectingNote: boolean
         private selectedTrack: number
         private leftTrack: number
-        private volume: number
-        private bpm: number
-        private otherSetting: number
+        private volume: Setting
+        private bpm: Setting
+        private otherSetting: Setting
+        private isSelectingSample: boolean
+        private rightTrack: number
 
-        constructor(app: AppInterface) {
+        constructor(app: AppInterface, volume?: Setting) {
             super(
                 app,
                 function () {
@@ -61,10 +63,13 @@ namespace micromusic {
             this.currentStep = 0
             this.currentTrack = 0
             this.leftTrack = 0
+            this.rightTrack = 1
             this.highlightHeight = 0
             this.isSelectingNote = false
-            this.volume = 100
-            this.bpm = 100
+            this.volume = new Setting(100)
+            this.bpm = new Setting(120)
+            this.otherSetting = new Setting(100)
+            this.isSelectingSample = false
 
             this.trackData = []
 
@@ -132,7 +137,8 @@ namespace micromusic {
                                 this.app,
                                 this,
                                 this.volume,
-                                this.bpm
+                                this.bpm,
+                                this.otherSetting
                             )
                         )
                     },
@@ -176,32 +182,14 @@ namespace micromusic {
         public resetNavigator() {
             this.navigator.setBtns([
                 [
-                    // (this.sampleSelectBtn = new Button({
-                    //     parent: null,
-                    //     style: ButtonStyles.Transparent,
-                    //     icon: "sample_section_select",
-                    //     x: 0,
-                    //     y: -40,
-                    //     onClick: () => {},
-                    // })),
                     (this.sampleSelectBtn = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "sample_button_small",
-                        x: -36,
+                        icon: "sample_section_select",
+                        x: 0,
                         y: -40,
                         onClick: () => {
-                            // Open sample selection page
-                        },
-                    })),
-                    (this.sampleSelectBtn = new Button({
-                        parent: null,
-                        style: ButtonStyles.Transparent,
-                        icon: "sample_button_small",
-                        x: 39,
-                        y: -40,
-                        onClick: () => {
-                            // Open sample selection page
+                            this.activateSampleSelection()
                         },
                     })),
                 ],
@@ -293,6 +281,15 @@ namespace micromusic {
         }
 
         private drawSamples() {
+            if (this.isSelectingSample) {
+                // Screen.drawRect(
+                //     startX + this.selectedTrack * (cellWidth + 20) - 42,
+                //     startY + this.highlightHeight * cellHeight - 1,
+                //     70,
+                //     10,
+                //     0x9
+                // )
+            }
             this.drawText(-60, -44, "Sample 1")
             this.drawText(15, -44, "Sample 2")
             Screen.drawLine(0, -44, 0, -36, 0xb)
@@ -458,6 +455,62 @@ namespace micromusic {
                 }
             )
             this.isSelectingNote = true
+        }
+
+        private activateSampleSelection() {
+            this.currentTrack = this.leftTrack
+            this.isSelectingSample = true
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_button_small",
+                        x: -36,
+                        y: -40,
+                        onClick: () => {
+                            // this.app.pop()
+                            // this.app.push(this.app, this, this.leftTrack)
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_button_small",
+                        x: 39,
+                        y: -40,
+                        onClick: () => {
+                            // this.app.pop()
+                            // this.app.push(this.app, this, this.rightTrack)
+                        },
+                    }),
+                ],
+            ])
+
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => {
+                    if (
+                        this.currentTrack == this.rightTrack &&
+                        this.currentTrack != NUM_TRACKS - 1
+                    ) {
+                        this.leftTrack++
+                        this.rightTrack++
+                    } else {
+                        this.cursor.move(CursorDir.Right)
+                    }
+                }
+            )
+
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.resetNavigator()
+                    this.resetControllerEvents()
+                }
+            )
         }
 
         private resetControllerEvents() {

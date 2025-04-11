@@ -17,7 +17,8 @@
         "home.ts",
         "version.ts",
         "songComposer.ts",
-        "settingsScreen.ts"
+        "settingsScreen.ts",
+        "setting.ts"
     ],
     "testFiles": [],
     "targetVersions": {

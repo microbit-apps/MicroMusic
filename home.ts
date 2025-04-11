@@ -12,10 +12,12 @@ namespace micromusic {
         private liveDataBtn: Button
         private recordDataBtn: Button
         private distributedLoggingBtn: Button
+        private volume: Setting
         // private viewBtn: Button
 
         constructor(app: AppInterface) {
             super(app)
+            this.volume = new Setting(100)
         }
 
         /* override */ startup() {
@@ -52,25 +54,18 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "largeSettingsGear",
-                        ariaId: "Options",
+                        ariaId: "Settings",
                         x: 40,
                         y,
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                new SettingsScreen(this.app, this)
+                                new SettingsScreen(this.app, this, this.volume)
                             )
                         },
                     })),
                 ],
             ])
-
-            // const btns: Button[] = [
-            //     this.liveDataBtn,
-            //     this.recordDataBtn,
-            //     this.distributedLoggingBtn,
-            // ] //, this.viewBtn]
-            // this.navigator.addButtons(btns)
         }
 
         private drawVersion() {

@@ -30,7 +30,7 @@
 
 ## Settings
 
--   [ ] Settings screen
+-   [x] Settings screen (Made but need to make more assets and pick settings)
 -   [ ] Settings functionality
 
 ## Saving
