@@ -498,8 +498,8 @@ namespace micromusic {
                         this.leftTrack++
                         this.rightTrack++
                     } else {
-                        this.cursor.move(CursorDir.Right)
                     }
+                    this.navigator.move(CursorDir.Right)
                 }
             )
 
