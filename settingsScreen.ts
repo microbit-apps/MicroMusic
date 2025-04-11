@@ -16,14 +16,14 @@ namespace micromusic {
     export class SettingsScreen extends CursorSceneWithPriorPage {
         private previousScene: CursorScene
         private allBtns: Button[][]
-        private settings: number[]
+        private settings: Setting[]
 
         constructor(
             app: AppInterface,
             previousScene: CursorScene,
-            volume?: number,
-            bpm?: number,
-            other?: number
+            volume?: Setting,
+            bpm?: Setting,
+            other?: Setting
         ) {
             super(
                 app,
@@ -34,6 +34,10 @@ namespace micromusic {
                 },
                 new GridNavigator()
             )
+
+            if (!volume) volume = new Setting(100)
+            if (!bpm) bpm = new Setting(100)
+            if (!other) other = new Setting(100)
 
             this.settings = [volume, bpm, other]
 
@@ -55,7 +59,7 @@ namespace micromusic {
                             x: -30,
                             y: -20,
                             onClick: () => {
-                                this.setVolumeContext()
+                                this.activateSettingContext(VOLUME)
                             },
                         }),
                     ],
@@ -63,23 +67,23 @@ namespace micromusic {
                         new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "volume",
+                            icon: "bpm",
                             x: -30,
                             y: 5,
-                            onClick: () => {},
+                            onClick: () => {
+                                this.activateSettingContext(BPM)
+                            },
                         }),
                     ],
                     [
                         new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "volume",
+                            icon: "other",
                             x: -30,
                             y: 30,
                             onClick: () => {
-                                // this.app.popScene()
-                                // this.previousScene.navigator = new GridNavigator() // Has to be given a new GridNavigator, old one stops working
-                                // this.app.pushScene(this.previousScene)
+                                this.activateSettingContext(OTHER)
                             },
                         }),
                     ],
@@ -102,9 +106,10 @@ namespace micromusic {
             )
         }
 
-        private changeVolume(direction: number) {}
-
         private activateSettingContext(setting: number) {
+            this.navigator.setBtns([this.allBtns[setting]])
+            this.cursor.setOutlineColour(0xd)
+
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
@@ -123,17 +128,16 @@ namespace micromusic {
                         () => (tick = false)
                     )
                     let counter = 0
+                    let _setting = this.settings[setting]
                     // Control logic:
                     while (tick) {
                         switch (setting) {
                             case VOLUME: {
-                                if (this.settings[setting] < 100)
-                                    this.settings[setting]++
+                                if (_setting.value < 100) _setting.value++
                                 break
                             }
                             case BPM: {
-                                if (this.settings[setting] < 200)
-                                    this.settings[setting]++
+                                if (_setting.value < 220) _setting.value++
                                 break
                             }
                         }
@@ -168,9 +172,10 @@ namespace micromusic {
                         () => (tick = false)
                     )
                     let counter = 0
+                    let _setting = this.settings[setting]
                     // Control logic:
                     while (tick) {
-                        if (this.settings[setting] > 0) this.settings[setting]--
+                        if (_setting.value > 0) _setting.value--
 
                         if (counter < 10) {
                             counter++
@@ -193,14 +198,6 @@ namespace micromusic {
             )
         }
 
-        private setVolumeContext() {
-            this.cursor.setOutlineColour(5)
-            this.navigator.setBtns([this.allBtns[0]])
-            this.activateSettingContext(VOLUME)
-        }
-
-        private setBPMContext() {}
-
         private resetContext() {
             this.navigator.setBtns(this.allBtns)
             this.cursor.setOutlineColour(9)
@@ -222,24 +219,24 @@ namespace micromusic {
             }
 
             Screen.print(
-                this.settings[VOLUME].toString(),
-                44 - (this.settings[VOLUME].toString().length - 1) * 6,
+                this.settings[VOLUME].value.toString(),
+                44 - (this.settings[VOLUME].value.toString().length - 1) * 6,
                 -26,
                 0xd,
                 bitmaps.doubledFont(bitmaps.font8)
             )
 
             Screen.print(
-                this.settings[BPM].toString(),
-                44 - (this.settings[BPM].toString().length - 1) * 6,
+                this.settings[BPM].value.toString(),
+                44 - (this.settings[BPM].value.toString().length - 1) * 6,
                 -1,
                 0xd,
                 bitmaps.doubledFont(bitmaps.font8)
             )
 
             Screen.print(
-                this.settings[VOLUME].toString(),
-                44 - (this.settings[VOLUME].toString().length - 1) * 6,
+                this.settings[OTHER].value.toString(),
+                44 - (this.settings[OTHER].value.toString().length - 1) * 6,
                 24,
                 0xd,
                 bitmaps.doubledFont(bitmaps.font8)
