@@ -45,3 +45,12 @@
 -   [ ] Create small settings cog asset
 -   [ ] Create small save button asset
 -   [ ] Sample selection arrow
+
+## Other
+
+- [ ] Sample/simpleEffect (echo or something, decay, holding a note for longer)
+- [ ] Sample sets instead of just 4 samples
+- [ ] Play stops using other buttons
+- [ ] Musical notation
+- [ ] 128-block length, can extend songs with different blocks/repeat blocks
+- [ ] Continuing on - multiple screens of data, song structure view and defining samples

@@ -313,13 +313,13 @@ namespace micromusic {
                 const digitCount = stepString.length
                 const rightX = 65 - (digitCount - 1) * 6
 
-                Screen.print(stepString, -70, y, 0xb, font)
-                Screen.print(stepString, rightX, y, 0xb, font)
+                Screen.print(stepString, -70, y, 0, font)
+                Screen.print(stepString, rightX, y, 0, font)
 
                 for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
                     const x = startX + track * cellWidth
                     const note = this.trackData[track][tempStep]
-                    Screen.print(note, x, y, 0xb, font)
+                    Screen.print(note, x, y, 0, font)
                 }
             }
 
@@ -335,7 +335,7 @@ namespace micromusic {
         }
 
         private drawText(x: number, y: number, text: string) {
-            Screen.print(text, x, y, 0xb, font)
+            Screen.print(text, x, y, 0, font)
         }
 
         private changeNote(direction: number) {
