@@ -238,6 +238,7 @@ namespace micromusic {
             this.cursorVisible = true
             control.inBackground(() => {
                 while (this.isPlaying && this.playedNote < NUM_NOTES) {
+                    basic.pause(200)
                     if (this.highlightHeight < 3) this.highlightHeight++
                     else if (
                         this.currentStep > NUM_NOTES - 6 &&
@@ -249,9 +250,8 @@ namespace micromusic {
                         this.currentStep =
                             Math.abs(this.currentStep + 1) % NUM_NOTES
 
+                    // this.draw()
                     this.playedNote += 1
-                    this.draw()
-                    basic.pause(200)
                 }
                 this.isPlaying = false
             })
@@ -263,6 +263,8 @@ namespace micromusic {
 
         private stop() {
             this.isPlaying = false
+            this.cursorVisible = false
+            basic.pause(200)
             this.playedNote = 0
             this.highlightHeight = 0
             this.currentStep = 0
