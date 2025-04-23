@@ -237,8 +237,9 @@ namespace micromusic {
             this.isPlaying = true
             this.cursorVisible = true
             control.inBackground(() => {
+                const tickSpeed = 60000 / this.bpm.value
                 while (this.isPlaying && this.playedNote < NUM_NOTES) {
-                    basic.pause(200)
+                    basic.pause(tickSpeed)
                     if (this.highlightHeight < 3) this.highlightHeight++
                     else if (
                         this.currentStep > NUM_NOTES - 6 &&
