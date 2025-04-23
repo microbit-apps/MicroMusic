@@ -22,8 +22,9 @@
 
 ## Note Scrolling
 
+-   [ ] Any adjustments needed for the visual effect, such as when it shows/when it doesn't
 -   [x] Make padding visible, add some indicator as to how far down the song it is currently and have it then sit in the middle while it continues to scroll down
--   [ ] Add indicator to when the song is playing instead of just note selection. As part of this, limit the cursor to the control buttons whilst it is playing.
+-   [x] Add indicator to when the song is playing instead of just note selection. As part of this, limit the cursor to the control buttons whilst it is playing.
 -   [x] Implement the scrolling to the note selection
 -   [x] Flesh out note selection with highlighting and making it actually change the notes that you want it to
 -   [x] Add smooth scrolling via ticks seen in microdata
@@ -31,7 +32,7 @@
 ## Settings
 
 -   [x] Settings screen (Made but need to make more assets and pick settings)
--   [ ] Settings functionality
+-   [ ] Settings functionality - BPM
 
 ## Saving
 
@@ -48,9 +49,9 @@
 
 ## Other
 
-- [ ] Sample/simpleEffect (echo or something, decay, holding a note for longer)
-- [ ] Sample sets instead of just 4 samples
-- [ ] Play stops using other buttons
-- [ ] Musical notation
-- [ ] 128-block length, can extend songs with different blocks/repeat blocks
-- [ ] Continuing on - multiple screens of data, song structure view and defining samples
+-   [ ] Sample/simpleEffect (echo or something, decay, holding a note for longer)
+-   [ ] Sample sets instead of just 4 samples
+-   [ ] Play stops using other buttons
+-   [ ] Musical notation
+-   [ ] 128-block length, can extend songs with different blocks/repeat blocks
+-   [ ] Continuing on - multiple screens of data, song structure view and defining samples
