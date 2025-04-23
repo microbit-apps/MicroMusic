@@ -339,6 +339,9 @@ namespace micromusic {
         }
 
         private changeNote(direction: number) {
+            samples.enable()
+            music.setVolume(100)
+            samples.setSampleRate(0, 8800)
             samples.playAsync(0, r8_drum)
             const track = this.selectedTrack
             const step = this.currentStep
