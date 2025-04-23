@@ -12,23 +12,30 @@ namespace micromusic {
     const NUM_TRACKS = 4
     const NUM_VISIBLE_TRACKS = 2
     const NUM_VISIBLE_STEPS = 8
-    const NUM_NOTES = 256
+    const NUM_NOTES = 128
     const NOTES = [
         "-",
-        "C",
         "C#",
-        "D",
+        "C",
+        "Cb",
         "D#",
-        "E",
+        "D",
+        "Db",
         "E#",
-        "F",
+        "E",
+        "Eb",
         "F#",
-        "G",
+        "F",
+        "Fb",
         "G#",
-        "A",
+        "G",
+        "Gb",
         "A#",
-        "B",
+        "A",
+        "Ab",
         "B#",
+        "B",
+        "Bb",
     ]
 
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
@@ -39,7 +46,7 @@ namespace micromusic {
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
         private icon: Bitmap
-        private playing: boolean
+        private isPlaying: boolean
         private highlightHeight: number
         private isSelectingNote: boolean
         private selectedTrack: number
@@ -49,6 +56,8 @@ namespace micromusic {
         private otherSetting: Setting
         private isSelectingSample: boolean
         private rightTrack: number
+        private cursorVisible: boolean
+        private playedNote: number
 
         constructor(app: AppInterface, volume?: Setting) {
             super(
@@ -70,6 +79,7 @@ namespace micromusic {
             this.bpm = new Setting(120)
             this.otherSetting = new Setting(100)
             this.isSelectingSample = false
+            this.playedNote = 0
 
             this.trackData = []
 
@@ -177,6 +187,7 @@ namespace micromusic {
             ]
 
             this.resetNavigator()
+            this.resetControllerEvents()
         }
 
         public resetNavigator() {
@@ -222,24 +233,41 @@ namespace micromusic {
         }
 
         private play() {
-            if (this.playing == true) return
-            this.playing = true
+            if (this.isPlaying == true) return
+            this.isPlaying = true
+            this.cursorVisible = true
             control.inBackground(() => {
-                while (this.playing && this.currentStep <= 255 - 8) {
-                    this.currentStep += 1
-                    this.draw()
-                    basic.pause(200)
+                const tickSpeed = 60000 / this.bpm.value
+                while (this.isPlaying && this.playedNote < NUM_NOTES) {
+                    basic.pause(tickSpeed)
+                    if (this.highlightHeight < 3) this.highlightHeight++
+                    else if (
+                        this.currentStep > NUM_NOTES - 6 &&
+                        this.currentStep < NUM_NOTES - 1
+                    )
+                        this.highlightHeight++
+
+                    if (this.currentStep != NUM_NOTES - 1)
+                        this.currentStep =
+                            Math.abs(this.currentStep + 1) % NUM_NOTES
+
+                    // this.draw()
+                    this.playedNote += 1
                 }
-                this.playing = false
+                this.isPlaying = false
             })
         }
 
         private pause() {
-            this.playing = false
+            this.isPlaying = false
         }
 
         private stop() {
-            this.playing = false
+            this.isPlaying = false
+            this.cursorVisible = false
+            basic.pause(200)
+            this.playedNote = 0
+            this.highlightHeight = 0
             this.currentStep = 0
             this.drawGrid()
         }
@@ -254,8 +282,8 @@ namespace micromusic {
 
         private fastForward() {
             this.currentStep = this.currentStep + 8
-            if (this.currentStep > 255 - 7) {
-                this.currentStep = 255 - 7
+            if (this.currentStep > NUM_NOTES - 8) {
+                this.currentStep = NUM_NOTES - 8
             }
             this.drawGrid()
         }
@@ -293,7 +321,7 @@ namespace micromusic {
             this.drawText(-60, -44, "Sample 1")
             this.drawText(15, -44, "Sample 2")
             Screen.drawLine(0, -44, 0, -36, 0xb)
-            Screen.drawLine(0, -24, 0, 49, 0xb)
+            Screen.drawLine(0, -20, 0, 42, 0xb)
         }
 
         private drawGrid() {
@@ -309,7 +337,7 @@ namespace micromusic {
             ) {
                 let tempStep = step - this.highlightHeight
                 const y = startY + (step - this.currentStep) * cellHeight
-                const stepString = tempStep.toString()
+                const stepString = (tempStep + 1).toString()
                 const digitCount = stepString.length
                 const rightX = 65 - (digitCount - 1) * 6
 
@@ -323,6 +351,9 @@ namespace micromusic {
                 }
             }
 
+            if (this.isPlaying) {
+            }
+
             if (this.isSelectingNote) {
                 Screen.drawRect(
                     startX + this.selectedTrack * (cellWidth + 20) - 42,
@@ -330,6 +361,14 @@ namespace micromusic {
                     70,
                     10,
                     0x9
+                )
+            } else if (this.cursorVisible) {
+                Screen.drawRect(
+                    startX + 0 * (cellWidth + 20) - 42,
+                    startY + this.highlightHeight * cellHeight - 1,
+                    145,
+                    10,
+                    0x1
                 )
             }
         }
@@ -380,7 +419,8 @@ namespace micromusic {
                     while (tick) {
                         if (this.highlightHeight > 0) this.highlightHeight--
                         if (this.currentStep != 0)
-                            this.currentStep = (this.currentStep - 1) % 256
+                            this.currentStep =
+                                (this.currentStep - 1) % NUM_NOTES
 
                         if (counter < 10) {
                             counter++
@@ -416,14 +456,14 @@ namespace micromusic {
                     while (tick) {
                         if (this.highlightHeight < 3) this.highlightHeight++
                         else if (
-                            this.currentStep > 250 &&
-                            this.currentStep < 255
+                            this.currentStep > NUM_NOTES - 6 &&
+                            this.currentStep < NUM_NOTES - 1
                         )
                             this.highlightHeight++
 
-                        if (this.currentStep != 255)
+                        if (this.currentStep != NUM_NOTES - 1)
                             this.currentStep =
-                                Math.abs(this.currentStep + 1) % 256
+                                Math.abs(this.currentStep + 1) % NUM_NOTES
 
                         if (counter < 10) {
                             counter++
@@ -519,12 +559,16 @@ namespace micromusic {
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.up.id,
-                () => this.moveCursor(CursorDir.Up)
+                () => {
+                    if (!this.isPlaying) this.moveCursor(CursorDir.Up)
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
-                () => this.moveCursor(CursorDir.Down)
+                () => {
+                    if (!this.isPlaying) this.moveCursor(CursorDir.Down)
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
