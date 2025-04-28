@@ -17,6 +17,7 @@ namespace micromusic {
         private previousScene: CursorScene
         private allBtns: Button[][]
         private settings: Setting[]
+        private isSettingChanging: boolean
 
         constructor(
             app: AppInterface,
@@ -59,7 +60,8 @@ namespace micromusic {
                             x: -30,
                             y: -20,
                             onClick: () => {
-                                this.activateSettingContext(VOLUME)
+                                if (!this.isSettingChanging)
+                                    this.activateSettingContext(VOLUME)
                             },
                         }),
                     ],
@@ -71,7 +73,8 @@ namespace micromusic {
                             x: -30,
                             y: 5,
                             onClick: () => {
-                                this.activateSettingContext(BPM)
+                                if (!this.isSettingChanging)
+                                    this.activateSettingContext(BPM)
                             },
                         }),
                     ],
@@ -83,7 +86,8 @@ namespace micromusic {
                             x: -30,
                             y: 30,
                             onClick: () => {
-                                this.activateSettingContext(OTHER)
+                                if (!this.isSettingChanging)
+                                    this.activateSettingContext(OTHER)
                             },
                         }),
                     ],
@@ -107,6 +111,7 @@ namespace micromusic {
         }
 
         private activateSettingContext(setting: number) {
+            this.isSettingChanging = true
             this.navigator.setBtns([this.allBtns[setting]])
             this.cursor.setOutlineColour(0xd)
 
@@ -201,6 +206,7 @@ namespace micromusic {
         private resetContext() {
             this.navigator.setBtns(this.allBtns)
             this.cursor.setOutlineColour(9)
+            this.isSettingChanging = false
         }
 
         draw() {
