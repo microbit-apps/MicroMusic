@@ -68,8 +68,7 @@ namespace micromusic {
         private currentTrack: number
         private trackData: string[][]
         private controlBtns: Button[]
-        private sampleSelectBtn: Button
-        private noteSelectBtn: Button
+        private samples: Buffer[]
         private icon: Bitmap
         private isPlaying: boolean
         private highlightHeight: number
@@ -91,7 +90,7 @@ namespace micromusic {
                     this.app.popScene()
                     this.app.pushScene(new Home(this.app))
                 },
-                new GridNavigator(),
+                new GridNavigator()
             )
 
             this.currentStep = 0
@@ -173,8 +172,8 @@ namespace micromusic {
                                 this,
                                 this.volume,
                                 this.bpm,
-                                this.otherSetting,
-                            ),
+                                this.otherSetting
+                            )
                         )
                     },
                 }),
@@ -218,7 +217,7 @@ namespace micromusic {
         public resetNavigator() {
             this.navigator.setBtns([
                 [
-                    (this.sampleSelectBtn = new Button({
+                    new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "sample_section_select",
@@ -227,10 +226,10 @@ namespace micromusic {
                         onClick: () => {
                             this.activateSampleSelection()
                         },
-                    })),
+                    }),
                 ],
                 [
-                    (this.noteSelectBtn = new Button({
+                    new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: this.icon,
@@ -240,8 +239,8 @@ namespace micromusic {
                             this.activateNoteSelection()
                             this.selectedTrack = this.leftTrack
                         },
-                    })),
-                    (this.noteSelectBtn = new Button({
+                    }),
+                    new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: this.icon,
@@ -251,7 +250,7 @@ namespace micromusic {
                             this.activateNoteSelection()
                             this.selectedTrack = this.leftTrack + 1
                         },
-                    })),
+                    }),
                 ],
                 this.controlBtns,
             ])
@@ -346,7 +345,7 @@ namespace micromusic {
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc,
+                0xc
             )
 
             this.navigator.drawComponents()
@@ -412,7 +411,7 @@ namespace micromusic {
                     startY + this.highlightHeight * cellHeight - 1,
                     70,
                     10,
-                    0x9,
+                    0x9
                 )
             } else if (this.cursorVisible) {
                 Screen.drawRect(
@@ -420,7 +419,7 @@ namespace micromusic {
                     startY + this.highlightHeight * cellHeight - 1,
                     145,
                     10,
-                    0x1,
+                    0x1
                 )
             }
         }
@@ -437,6 +436,7 @@ namespace micromusic {
             noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
 
             this.trackData[track][step] = NOTES[noteIndex]
+            this.playNote(this.selectedTrack, this.samples[this.selectedTrack])
         }
 
         private activateNoteSelection() {
@@ -446,14 +446,14 @@ namespace micromusic {
                 controller.right.id,
                 () => {
                     this.changeNote(1)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
                 () => {
                     this.changeNote(-1)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -463,7 +463,7 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.up.id,
-                        () => (tick = false),
+                        () => (tick = false)
                     )
                     let counter = 0
                     // Control logic:
@@ -488,9 +488,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.up.id,
-                        () => {},
+                        () => {}
                     )
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -500,7 +500,7 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.down.id,
-                        () => (tick = false),
+                        () => (tick = false)
                     )
                     let counter = 0
                     // Control logic:
@@ -531,9 +531,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.down.id,
-                        () => {},
+                        () => {}
                     )
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -544,7 +544,7 @@ namespace micromusic {
                     this.currentStep = this.currentStep - this.highlightHeight
                     this.highlightHeight = 0
                     // Code for setting the buttons again
-                },
+                }
             )
             this.isSelectingNote = true
         }
@@ -592,7 +592,7 @@ namespace micromusic {
                     } else {
                     }
                     this.navigator.move(CursorDir.Right)
-                },
+                }
             )
 
             control.onEvent(
@@ -601,7 +601,7 @@ namespace micromusic {
                 () => {
                     this.resetNavigator()
                     this.resetControllerEvents()
-                },
+                }
             )
         }
 
@@ -612,24 +612,24 @@ namespace micromusic {
                 controller.up.id,
                 () => {
                     if (!this.isPlaying) this.moveCursor(CursorDir.Up)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
                 () => {
                     if (!this.isPlaying) this.moveCursor(CursorDir.Down)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.right.id,
-                () => this.moveCursor(CursorDir.Right),
+                () => this.moveCursor(CursorDir.Right)
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
-                () => this.moveCursor(CursorDir.Left),
+                () => this.moveCursor(CursorDir.Left)
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -637,7 +637,7 @@ namespace micromusic {
                 () => {
                     this.app.popScene()
                     this.app.pushScene(new Home(this.app))
-                },
+                }
             )
         }
     }
