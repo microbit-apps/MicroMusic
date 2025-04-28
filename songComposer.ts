@@ -108,13 +108,13 @@ namespace micromusic {
             this.trackData = []
 
             // Grid data
-            for (let i = 0; i < NUM_TRACKS; i++) {
-                this.trackData[i] = []
-                for (let j = 0; j < NUM_NOTES; j++) {
-                    if (j % 2 == 0) this.trackData[i][j] = "-"
-                    else this.trackData[i][j] = "C"
-                }
-            }
+            // for (let i = 0; i < NUM_TRACKS; i++) {
+            //     this.trackData[i] = []
+            //     for (let j = 0; j < NUM_NOTES; j++) {
+            //         if (j % 2 == 0) this.trackData[i][j] = "-"
+            //         else this.trackData[i][j] = "C"
+            //     }
+            // }
         }
 
         /* override */ startup() {
@@ -185,6 +185,7 @@ namespace micromusic {
                     y: -52,
                     onClick: () => {
                         this.app.popScene()
+                        // Make rectangle asking if they are sure then let it popScene and push
                         this.app.pushScene(new Home(this.app))
                     },
                 }),
@@ -268,7 +269,7 @@ namespace micromusic {
                 const tickSpeed = 60000 / this.bpm.value
                 while (this.isPlaying && this.playedNote < NUM_NOTES) {
                     for (let i = 0; i < NUM_TRACKS; i++) {
-                        this.playNote(i, getSample("ShortB"))
+                        this.playNote(i, this.samples[i])
                     }
                     basic.pause(tickSpeed)
                     if (this.highlightHeight < 3) this.highlightHeight++
