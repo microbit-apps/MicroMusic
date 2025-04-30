@@ -58,6 +58,7 @@ namespace micromusic {
         private rightTrack: number
         private cursorVisible: boolean
         private playedNote: number
+        private hasClickedBack: boolean
 
         constructor(app: AppInterface, volume?: Setting) {
             super(
@@ -80,6 +81,7 @@ namespace micromusic {
             this.otherSetting = new Setting(100)
             this.isSelectingSample = false
             this.playedNote = 0
+            this.hasClickedBack = false
 
             this.trackData = []
 
@@ -160,8 +162,7 @@ namespace micromusic {
                     x: -68,
                     y: -52,
                     onClick: () => {
-                        this.app.popScene()
-                        this.app.pushScene(new Home(this.app))
+                        this.backConfirmation()
                     },
                 }),
                 new Button({
@@ -188,6 +189,39 @@ namespace micromusic {
 
             this.resetNavigator()
             this.resetControllerEvents()
+        }
+
+        private backConfirmation() {
+            this.hasClickedBack = true
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_section_select",
+                        x: 0,
+                        y: -40,
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(new Home(this.app))
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_section_select",
+                        x: 0,
+                        y: -20,
+                        onClick: () => {
+                            this.hasClickedBack = false
+                            this.resetNavigator()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
+                        },
+                    }),
+                ],
+            ])
+            this.moveCursor(CursorDir.Down)
         }
 
         public resetNavigator() {
@@ -298,6 +332,13 @@ namespace micromusic {
             )
 
             this.navigator.drawComponents()
+
+            if (this.hasClickedBack) {
+                Screen.fillRect(-60, -40, 120, 80, 0x6)
+                this.cursor.draw()
+                // super.draw()
+                return
+            }
 
             for (let btns of this.controlBtns) {
                 btns.draw()

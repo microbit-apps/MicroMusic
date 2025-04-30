@@ -1,16 +1,20 @@
 ### TODO
 
+## Bugs
+
+-   [x] Crash when clicking on setting inside of setting button
+
 ## General
 
 -   [x] Split grid into note sections
 -   [x] Grid current note highlighting instead of constant scrolling
 -   [ ] Sample selection screen
--   [ ] BPM calculation for tick speed
+-   [x] BPM calculation for tick speed
 -   [ ] Moving over and selecting last 2 samples
 -   [x] Way to go through the sounds
 -   [ ] Keyboard screen
 -   [x] IMPORTANT - Reloading a screen with state, need to get back or store the state somehow
--   [ ] Octave stuff
+-   [ ] Octave stuff - Semitones done, for octaves it owuld be just halving or doubling
 -   [ ] Need to sort sample selection
 -   [ ] Minimising the number of clicks - find commonalities
 -   [ ] Music that repeats notes, select multiple notes at once?
@@ -18,7 +22,7 @@
 -   [ ] Anything that would make note entry easier
 -   [x] Navigate D-Pad to go down and then new page, up and down to increment through scale
 -   [x] Kind of like select a row, using the cursor, select with a button, then up and down buttons could change the pitch of the note being played
--   [ ] Could play the note as you select it
+-   [x] Could play the note as you select it
 
 ## Note Scrolling
 
@@ -32,7 +36,7 @@
 ## Settings
 
 -   [x] Settings screen (Made but need to make more assets and pick settings)
--   [ ] Settings functionality - BPM
+-   [x] Settings functionality - BPM
 
 ## Saving
 
