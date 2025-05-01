@@ -283,7 +283,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
-                            this.selectedTrack = this.leftTrack + 1
+                            this.selectedTrack = this.rightTrack
                         },
                     }),
                 ],
@@ -615,10 +615,7 @@ namespace micromusic {
                         icon: "sample_button_small",
                         x: -36,
                         y: -40,
-                        onClick: () => {
-                            // this.app.pop()
-                            // this.app.push(this.app, this, this.leftTrack)
-                        },
+                        onClick: () => {},
                     }),
                     new Button({
                         parent: null,
@@ -626,29 +623,10 @@ namespace micromusic {
                         icon: "sample_button_small",
                         x: 39,
                         y: -40,
-                        onClick: () => {
-                            // this.app.pop()
-                            // this.app.push(this.app, this, this.rightTrack)
-                        },
+                        onClick: () => {},
                     }),
                 ],
             ])
-
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.right.id,
-                () => {
-                    if (
-                        this.currentTrack == this.rightTrack &&
-                        this.currentTrack != NUM_TRACKS - 1
-                    ) {
-                        this.leftTrack++
-                        this.rightTrack++
-                    } else {
-                    }
-                    this.navigator.move(CursorDir.Right)
-                }
-            )
 
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -656,8 +634,11 @@ namespace micromusic {
                 () => {
                     this.resetNavigator()
                     this.resetControllerEvents()
+                    this.moveCursor(CursorDir.Right)
                 }
             )
+
+            this.moveCursor(CursorDir.Down)
         }
 
         private resetControllerEvents() {
@@ -690,8 +671,8 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
+                    this.backConfirmation()
+                    this.moveCursor(CursorDir.Right)
                 }
             )
         }

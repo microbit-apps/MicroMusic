@@ -14,7 +14,7 @@
 -   [x] Way to go through the sounds
 -   [ ] Keyboard screen
 -   [x] IMPORTANT - Reloading a screen with state, need to get back or store the state somehow
--   [ ] Octave stuff - Semitones done, for octaves it owuld be just halving or doubling
+-   [ ] Octave stuff - Semitones done, for octaves it would be just halving or doubling
 -   [ ] Need to sort sample selection
 -   [ ] Minimising the number of clicks - find commonalities
 -   [ ] Music that repeats notes, select multiple notes at once?
@@ -56,6 +56,6 @@
 -   [ ] Sample/simpleEffect (echo or something, decay, holding a note for longer)
 -   [ ] Sample sets instead of just 4 samples
 -   [ ] Play stops using other buttons
--   [ ] Musical notation
+-   [x] Musical notation
 -   [ ] 128-block length, can extend songs with different blocks/repeat blocks
 -   [ ] Continuing on - multiple screens of data, song structure view and defining samples
