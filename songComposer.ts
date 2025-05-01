@@ -259,7 +259,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
-                            this.selectedTrack = this.leftTrack + 1
+                            this.selectedTrack = this.rightTrack
                         },
                     })),
                 ],
@@ -563,10 +563,7 @@ namespace micromusic {
                         icon: "sample_button_small",
                         x: -36,
                         y: -40,
-                        onClick: () => {
-                            // this.app.pop()
-                            // this.app.push(this.app, this, this.leftTrack)
-                        },
+                        onClick: () => {},
                     }),
                     new Button({
                         parent: null,
@@ -574,10 +571,7 @@ namespace micromusic {
                         icon: "sample_button_small",
                         x: 39,
                         y: -40,
-                        onClick: () => {
-                            // this.app.pop()
-                            // this.app.push(this.app, this, this.rightTrack)
-                        },
+                        onClick: () => {},
                     }),
                 ],
             ])
