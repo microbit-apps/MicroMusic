@@ -82,6 +82,7 @@ namespace micromusic {
         private rightTrack: number
         private cursorVisible: boolean
         private playedNote: number
+        private hasClickedBack: boolean
 
         constructor(app: AppInterface, volume?: Setting) {
             super(
@@ -104,6 +105,7 @@ namespace micromusic {
             this.otherSetting = new Setting(100)
             this.isSelectingSample = false
             this.playedNote = 0
+            this.hasClickedBack = false
 
             this.trackData = []
 
@@ -184,9 +186,7 @@ namespace micromusic {
                     x: -68,
                     y: -52,
                     onClick: () => {
-                        this.app.popScene()
-                        // Make rectangle asking if they are sure then let it popScene and push
-                        this.app.pushScene(new Home(this.app))
+                        this.backConfirmation()
                     },
                 }),
                 new Button({
@@ -213,6 +213,40 @@ namespace micromusic {
 
             this.resetNavigator()
             this.resetControllerEvents()
+        }
+
+        private backConfirmation() {
+            this.hasClickedBack = true
+            const ic = icons.get("placeholder")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -22,
+                        y: 18,
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(new Home(this.app))
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: 21,
+                        y: 18,
+                        onClick: () => {
+                            this.hasClickedBack = false
+                            this.resetNavigator()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
+                        },
+                    }),
+                ],
+            ])
+            this.moveCursor(CursorDir.Down)
         }
 
         public resetNavigator() {
@@ -351,6 +385,18 @@ namespace micromusic {
 
             this.navigator.drawComponents()
 
+            if (this.hasClickedBack) {
+                Screen.fillRect(-57, -37, 120, 80, 0)
+                Screen.fillRect(-60, -40, 120, 80, 0x6)
+                this.drawText(-36, -30, "Return Home?")
+                Screen.print("Any unsaved work", -48, -20, 0x2)
+                Screen.print("will be lost", -38, -10, 0x2)
+                this.drawText(-30, 15, "Yes")
+                this.drawText(15, 15, "No")
+                this.cursor.draw()
+                return
+            }
+
             for (let btns of this.controlBtns) {
                 btns.draw()
             }
@@ -425,8 +471,16 @@ namespace micromusic {
             }
         }
 
-        private drawText(x: number, y: number, text: string) {
-            Screen.print(text, x, y, 0, font)
+        private drawText(
+            x: number,
+            y: number,
+            text: string,
+            colour?: number,
+            _font?: bitmaps.Font
+        ) {
+            if (!colour) colour = 0
+            if (!_font) _font = font
+            Screen.print(text, x, y, colour, _font)
         }
 
         private changeNote(direction: number) {
