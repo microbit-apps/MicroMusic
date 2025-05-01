@@ -584,28 +584,15 @@ namespace micromusic {
 
             control.onEvent(
                 ControllerButtonEvent.Pressed,
-                controller.right.id,
-                () => {
-                    if (
-                        this.currentTrack == this.rightTrack &&
-                        this.currentTrack != NUM_TRACKS - 1
-                    ) {
-                        this.leftTrack++
-                        this.rightTrack++
-                    } else {
-                    }
-                    this.navigator.move(CursorDir.Right)
-                }
-            )
-
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
                     this.resetNavigator()
                     this.resetControllerEvents()
+                    this.moveCursor(CursorDir.Right)
                 }
             )
+
+            this.moveCursor(CursorDir.Down)
         }
 
         private resetControllerEvents() {
@@ -638,8 +625,8 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
-                    this.app.popScene()
-                    this.app.pushScene(new Home(this.app))
+                    this.backConfirmation()
+                    this.moveCursor(CursorDir.Right)
                 }
             )
         }
