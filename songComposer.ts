@@ -238,6 +238,36 @@ namespace micromusic {
                             this.activateSampleSelection()
                         },
                     })),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "missing",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "missing",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
+                        },
+                    }),
                 ],
                 [
                     (this.noteSelectBtn = new Button({
@@ -391,11 +421,15 @@ namespace micromusic {
                 Screen.print(stepString, -70, y, 0, font)
                 Screen.print(stepString, rightX, y, 0, font)
 
-                for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
-                    const x = startX + track * cellWidth
-                    const note = this.trackData[track][tempStep]
-                    Screen.print(note, x, y, 0, font)
-                }
+                // Draw left track
+                let x = startX + 0 * cellWidth
+                let note = this.trackData[this.leftTrack][tempStep]
+                Screen.print(note, x, y, 0, font)
+
+                // Draw right track
+                x = startX + 1 * cellWidth
+                note = this.trackData[this.rightTrack][tempStep]
+                Screen.print(note, x, y, 0, font)
             }
 
             if (this.isPlaying) {
