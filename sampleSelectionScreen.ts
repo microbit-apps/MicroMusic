@@ -159,7 +159,6 @@ namespace micromusic {
                 0xc
             )
             this.navigator.drawComponents()
-            // Just hides the ones that are too many instead of shifting it up and down lmao
             const startY = -30
 
             let i = this.selectedIndex - 3
@@ -178,7 +177,7 @@ namespace micromusic {
                 }
 
                 const y = startY + counter * 12
-                const colour = i === this.selectedIndex ? 0x3 : 0
+                const colour = i === this.selectedIndex ? 0x2 : 0
                 Screen.print(this.sampleNames[i], -36, y, colour)
                 console.log(i)
                 i++
