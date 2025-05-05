@@ -7,10 +7,19 @@ namespace micromusic {
     import ButtonStyles = user_interface_base.ButtonStyles
     import Screen = user_interface_base.Screen
 
-    export class SampleSelectionScreen extends CursorSceneWithPriorPage {
-        private previousScene: CursorScene
+    const NUM_SAMPLES_SHOWN = 7
 
-        constructor(app: AppInterface, previousScene: CursorScene) {
+    export class SampleSelectionScreen extends CursorSceneWithPriorPage {
+        private previousScene: SoundTrackerScreen
+        private sampleNames: string[]
+        private selectedIndex: number
+        private currentSample: Sample
+
+        constructor(
+            app: AppInterface,
+            previousScene: SoundTrackerScreen,
+            currentSample: Sample
+        ) {
             super(
                 app,
                 function () {
@@ -21,7 +30,169 @@ namespace micromusic {
                 new GridNavigator()
             )
 
+            this.sampleNames = listSamples()
+            this.currentSample = currentSample
             this.previousScene = previousScene
+            this.selectedIndex = this.sampleNames.indexOf(
+                this.currentSample.name
+            )
+        }
+
+        /* override */ startup() {
+            super.startup()
+
+            console.log(this.sampleNames)
+            this.resetNavigator()
+            // this.resetControllerEvents()
+            this.setControllerEvents()
+        }
+
+        private resetNavigator() {
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "back_arrow",
+                        x: -40,
+                        y: -50,
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(this.previousScene)
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "confirm",
+                        x: 40,
+                        y: -50,
+                        onClick: () => {
+                            this.selectSample()
+                        },
+                    }),
+                ],
+            ])
+        }
+
+        private setControllerEvents() {
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.up.id,
+                () => {
+                    this.selectedIndex -= 1
+                    if (this.selectedIndex < 0)
+                        this.selectedIndex = this.sampleNames.length - 1
+                    // this.draw()
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.down.id,
+                () => {
+                    this.selectedIndex += 1
+                    if (this.selectedIndex == this.sampleNames.length)
+                        this.selectedIndex = 0
+                    console.log(this.selectedIndex + " : Index")
+                    // this.draw()
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.A.id,
+                () => {
+                    this.selectSample()
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.app.popScene()
+                    this.app.pushScene(this.previousScene)
+                }
+            )
+        }
+
+        private resetControllerEvents() {
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.up.id,
+                () => {}
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.down.id,
+                () => {}
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.A.id,
+                () => {
+                    this.selectSample()
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.app.popScene()
+                    this.app.pushScene(this.previousScene)
+                }
+            )
+        }
+
+        private selectSample() {
+            const sampleName = this.sampleNames[this.selectedIndex]
+            const sample = new Sample(sampleName)
+            this.previousScene.setSampleForTrack(sample)
+            this.app.popScene()
+            this.app.pushScene(this.previousScene)
+        }
+
+        draw() {
+            Screen.fillRect(
+                Screen.LEFT_EDGE,
+                Screen.TOP_EDGE,
+                Screen.WIDTH,
+                Screen.HEIGHT,
+                0xc
+            )
+            this.navigator.drawComponents()
+            // Just hides the ones that are too many instead of shifting it up and down lmao
+            const startY = -30
+
+            let i = this.selectedIndex - 3
+            if (i < 0) {
+                i = this.sampleNames.length + i
+            }
+            let endValue = i + NUM_SAMPLES_SHOWN
+
+            let counter = 0
+            while (true) {
+                if (i == endValue) break
+                if (i == this.sampleNames.length) {
+                    let remainder = endValue - i
+                    endValue = remainder
+                    i = 0
+                }
+
+                const y = startY + counter * 12
+                const colour = i === this.selectedIndex ? 0x3 : 0
+                Screen.print(this.sampleNames[i], -36, y, colour)
+                console.log(i)
+                i++
+                counter++
+            }
+            // for (let i = this.selectedIndex; i < i + NUM_SAMPLES_SHOWN; i++) {
+            //     if (i > this.sampleNames.length) {
+            //         i = 0
+            //     } else if (i) const y = startY + i * 12
+            //     const colour = i === this.selectedIndex ? 0x1 : 0
+            //     Screen.print(this.sampleNames[i], -40, y, colour)
+            // }
+
+            this.cursor.draw()
         }
     }
 }

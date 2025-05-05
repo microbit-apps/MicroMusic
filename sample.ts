@@ -1,5 +1,5 @@
 namespace micromusic {
-    class Sample {
+    export class Sample {
         private _audio: Buffer
         private _sampleName: string
 
@@ -12,7 +12,7 @@ namespace micromusic {
             return this._audio
         }
 
-        get sampleName() {
+        get name() {
             return this._sampleName
         }
     }

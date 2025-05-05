@@ -45,6 +45,7 @@ namespace micromusic {
         private controlBtns: Button[]
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
+        private samples: Sample[]
         private icon: Bitmap
         private isPlaying: boolean
         private highlightHeight: number
@@ -60,7 +61,12 @@ namespace micromusic {
         private playedNote: number
         private hasClickedBack: boolean
 
-        constructor(app: AppInterface, volume?: Setting) {
+        constructor(
+            app: AppInterface,
+            volume?: Setting,
+            samples?: Sample[],
+            trackData?: string[][]
+        ) {
             super(
                 app,
                 function () {
@@ -84,6 +90,13 @@ namespace micromusic {
             this.hasClickedBack = false
 
             this.trackData = []
+
+            this.samples = [
+                new Sample("FunBass_L"),
+                new Sample("ResBass"),
+                new Sample("ShortB"),
+                new Sample("r8_drum"),
+            ]
 
             // Grid data
             for (let i = 0; i < NUM_TRACKS; i++) {
@@ -454,6 +467,11 @@ namespace micromusic {
             }
         }
 
+        public setSampleForTrack(sample: Sample) {
+            this.samples[this.currentTrack] = sample
+            this.drawGrid()
+        }
+
         private drawText(
             x: number,
             y: number,
@@ -597,7 +615,16 @@ namespace micromusic {
                         icon: "sample_button_small",
                         x: -36,
                         y: -40,
-                        onClick: () => {},
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(
+                                new SampleSelectionScreen(
+                                    this.app,
+                                    this,
+                                    this.samples[this.leftTrack]
+                                )
+                            )
+                        },
                     }),
                     new Button({
                         parent: null,
