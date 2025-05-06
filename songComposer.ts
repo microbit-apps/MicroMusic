@@ -124,13 +124,13 @@ namespace micromusic {
             ]
 
             // Grid data
-            // for (let i = 0; i < NUM_TRACKS; i++) {
-            //     this.trackData[i] = []
-            //     for (let j = 0; j < NUM_NOTES; j++) {
-            //         if (j % 2 == 0) this.trackData[i][j] = "-"
-            //         else this.trackData[i][j] = "C"
-            //     }
-            // }
+            for (let i = 0; i < NUM_TRACKS; i++) {
+                this.trackData[i] = []
+                for (let j = 0; j < NUM_NOTES; j++) {
+                    this.trackData[i][j] = "-"
+                    // else this.trackData[i][j] = "C"
+                }
+            }
         }
 
         /* override */ startup() {
