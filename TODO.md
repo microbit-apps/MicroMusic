@@ -2,6 +2,8 @@
 
 ## Bugs
 
+-   [ ] Change sample selection box to fit
+-   [ ] Fix getting stuck scrolling (there may not be a fix rn)
 -   [x] Crash when clicking on setting inside of setting button
 
 ## General

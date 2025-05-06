@@ -13,6 +13,8 @@ namespace micromusic {
     const NUM_VISIBLE_TRACKS = 2
     const NUM_VISIBLE_STEPS = 8
     const NUM_NOTES = 128
+    const LEFT_TRACK_INDEX = 0
+    const RIGHT_TRACK_INDEX = 1
     const NOTES = [
         "-",
         "C#",
@@ -53,6 +55,7 @@ namespace micromusic {
         private selectedTrack: number
         private leftTrack: number
         private volume: Setting
+        private selectedTrackPos: number
         private bpm: Setting
         private otherSetting: Setting
         private isSelectingSample: boolean
@@ -76,6 +79,7 @@ namespace micromusic {
                 new GridNavigator()
             )
 
+            this.selectedTrackPos = 0
             this.currentStep = 0
             this.currentTrack = 0
             this.leftTrack = 0
@@ -291,6 +295,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
+                            this.selectedTrackPos = 0
                             this.selectedTrack = this.leftTrack
                         },
                     })),
@@ -302,6 +307,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
+                            this.selectedTrackPos = 1
                             this.selectedTrack = this.rightTrack
                         },
                     })),
@@ -408,8 +414,8 @@ namespace micromusic {
                 //     0x9
                 // )
             }
-            this.drawText(-60, -44, "Sample 1")
-            this.drawText(15, -44, "Sample 2")
+            this.drawText(-60, -44, this.samples[this.leftTrack].name)
+            this.drawText(15, -44, this.samples[this.rightTrack].name)
             Screen.drawLine(0, -44, 0, -36, 0xb)
             Screen.drawLine(0, -20, 0, 42, 0xb)
         }
@@ -450,7 +456,7 @@ namespace micromusic {
 
             if (this.isSelectingNote) {
                 Screen.drawRect(
-                    startX + this.selectedTrack * (cellWidth + 20) - 42,
+                    startX + this.selectedTrackPos * (cellWidth + 20) - 42,
                     startY + this.highlightHeight * cellHeight - 1,
                     70,
                     10,
