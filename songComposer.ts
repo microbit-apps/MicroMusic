@@ -68,7 +68,9 @@ namespace micromusic {
         private currentTrack: number
         private trackData: string[][]
         private controlBtns: Button[]
-        private samples: Buffer[]
+        private sampleSelectBtn: Button
+        private noteSelectBtn: Button
+        private samples: Sample[]
         private icon: Bitmap
         private isPlaying: boolean
         private highlightHeight: number
@@ -84,7 +86,12 @@ namespace micromusic {
         private playedNote: number
         private hasClickedBack: boolean
 
-        constructor(app: AppInterface, volume?: Setting) {
+        constructor(
+            app: AppInterface,
+            volume?: Setting,
+            samples?: Sample[],
+            trackData?: string[][]
+        ) {
             super(
                 app,
                 function () {
@@ -108,6 +115,13 @@ namespace micromusic {
             this.hasClickedBack = false
 
             this.trackData = []
+
+            this.samples = [
+                new Sample("FunBass_L"),
+                new Sample("ResBass"),
+                new Sample("ShortB"),
+                new Sample("r8_drum"),
+            ]
 
             // Grid data
             // for (let i = 0; i < NUM_TRACKS; i++) {
@@ -262,6 +276,36 @@ namespace micromusic {
                             this.activateSampleSelection()
                         },
                     }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "missing",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "missing",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
+                        },
+                    }),
                 ],
                 [
                     new Button({
@@ -303,7 +347,7 @@ namespace micromusic {
                 const tickSpeed = 60000 / this.bpm.value
                 while (this.isPlaying && this.playedNote < NUM_NOTES) {
                     for (let i = 0; i < NUM_TRACKS; i++) {
-                        this.playNote(i, this.samples[i])
+                        this.playNote(i, this.samples[i].audio)
                     }
                     basic.pause(tickSpeed)
                     if (this.highlightHeight < 3) this.highlightHeight++
@@ -442,11 +486,15 @@ namespace micromusic {
                 Screen.print(stepString, -70, y, 0, font)
                 Screen.print(stepString, rightX, y, 0, font)
 
-                for (let track = 0; track < NUM_VISIBLE_TRACKS; track++) {
-                    const x = startX + track * cellWidth
-                    const note = this.trackData[track][tempStep]
-                    Screen.print(note, x, y, 0, font)
-                }
+                // Draw left track
+                let x = startX + 0 * cellWidth
+                let note = this.trackData[this.leftTrack][tempStep]
+                Screen.print(note, x, y, 0, font)
+
+                // Draw right track
+                x = startX + 1 * cellWidth
+                note = this.trackData[this.rightTrack][tempStep]
+                Screen.print(note, x, y, 0, font)
             }
 
             if (this.isPlaying) {
@@ -471,6 +519,11 @@ namespace micromusic {
             }
         }
 
+        public setSampleForTrack(sample: Sample) {
+            this.samples[this.currentTrack] = sample
+            this.drawGrid()
+        }
+
         private drawText(
             x: number,
             y: number,
@@ -491,7 +544,10 @@ namespace micromusic {
             noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
 
             this.trackData[track][step] = NOTES[noteIndex]
-            this.playNote(this.selectedTrack, this.samples[this.selectedTrack])
+            this.playNote(
+                this.selectedTrack,
+                this.samples[this.selectedTrack].audio
+            )
         }
 
         private activateNoteSelection() {
@@ -615,7 +671,16 @@ namespace micromusic {
                         icon: "sample_button_small",
                         x: -36,
                         y: -40,
-                        onClick: () => {},
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(
+                                new SampleSelectionScreen(
+                                    this.app,
+                                    this,
+                                    this.samples[this.leftTrack]
+                                )
+                            )
+                        },
                     }),
                     new Button({
                         parent: null,
