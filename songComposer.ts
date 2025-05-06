@@ -691,5 +691,19 @@ namespace micromusic {
                 }
             )
         }
+
+        public save(slot: number) {
+            let sampleNames = [
+                this.samples[0].name,
+                this.samples[1].name,
+                this.samples[2].name,
+                this.samples[3].name,
+            ]
+
+            datalogger.log(
+                datalogger.createCV("track_data_" + slot, this.trackData),
+                datalogger.createCV("samples_" + slot, sampleNames)
+            )
+        }
     }
 }

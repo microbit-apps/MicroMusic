@@ -79,11 +79,13 @@ namespace micromusic {
                         new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "other",
+                            icon: "save",
                             x: -30,
                             y: 30,
                             onClick: () => {
-                                this.activateSettingContext(OTHER)
+                                ;(<SoundTrackerScreen>this.previousScene).save(
+                                    0
+                                )
                             },
                         }),
                     ],
