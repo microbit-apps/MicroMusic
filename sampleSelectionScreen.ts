@@ -157,7 +157,7 @@ namespace micromusic {
                 Screen.WIDTH,
                 Screen.HEIGHT,
                 0xc
-            )
+            ) // Wednesday 14th 3pm
             this.navigator.drawComponents()
             const startY = -30
 
