@@ -83,6 +83,13 @@ namespace micromusic {
                     this.selectedIndex -= 1
                     if (this.selectedIndex < 0)
                         this.selectedIndex = this.sampleNames.length - 1
+
+                    // Play the selected sample so user can hear it
+                    const sample = new Sample(
+                        this.sampleNames[this.selectedIndex],
+                        this.currentSample.channel
+                    )
+                    // TODO: sort this out on a different branch
                     // this.draw()
                 }
             )
@@ -93,6 +100,13 @@ namespace micromusic {
                     this.selectedIndex += 1
                     if (this.selectedIndex == this.sampleNames.length)
                         this.selectedIndex = 0
+
+                    // Play the selected sample so user can hear it
+                    const sample = new Sample(
+                        this.sampleNames[this.selectedIndex],
+                        this.currentSample.channel
+                    )
+                    // T
                     console.log(this.selectedIndex + " : Index")
                     // this.draw()
                 }
@@ -144,8 +158,8 @@ namespace micromusic {
 
         private selectSample() {
             const sampleName = this.sampleNames[this.selectedIndex]
-            const sample = new Sample(sampleName)
-            this.previousScene.setSampleForTrack(sample)
+            const sample = new Sample(sampleName, this.currentSample.channel)
+            this.previousScene.setSampleForTrack(sample, sample.channel)
             this.app.popScene()
             this.app.pushScene(this.previousScene)
         }
@@ -157,7 +171,7 @@ namespace micromusic {
                 Screen.WIDTH,
                 Screen.HEIGHT,
                 0xc
-            ) // Wednesday 14th 3pm
+            ) // Background color
             this.navigator.drawComponents()
             const startY = -30
 
@@ -178,7 +192,11 @@ namespace micromusic {
 
                 const y = startY + counter * 12
                 const colour = i === this.selectedIndex ? 0x2 : 0
-                Screen.print(this.sampleNames[i], -36, y, colour)
+                if (i === this.selectedIndex) {
+                    Screen.print(this.sampleNames[i], -36, y, colour)
+                } else {
+                    Screen.print(this.sampleNames[i], -36, y, colour)
+                }
                 console.log(i)
                 i++
                 counter++
@@ -190,6 +208,9 @@ namespace micromusic {
             //     const colour = i === this.selectedIndex ? 0x1 : 0
             //     Screen.print(this.sampleNames[i], -40, y, colour)
             // }
+
+            // Draw title at top of screen
+            Screen.print("Select Sample", -40, -50, 0x1)
 
             this.cursor.draw()
         }
