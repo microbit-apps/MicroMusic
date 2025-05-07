@@ -152,11 +152,10 @@ namespace micromusic {
 
         private loadSave(slot: number) {
             try {
-                // This is a simplified placeholder implementation
-                // In a real implementation, we would load the saved data
+                // TODO: implement loading (datalogger)
                 console.log("Loading save from slot: " + slot)
 
-                // For now, just create some default data
+                // if no log do this
                 const defaultTrackData: string[][] = []
                 for (let i = 0; i < 4; i++) {
                     // 4 tracks
@@ -167,7 +166,7 @@ namespace micromusic {
                     }
                 }
 
-                // OVERWRITE THIS
+                // TODO: change defaults
                 const samples = [
                     new Sample("bass", 1),
                     new Sample("piano", 2),
@@ -183,7 +182,6 @@ namespace micromusic {
         }
 
         draw() {
-            // Clear screen with background color
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
@@ -192,14 +190,12 @@ namespace micromusic {
                 0xc
             )
 
-            // Draw title at top of screen
             const title =
                 this.mode === SaveLoadMode.SAVE
                     ? "Save Composition"
                     : "Load Composition"
             Screen.print(title, -40, -50, 0x1)
 
-            // Draw navigator components (back and confirm buttons)
             this.navigator.drawComponents()
 
             // Calculate which slots to show based on selected index
@@ -240,12 +236,12 @@ namespace micromusic {
                 }
             }
 
-            // Draw instructions at the bottom
-            const instruction =
-                this.mode === SaveLoadMode.SAVE
-                    ? "Press A to save"
-                    : "Press A to load"
-            Screen.print(instruction, -36, 40, 0)
+            // TODO: update this
+            // const instruction =
+            //     this.mode === SaveLoadMode.SAVE
+            //         ? "Press A to save"
+            //         : "Press A to load"
+            // Screen.print(instruction, -36, 40, 0)
 
             // Draw the cursor
             this.cursor.draw()
