@@ -53,8 +53,8 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "back_arrow",
-                        x: -40,
+                        icon: "back_button",
+                        x: -60,
                         y: -50,
                         onClick: () => {
                             this.app.popScene()
@@ -64,8 +64,8 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "confirm",
-                        x: 40,
+                        icon: "green_tick",
+                        x: 60,
                         y: -50,
                         onClick: () => {
                             this.selectSample()

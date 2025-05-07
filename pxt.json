@@ -20,7 +20,8 @@
         "settingsScreen.ts",
         "setting.ts",
         "sample.ts",
-        "sampleSelectionScreen.ts"
+        "sampleSelectionScreen.ts",
+        "saveLoadScreen.ts"
     ],
     "testFiles": [],
     "targetVersions": {
