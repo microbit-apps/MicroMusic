@@ -68,7 +68,7 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "back_arrow",
-                        x: -40,
+                        x: -60,
                         y: -50,
                         onClick: () => {
                             this.app.popScene()
@@ -79,7 +79,7 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "green_tick",
-                        x: 40,
+                        x: 60,
                         y: -50,
                         onClick: () => {
                             this.processSlotAction()
