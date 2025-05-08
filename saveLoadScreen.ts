@@ -17,11 +17,12 @@ namespace micromusic {
     }
 
     export class SaveLoadScreen extends CursorSceneWithPriorPage {
-        private previousScene: SoundTrackerScreen
+        private previousScene: CursorScene
         private mode: SaveLoadMode
         private selectedIndex: number
         private saveNames: string[]
         private saveExists: boolean[]
+        private static instance: SaveLoadScreen | null = null
         private currentRowOffset: number
 
         constructor(
@@ -54,11 +55,28 @@ namespace micromusic {
             }
         }
 
+        public static getInstance(
+            app?: AppInterface,
+            previousScene?: CursorScene,
+            mode?: SaveLoadMode
+        ) {
+            if (!SaveLoadScreen.instance) {
+                if (app === undefined) {
+                    console.error(
+                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
+                    )
+                }
+                SaveLoadScreen.instance = SaveLoadScreen.getInstance(app)
+            }
+
+            return SaveLoadScreen.instance
+        }
+
         /* override */ startup() {
             super.startup()
             this.checkSaveExists()
             this.resetNavigator()
-            this.setControllerEvents()
+            // this.setControllerEvents()
         }
 
         private resetNavigator() {
@@ -89,41 +107,41 @@ namespace micromusic {
             ])
         }
 
-        private setControllerEvents() {
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.up.id,
-                () => {
-                    this.selectedIndex -= 1
-                    if (this.selectedIndex < 0)
-                        this.selectedIndex = NUM_SAVE_SLOTS - 1
-                }
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.down.id,
-                () => {
-                    this.selectedIndex += 1
-                    if (this.selectedIndex >= NUM_SAVE_SLOTS)
-                        this.selectedIndex = 0
-                }
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
-                    this.processSlotAction()
-                }
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.B.id,
-                () => {
-                    this.app.popScene()
-                    this.app.pushScene(this.previousScene)
-                }
-            )
-        }
+        // private setControllerEvents() {
+        //     control.onEvent(
+        //         ControllerButtonEvent.Pressed,
+        //         controller.up.id,
+        //         () => {
+        //             this.selectedIndex -= 1
+        //             if (this.selectedIndex < 0)
+        //                 this.selectedIndex = NUM_SAVE_SLOTS - 1
+        //         }
+        //     )
+        //     control.onEvent(
+        //         ControllerButtonEvent.Pressed,
+        //         controller.down.id,
+        //         () => {
+        //             this.selectedIndex += 1
+        //             if (this.selectedIndex >= NUM_SAVE_SLOTS)
+        //                 this.selectedIndex = 0
+        //         }
+        //     )
+        //     control.onEvent(
+        //         ControllerButtonEvent.Pressed,
+        //         controller.A.id,
+        //         () => {
+        //             this.processSlotAction()
+        //         }
+        //     )
+        //     control.onEvent(
+        //         ControllerButtonEvent.Pressed,
+        //         controller.B.id,
+        //         () => {
+        //             this.app.popScene()
+        //             this.app.pushScene(this.previousScene)
+        //         }
+        //     )
+        // }
 
         private processSlotAction() {
             // if (this.mode === SaveLoadMode.SAVE) {
@@ -248,6 +266,7 @@ namespace micromusic {
 
             // Draw the cursor
             this.cursor.draw()
+            super.draw()
         }
     }
 }

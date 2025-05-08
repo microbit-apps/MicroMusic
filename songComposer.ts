@@ -41,6 +41,7 @@ namespace micromusic {
     ]
 
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
+        private static instance: SoundTrackerScreen | null = null
         private currentStep: number
         private currentTrack: number
         private trackData: string[][]
@@ -63,7 +64,11 @@ namespace micromusic {
         private playedNote: number
         private hasClickedBack: boolean
 
-        constructor(app: AppInterface, volume?: Setting, bpm?: Setting) {
+        private constructor(
+            app: AppInterface,
+            volume?: Setting,
+            bpm?: Setting
+        ) {
             super(
                 app,
                 function () {
@@ -117,6 +122,23 @@ namespace micromusic {
             }
         }
 
+        public static getInstance(
+            app?: AppInterface,
+            volume?: Setting,
+            bpm?: Setting
+        ) {
+            if (!SoundTrackerScreen.instance) {
+                if (app === undefined) {
+                    console.error(
+                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
+                    )
+                }
+                SoundTrackerScreen.instance = new SoundTrackerScreen(app)
+            }
+
+            return SoundTrackerScreen.instance
+        }
+
         /* override */ startup() {
             super.startup()
 
@@ -168,7 +190,7 @@ namespace micromusic {
                         this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
-                            new SettingsScreen(
+                            SettingsScreen.getInstance(
                                 this.app,
                                 this,
                                 this.volume,
@@ -257,7 +279,8 @@ namespace micromusic {
                         x: 0,
                         y: -40,
                         onClick: () => {
-                            this.activateSampleSelection()
+                            // this.activateSampleSelection()
+                            // this.openSaveScreen()
                         },
                     })),
                     new Button({
@@ -783,6 +806,13 @@ namespace micromusic {
             this.currentStep = 0
             this.playedNote = 0
             this.highlightHeight = 0
+        }
+
+        public openSaveScreen() {
+            this.app.popScene()
+            this.app.pushScene(
+                new SaveLoadScreen(this.app, this, SaveLoadMode.SAVE)
+            )
         }
     }
 }

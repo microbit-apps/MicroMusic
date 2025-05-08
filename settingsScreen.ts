@@ -17,8 +17,9 @@ namespace micromusic {
         private previousScene: CursorScene
         private allBtns: Button[][]
         private settings: Setting[]
+        private static instance: SettingsScreen | null = null
 
-        constructor(
+        private constructor(
             app: AppInterface,
             previousScene: CursorScene,
             volume?: Setting,
@@ -86,14 +87,17 @@ namespace micromusic {
                             y: 30,
                             onClick: () => {
                                 // Go to Save screen
-                                this.app.popScene()
-                                this.app.pushScene(
-                                    new SaveLoadScreen(
-                                        this.app,
-                                        <SoundTrackerScreen>this.previousScene,
-                                        SaveLoadMode.SAVE
-                                    )
-                                )
+                                // this.app.popScene()
+                                // this.app.pushScene(
+                                //     new SaveLoadScreen(
+                                //         this.app,
+                                //         <SoundTrackerScreen>this.previousScene,
+                                //         SaveLoadMode.SAVE
+                                //     )
+                                // )
+                                ;(<SoundTrackerScreen>(
+                                    this.previousScene
+                                )).openSaveScreen()
                             },
                         }),
                         new Button({
@@ -133,6 +137,25 @@ namespace micromusic {
                     ],
                 ])
             )
+        }
+
+        public static getInstance(
+            app?: AppInterface,
+            previousScene?: CursorScene,
+            volume?: Setting,
+            bpm?: Setting,
+            other?: Setting
+        ) {
+            if (!SettingsScreen.instance) {
+                if (app === undefined) {
+                    console.error(
+                        "Singleton not initialized. Call with parameters first."
+                    )
+                }
+                SettingsScreen.instance = new SettingsScreen(app, previousScene)
+            }
+
+            return SettingsScreen.instance
         }
 
         private activateSettingContext(setting: number) {
