@@ -69,9 +69,9 @@ namespace micromusic {
                         new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "bpm",
+                            icon: "volume", // bpm
                             x: -30,
-                            y: 5,
+                            y: 0,
                             onClick: () => {
                                 if (!this.isSettingChanging)
                                     this.activateSettingContext(BPM)
@@ -80,14 +80,47 @@ namespace micromusic {
                     ],
                     [
                         new Button({
+                            // save button
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "other",
-                            x: -30,
+                            icon: "save_button_small",
+                            ariaId: "save",
+                            x: -40,
                             y: 30,
                             onClick: () => {
+<<<<<<< HEAD
                                 if (!this.isSettingChanging)
                                     this.activateSettingContext(OTHER)
+=======
+                                // Go to Save screen
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    new SaveLoadScreen(
+                                        this.app,
+                                        <SoundTrackerScreen>this.previousScene,
+                                        SaveLoadMode.SAVE
+                                    )
+                                )
+                            },
+                        }),
+                        new Button({
+                            // load button
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "save_button_small",
+                            ariaId: "load",
+                            x: 40,
+                            y: 30,
+                            onClick: () => {
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    new SaveLoadScreen(
+                                        this.app,
+                                        <SoundTrackerScreen>this.previousScene,
+                                        SaveLoadMode.LOAD
+                                    )
+                                )
+>>>>>>> 222b1b5d53567da9fc6039141fa6c66e4a3822d9
                             },
                         }),
                     ],
@@ -236,14 +269,6 @@ namespace micromusic {
                 this.settings[BPM].value.toString(),
                 44 - (this.settings[BPM].value.toString().length - 1) * 6,
                 -1,
-                0xd,
-                bitmaps.doubledFont(bitmaps.font8)
-            )
-
-            Screen.print(
-                this.settings[OTHER].value.toString(),
-                44 - (this.settings[OTHER].value.toString().length - 1) * 6,
-                24,
                 0xd,
                 bitmaps.doubledFont(bitmaps.font8)
             )

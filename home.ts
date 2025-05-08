@@ -47,7 +47,13 @@ namespace micromusic {
                         y,
                         onClick: () => {
                             this.app.popScene()
-                            // this.app.pushScene(new SensorSelect(this.app, CursorSceneEnum.RecordingConfigSelect))
+                            this.app.pushScene(
+                                new SaveLoadScreen(
+                                    this.app,
+                                    new SoundTrackerScreen(this.app),
+                                    SaveLoadMode.LOAD
+                                )
+                            )
                         },
                     })),
                     (this.distributedLoggingBtn = new Button({

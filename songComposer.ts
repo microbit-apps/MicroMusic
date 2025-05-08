@@ -13,6 +13,8 @@ namespace micromusic {
     const NUM_VISIBLE_TRACKS = 2
     const NUM_VISIBLE_STEPS = 8
     const NUM_NOTES = 128
+    const LEFT_TRACK_INDEX = 0
+    const RIGHT_TRACK_INDEX = 1
     const NOTES = [
         "-",
         "C#",
@@ -78,20 +80,15 @@ namespace micromusic {
         private selectedTrack: number
         private leftTrack: number
         private volume: Setting
+        private selectedTrackPos: number
         private bpm: Setting
-        private otherSetting: Setting
         private isSelectingSample: boolean
         private rightTrack: number
         private cursorVisible: boolean
         private playedNote: number
         private hasClickedBack: boolean
 
-        constructor(
-            app: AppInterface,
-            volume?: Setting,
-            samples?: Sample[],
-            trackData?: string[][]
-        ) {
+        constructor(app: AppInterface, volume?: Setting, bpm?: Setting) {
             super(
                 app,
                 function () {
@@ -101,6 +98,18 @@ namespace micromusic {
                 new GridNavigator()
             )
 
+            if (volume) {
+                this.volume = volume
+            } else {
+                this.volume = new Setting(100)
+            }
+            if (bpm) {
+                this.bpm = bpm
+            } else {
+                this.bpm = new Setting(120)
+            }
+
+            this.selectedTrackPos = 0
             this.currentStep = 0
             this.currentTrack = 0
             this.leftTrack = 0
@@ -109,7 +118,6 @@ namespace micromusic {
             this.isSelectingNote = false
             this.volume = new Setting(100)
             this.bpm = new Setting(120)
-            this.otherSetting = new Setting(100)
             this.isSelectingSample = false
             this.playedNote = 0
             this.hasClickedBack = false
@@ -117,10 +125,11 @@ namespace micromusic {
             this.trackData = []
 
             this.samples = [
-                new Sample("FunBass_L"),
-                new Sample("ResBass"),
-                new Sample("ShortB"),
-                new Sample("r8_drum"),
+                // TODO: Temporary
+                new Sample("FunBass_L", 1),
+                new Sample("ResBass", 2),
+                new Sample("ShortB", 3),
+                new Sample("r8_drum", 4),
             ]
 
             // Grid data
@@ -177,18 +186,18 @@ namespace micromusic {
                 new Button({
                     parent: null,
                     style: ButtonStyles.Transparent,
-                    icon: "small_cog",
+                    icon: "settings_cog_small",
                     x: 70,
                     y: -52,
                     onClick: () => {
+                        this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
                             new SettingsScreen(
                                 this.app,
                                 this,
                                 this.volume,
-                                this.bpm,
-                                this.otherSetting
+                                this.bpm
                             )
                         )
                     },
@@ -196,7 +205,7 @@ namespace micromusic {
                 new Button({
                     parent: null,
                     style: ButtonStyles.Transparent,
-                    icon: "back_arrow",
+                    icon: "back_button",
                     x: -68,
                     y: -52,
                     onClick: () => {
@@ -279,7 +288,7 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "missing",
+                        icon: "sample_selection_arrow_right",
                         x: 70,
                         y: -40,
                         onClick: () => {
@@ -295,7 +304,7 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "missing",
+                        icon: "sample_selection_arrow_left",
                         x: -70,
                         y: -40,
                         onClick: () => {
@@ -316,6 +325,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
+                            this.selectedTrackPos = 0
                             this.selectedTrack = this.leftTrack
                         },
                     }),
@@ -327,6 +337,7 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             this.activateNoteSelection()
+                            this.selectedTrackPos = 1
                             this.selectedTrack = this.rightTrack
                         },
                     }),
@@ -337,6 +348,7 @@ namespace micromusic {
 
         private play() {
             if (this.isPlaying == true) return
+            music.setVolume((this.volume.value / 100) * 255)
             this.isPlaying = true
             this.cursorVisible = true
 
@@ -350,12 +362,16 @@ namespace micromusic {
                         this.playNote(i, this.samples[i].audio)
                     }
                     basic.pause(tickSpeed)
+                    // Only increment highlightHeight if it's within bounds
                     if (this.highlightHeight < 3) this.highlightHeight++
                     else if (
                         this.currentStep > NUM_NOTES - 6 &&
                         this.currentStep < NUM_NOTES - 1
-                    )
-                        this.highlightHeight++
+                    ) {
+                        if (this.highlightHeight < 7) {
+                            this.highlightHeight++
+                        }
+                    }
 
                     if (this.currentStep != NUM_NOTES - 1)
                         this.currentStep =
@@ -460,8 +476,8 @@ namespace micromusic {
                 //     0x9
                 // )
             }
-            this.drawText(-60, -44, "Sample 1")
-            this.drawText(15, -44, "Sample 2")
+            this.drawText(-60, -44, this.samples[this.leftTrack].name)
+            this.drawText(8, -44, this.samples[this.rightTrack].name)
             Screen.drawLine(0, -44, 0, -36, 0xb)
             Screen.drawLine(0, -20, 0, 42, 0xb)
         }
@@ -502,7 +518,7 @@ namespace micromusic {
 
             if (this.isSelectingNote) {
                 Screen.drawRect(
-                    startX + this.selectedTrack * (cellWidth + 20) - 42,
+                    startX + this.selectedTrackPos * (cellWidth + 20) - 42,
                     startY + this.highlightHeight * cellHeight - 1,
                     70,
                     10,
@@ -519,8 +535,8 @@ namespace micromusic {
             }
         }
 
-        public setSampleForTrack(sample: Sample) {
-            this.samples[this.currentTrack] = sample
+        public setSampleForTrack(sample: Sample, track: number) {
+            this.samples[track] = sample
             this.drawGrid()
         }
 
@@ -544,10 +560,16 @@ namespace micromusic {
             noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
 
             this.trackData[track][step] = NOTES[noteIndex]
+<<<<<<< HEAD
             this.playNote(
                 this.selectedTrack,
                 this.samples[this.selectedTrack].audio
             )
+=======
+
+            // Play the current note when it is changed
+            // TODO: Implement in main
+>>>>>>> 222b1b5d53567da9fc6039141fa6c66e4a3822d9
         }
 
         private activateNoteSelection() {
@@ -620,8 +642,12 @@ namespace micromusic {
                         else if (
                             this.currentStep > NUM_NOTES - 6 &&
                             this.currentStep < NUM_NOTES - 1
-                        )
-                            this.highlightHeight++
+                        ) {
+                            // Prevent the highlightHeight from exceeding a reasonable maximum
+                            if (this.highlightHeight < 7) {
+                                this.highlightHeight++
+                            }
+                        }
 
                         if (this.currentStep != NUM_NOTES - 1)
                             this.currentStep =
@@ -669,7 +695,7 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "sample_button_small",
-                        x: -36,
+                        x: -34,
                         y: -40,
                         onClick: () => {
                             this.app.popScene()
@@ -686,9 +712,48 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "sample_button_small",
-                        x: 39,
+                        x: 35,
                         y: -40,
-                        onClick: () => {},
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(
+                                new SampleSelectionScreen(
+                                    this.app,
+                                    this,
+                                    this.samples[this.rightTrack]
+                                )
+                            )
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_right",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_left",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
+                        },
                     }),
                 ],
             ])
@@ -740,6 +805,43 @@ namespace micromusic {
                     this.moveCursor(CursorDir.Right)
                 }
             )
+        }
+
+        public save(slot: number) {
+            let sampleNames = [
+                this.samples[0].name,
+                this.samples[1].name,
+                this.samples[2].name,
+                this.samples[3].name,
+            ]
+
+            datalogger.log(
+                datalogger.createCV("track_data_" + slot, this.trackData),
+                datalogger.createCV("samples_" + slot, sampleNames)
+            )
+        }
+
+        public loadFromSave(
+            savedTrackData: string[][],
+            savedSamples: Sample[]
+        ) {
+            // Restore the track data
+            this.trackData = savedTrackData
+
+            // Restore the samples
+            for (
+                let i = 0;
+                i < Math.min(this.samples.length, savedSamples.length);
+                i++
+            ) {
+                this.samples[i] = savedSamples[i]
+            }
+
+            // Reset playback state
+            this.isPlaying = false
+            this.currentStep = 0
+            this.playedNote = 0
+            this.highlightHeight = 0
         }
     }
 }
