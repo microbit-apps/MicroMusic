@@ -144,10 +144,8 @@ namespace micromusic {
             }
         }
 
-        // In a real implementation, we would check if the save exists
-        // For now, this always returns false since we haven't implemented storage
         private checkSaveExists(slot: number): boolean {
-            return false // Placeholder
+            return false // TODO: implement
         }
 
         private loadSave(slot: number) {

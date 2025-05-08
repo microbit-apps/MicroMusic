@@ -57,19 +57,13 @@ namespace micromusic {
         private volume: Setting
         private selectedTrackPos: number
         private bpm: Setting
-        private otherSetting: Setting
         private isSelectingSample: boolean
         private rightTrack: number
         private cursorVisible: boolean
         private playedNote: number
         private hasClickedBack: boolean
 
-        constructor(
-            app: AppInterface,
-            volume?: Setting,
-            samples?: Sample[],
-            trackData?: string[][]
-        ) {
+        constructor(app: AppInterface, volume?: Setting, bpm?: Setting) {
             super(
                 app,
                 function () {
@@ -78,6 +72,17 @@ namespace micromusic {
                 },
                 new GridNavigator()
             )
+
+            if (volume) {
+                this.volume = volume
+            } else {
+                this.volume = new Setting(100)
+            }
+            if (bpm) {
+                this.bpm = bpm
+            } else {
+                this.bpm = new Setting(120)
+            }
 
             this.selectedTrackPos = 0
             this.currentStep = 0
@@ -88,7 +93,6 @@ namespace micromusic {
             this.isSelectingNote = false
             this.volume = new Setting(100)
             this.bpm = new Setting(120)
-            this.otherSetting = new Setting(100)
             this.isSelectingSample = false
             this.playedNote = 0
             this.hasClickedBack = false
@@ -161,14 +165,14 @@ namespace micromusic {
                     x: 70,
                     y: -52,
                     onClick: () => {
+                        this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
                             new SettingsScreen(
                                 this.app,
                                 this,
                                 this.volume,
-                                this.bpm,
-                                this.otherSetting // potentially remove
+                                this.bpm
                             )
                         )
                     },
@@ -319,6 +323,7 @@ namespace micromusic {
 
         private play() {
             if (this.isPlaying == true) return
+            music.setVolume((this.volume.value / 100) * 255)
             this.isPlaying = true
             this.cursorVisible = true
             control.inBackground(() => {
