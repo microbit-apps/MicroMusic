@@ -560,16 +560,10 @@ namespace micromusic {
             noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
 
             this.trackData[track][step] = NOTES[noteIndex]
-<<<<<<< HEAD
             this.playNote(
                 this.selectedTrack,
                 this.samples[this.selectedTrack].audio
             )
-=======
-
-            // Play the current note when it is changed
-            // TODO: Implement in main
->>>>>>> 222b1b5d53567da9fc6039141fa6c66e4a3822d9
         }
 
         private activateNoteSelection() {

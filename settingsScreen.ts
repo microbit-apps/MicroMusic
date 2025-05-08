@@ -88,10 +88,6 @@ namespace micromusic {
                             x: -40,
                             y: 30,
                             onClick: () => {
-<<<<<<< HEAD
-                                if (!this.isSettingChanging)
-                                    this.activateSettingContext(OTHER)
-=======
                                 // Go to Save screen
                                 this.app.popScene()
                                 this.app.pushScene(
@@ -120,7 +116,6 @@ namespace micromusic {
                                         SaveLoadMode.LOAD
                                     )
                                 )
->>>>>>> 222b1b5d53567da9fc6039141fa6c66e4a3822d9
                             },
                         }),
                     ],
