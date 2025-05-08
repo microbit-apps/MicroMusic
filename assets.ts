@@ -13,6 +13,8 @@ namespace micromusic {
 
             if (name == "volume") return icondb.volumeLogo
 
+            if (name == "green_tick_2") return icondb.green_tick_transparent
+
             if (name == "placeholder") return icondb.invisibleButtonPlaceholder
             if (name == "sample_button_small")
                 return icondb.sampleSectionSelectSmall
@@ -248,35 +250,53 @@ namespace icondb {
     `
 
     export const backButton = bmp`
+       . . . . . . . . . . . . . . . . 
+       . . . . . f f . . . . . . . . . 
+       . . . . f f . . . . . . . . . . 
+       . . . f f . . . . . . . . . . . 
+       . . f f f f f f f f f f f f . . 
+       . f f f f f f f f f f f f f f . 
+       . . f f f f f f f f f f f f . . 
+       . . . f f . . . . . . . . . . .
+       . . . . f f . . . . . . . . . . 
+       . . . . . f f . . . . . . . . . 
+       . . . . . . . . . . . . . . . . 
+    `
+
+    export const green_tick_transparent = bmp`
         . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . .
-        . . . . f f . . . . . . . . . .
-        . . . f f . . . . . . . . . . .
-        . . f f . . . . . . . . . . . .
-        . f f f f f f f f f f f f . . .
-        f f f f f f f f f f f f f f . .
-        . f f f f f f f f f f f f . . .
-        . . f f . . . . . . . . . . . .
-        . . . f f . . . . . . . . . . .
-        . . . . f f . . . . . . . . . .
+        . . . . . . . . . . . . . 6 6 .
+        . . . . . . . . . . . . 6 6 6 .
+        . . . . . . . . . . . 6 6 6 6 .
+        . . . . . . . . . . 6 6 6 6 6 .
+        . . . . . . . . . 6 6 6 6 6 . .
+        . 6 . . . . . . 6 6 6 6 6 . . .
+        . 6 6 . . . . 6 6 6 6 6 . . . .
+        . 6 6 6 . . 6 6 6 6 6 . . . . .
+        . 6 6 6 6 6 6 6 6 6 . . . . . .
+        . 6 6 6 6 6 6 6 6 . . . . . . .
+        . 6 6 6 6 6 6 6 . . . . . . . .
+        . . 6 6 6 6 6 . . . . . . . . .
+        . . . 6 6 6 . . . . . . . . . .
         . . . . . . . . . . . . . . . .
     `
 
     export const settingsCogSmall = bmp`
-        . . . . . . . . . . . . . . .
-        . . . . . f f . . . . . . . .
-        . . . . f f f f . . . . . . .
-        . . f f f . . f f f . . . . .
-        . . f f . . . . f f . . . . .
-        . f f . . f f . . f f . . . .
-        . f f . . f f . . f f . . . .
-        . . f f . . . . f f . . . . .
-        . . f f f . . f f f . . . . .
-        . . . . f f f f . . . . . . .
-        . . . . . f f . . . . . . . .
-        . . . . . . . . . . . . . . .
-        . . . . . . . . . . . . . . .
-        . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . 
+        . . . . . . f f . . . . . . 
+        . . . . . f f f f . . . . .
+        . . . f f f . . f f f . . .
+        . . . f f . . . . f f . . .
+        . . f f . . f f . . f f . .
+        . . f f . . f f . . f f . .
+        . . . f f . . . . f f . . .
+        . . . f f f . . f f f . . .
+        . . . . . f f f f . . . . .
+        . . . . . . f f . . . . . .
+        . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . 
     `
 
     export const saveButtonSmall = bmp`

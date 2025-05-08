@@ -425,7 +425,7 @@ namespace micromusic {
                 // )
             }
             this.drawText(-60, -44, this.samples[this.leftTrack].name)
-            this.drawText(15, -44, this.samples[this.rightTrack].name)
+            this.drawText(8, -44, this.samples[this.rightTrack].name)
             Screen.drawLine(0, -44, 0, -36, 0xb)
             Screen.drawLine(0, -20, 0, 42, 0xb)
         }
@@ -783,10 +783,6 @@ namespace micromusic {
             this.currentStep = 0
             this.playedNote = 0
             this.highlightHeight = 0
-
-            // Refresh the UI
-            this.resetNavigator()
-            this.resetControllerEvents()
         }
     }
 }

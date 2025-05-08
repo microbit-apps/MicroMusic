@@ -2,7 +2,7 @@
 
 ## Bugs
 
--   [ ] Change size of small sample selection box on soundtrackerscreen as it's slightly too small for the sample names to fit inside
+-   [x] Change size of small sample selection box on soundtrackerscreen as it's slightly too small for the sample names to fit inside
 -   [ ] Fix getting stuck scrolling (there may not be a fix rn)
 -   [x] Crash when clicking on setting inside of setting button
 
@@ -16,7 +16,7 @@
 -   [x] Way to go through the sounds
 -   [ ] Keyboard screen
 -   [ ] Add saving fully with save names and then add Loading
--   [ ] Need to create a screen for the save loading from flash. Checkout datalogger for saving and loading
+-   [x] Need to create a screen for the save loading from flash. Checkout datalogger for saving and loading
 -   [x] IMPORTANT - Reloading a screen with state, need to get back or store the state somehow
 -   [ ] Octave stuff - Semitones done, for octaves it would be just halving or doubling
 -   [x] Need to sort sample selection
@@ -24,7 +24,9 @@
 -   [ ] Copy paste feature, can copy 8 notes on screen and paste into another part of one sample or to another sample's track
 -   [x] Navigate D-Pad to go down and then new page, up and down to increment through scale
 -   [x] Kind of like select a row, using the cursor, select with a button, then up and down buttons could change the pitch of the note being played
--   [] Enable playing the current note as it is changed
+-   [ ] Enable playing the current note as it is changed
+-   [ ] Enable playing sample sound when it's changed
+-   [ ] Sample groupings
 
 ## Note Scrolling
 
@@ -44,7 +46,9 @@
 
 -   [ ] Saving functionality
 -   [ ] Loading functionality
--   [ ] Load screen and Save screen -> Composite "saves" screen
+-   [ ] If not saved before load, confirmation on load
+-   [ ] Confirmation on save slot to use
+-   [x] Load screen and Save screen -> Composite "saves" screen
 
 ## Assets
 
@@ -52,8 +56,8 @@
 -   [x] Create small settings cog asset
 -   [x] Create small save button asset
 -   [x] Sample selection arrow
-- [ ] Change back button asset to be black (0xf)
-- [ ] Change cog button to be black
+-   [x] Change back button asset to be black (0xf)
+-   [x] Change cog button to be black
 
 ## Other
 

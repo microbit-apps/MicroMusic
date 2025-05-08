@@ -41,6 +41,7 @@ namespace micromusic {
         /* override */ startup() {
             super.startup()
 
+            this.cursor.setBorderThickness(1)
             console.log(this.sampleNames)
             this.resetNavigator()
             // this.resetControllerEvents()
@@ -64,7 +65,7 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "green_tick",
+                        icon: "green_tick_2",
                         x: 60,
                         y: -50,
                         onClick: () => {

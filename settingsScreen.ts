@@ -81,6 +81,7 @@ namespace micromusic {
                             parent: null,
                             style: ButtonStyles.Transparent,
                             icon: "save_button_small",
+                            ariaId: "save",
                             x: -40,
                             y: 30,
                             onClick: () => {
@@ -100,6 +101,7 @@ namespace micromusic {
                             parent: null,
                             style: ButtonStyles.Transparent,
                             icon: "save_button_small",
+                            ariaId: "load",
                             x: 40,
                             y: 30,
                             onClick: () => {

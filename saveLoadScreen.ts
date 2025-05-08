@@ -22,6 +22,7 @@ namespace micromusic {
         private selectedIndex: number
         private saveNames: string[]
         private saveExists: boolean[]
+        private currentRowOffset: number
 
         constructor(
             app: AppInterface,
@@ -43,6 +44,7 @@ namespace micromusic {
             this.selectedIndex = 0
             this.saveNames = []
             this.saveExists = []
+            this.currentRowOffset = 0
 
             // Initialize save names and check if saves exist
             for (let i = 0; i < NUM_SAVE_SLOTS; i++) {
@@ -54,6 +56,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
+            this.checkSaveExists()
             this.resetNavigator()
             this.setControllerEvents()
         }
@@ -144,7 +147,12 @@ namespace micromusic {
             }
         }
 
-        private checkSaveExists(slot: number): boolean {
+        private checkSaveExists(): boolean {
+            // let dataLoggerHeader = datalogger
+            //     .getRows(this.currentRowOffset, 1)
+            //     .split("\n")[0]
+            //     .split(",")
+            // Screen.print(dataLoggerHeader[0], 0, 0)
             return false // TODO: implement
         }
 
@@ -153,6 +161,7 @@ namespace micromusic {
                 // TODO: implement loading (datalogger)
                 console.log("Loading save from slot: " + slot)
 
+                // Temp results
                 // if no log do this
                 const defaultTrackData: string[][] = []
                 for (let i = 0; i < 4; i++) {
@@ -166,10 +175,10 @@ namespace micromusic {
 
                 // TODO: change defaults
                 const samples = [
-                    new Sample("bass", 1),
-                    new Sample("piano", 2),
-                    new Sample("drum", 3),
-                    new Sample("guitar", 4),
+                    new Sample("FunBass_L", 1),
+                    new Sample("FunBass_L", 2),
+                    new Sample("FunBass_L", 3),
+                    new Sample("FunBass_L", 4),
                 ]
 
                 // Load the data into the SoundTrackerScreen
