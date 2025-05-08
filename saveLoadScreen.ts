@@ -126,25 +126,25 @@ namespace micromusic {
         }
 
         private processSlotAction() {
-            if (this.mode === SaveLoadMode.SAVE) {
-                // Save the current track data to the selected slot
-                this.previousScene.save(this.selectedIndex)
-                this.saveExists[this.selectedIndex] = true
-                // Show a save confirmation
-                Screen.print("Saved!", 0, 0, 0x2)
-                basic.pause(500)
-            } else {
-                // Load mode - only proceed if a save exists in the slot
-                if (this.saveExists[this.selectedIndex]) {
-                    this.loadSave(this.selectedIndex)
-                    this.app.popScene()
-                    this.app.pushScene(this.previousScene)
-                } else {
-                    // Indicate there's no save to load
-                    Screen.print("No save found!", 0, 0, 0x2)
-                    basic.pause(500)
-                }
-            }
+            // if (this.mode === SaveLoadMode.SAVE) {
+            //     // Save the current track data to the selected slot
+            //     this.previousScene.save(this.selectedIndex)
+            //     this.saveExists[this.selectedIndex] = true
+            //     // Show a save confirmation
+            //     Screen.print("Saved!", 0, 0, 0x2)
+            //     basic.pause(500)
+            // } else {
+            //     // Load mode - only proceed if a save exists in the slot
+            //     if (this.saveExists[this.selectedIndex]) {
+            //         this.loadSave(this.selectedIndex)
+            //         this.app.popScene()
+            //         this.app.pushScene(this.previousScene)
+            //     } else {
+            //         // Indicate there's no save to load
+            //         Screen.print("No save found!", 0, 0, 0x2)
+            //         basic.pause(500)
+            //     }
+            // }
         }
 
         private checkSaveExists(): boolean {
@@ -156,37 +156,37 @@ namespace micromusic {
             return false // TODO: implement
         }
 
-        private loadSave(slot: number) {
-            try {
-                // TODO: implement loading (datalogger)
-                console.log("Loading save from slot: " + slot)
+        // private loadSave(slot: number) {
+        //     try {
+        //         // TODO: implement loading (datalogger)
+        //         console.log("Loading save from slot: " + slot)
 
-                // Temp results
-                // if no log do this
-                const defaultTrackData: string[][] = []
-                for (let i = 0; i < 4; i++) {
-                    // 4 tracks
-                    defaultTrackData[i] = []
-                    for (let j = 0; j < 128; j++) {
-                        // 128 notes
-                        defaultTrackData[i][j] = j % 2 === 0 ? "-" : "C"
-                    }
-                }
+        //         // Temp results
+        //         // if no log do this
+        //         const defaultTrackData: string[][] = []
+        //         for (let i = 0; i < 4; i++) {
+        //             // 4 tracks
+        //             defaultTrackData[i] = []
+        //             for (let j = 0; j < 128; j++) {
+        //                 // 128 notes
+        //                 defaultTrackData[i][j] = j % 2 === 0 ? "-" : "C"
+        //             }
+        //         }
 
-                // TODO: change defaults
-                const samples = [
-                    new Sample("FunBass_L", 1),
-                    new Sample("FunBass_L", 2),
-                    new Sample("FunBass_L", 3),
-                    new Sample("FunBass_L", 4),
-                ]
+        //         // TODO: change defaults
+        //         const samples = [
+        //             new Sample("FunBass_L", 1),
+        //             new Sample("FunBass_L", 2),
+        //             new Sample("FunBass_L", 3),
+        //             new Sample("FunBass_L", 4),
+        //         ]
 
-                // Load the data into the SoundTrackerScreen
-                this.previousScene.loadFromSave(defaultTrackData, samples)
-            } catch (e) {
-                console.log("Error loading save: " + e)
-            }
-        }
+        //         // Load the data into the SoundTrackerScreen
+        //         this.previousScene.loadFromSave(defaultTrackData, samples)
+        //     } catch (e) {
+        //         console.log("Error loading save: " + e)
+        //     }
+        // }
 
         draw() {
             Screen.fillRect(
@@ -232,11 +232,7 @@ namespace micromusic {
                     slotText += " [Empty]"
                 }
 
-                // Draw slot text with an indicator for the selected item
                 if (slotIndex === this.selectedIndex) {
-                    // Draw the arrow icon next to the selected item
-                    const arrow = icons.get("sample_selection_arrow")
-                    // You could draw the arrow here if needed
                     Screen.print(slotText, -36, y, color)
                 } else {
                     Screen.print(slotText, -36, y, color)
