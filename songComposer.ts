@@ -65,13 +65,13 @@ namespace micromusic {
         "-": null,
     }
 
-    type note = [string, number]
+    type Note = [string, number]
 
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
         private static instance: SoundTrackerScreen | null = null
         private currentStep: number
         private currentTrack: number
-        private trackData: note[][]
+        private trackData: Note[][]
         private controlBtns: Button[]
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
@@ -533,13 +533,22 @@ namespace micromusic {
                 // Draw left track
                 let x = startX + 0 * cellWidth
                 let noteTuple = this.trackData[this.leftTrack][tempStep]
-                let note = `${noteTuple[0]} ${noteTuple[1]}`
+                let note: any
+                if ((noteTuple as any[])[0] != "-") {
+                    note = `${(noteTuple as any[])[0]}${(noteTuple as any[])[1]}`
+                } else {
+                    note = "-"
+                }
                 Screen.print(note, x, y, 0, font)
 
                 // Draw right track
                 x = startX + 1 * cellWidth
                 noteTuple = this.trackData[this.leftTrack][tempStep]
-                note = `${noteTuple[0]} ${noteTuple[1]}`
+                if ((noteTuple as any[])[0] != "-") {
+                    note = `${(noteTuple as any[])[0]}${(noteTuple as any[])[1]}`
+                } else {
+                    note = "-"
+                }
                 Screen.print(note, x, y, 0, font)
             }
 
