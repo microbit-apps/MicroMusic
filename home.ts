@@ -47,16 +47,7 @@ namespace micromusic {
                         ariaId: "Saved Songs",
                         x: 0,
                         y,
-                        onClick: () => {
-                            this.app.popScene()
-                            this.app.pushScene(
-                                new SaveLoadScreen(
-                                    this.app,
-                                    SoundTrackerScreen.getInstance(this.app),
-                                    SaveLoadMode.LOAD
-                                )
-                            )
-                        },
+                        onClick: () => {},
                     })),
                     (this.distributedLoggingBtn = new Button({
                         parent: null,
