@@ -1,7 +1,15 @@
 ### TODO
 
+Console.log over serial
+
+-   More than 1 bank of track data important one, can have them playing after eachother
+-   Want a nice strong evaluation, start thinking about that now
+-   Playing at different octaves
+-   Switch through octaves on same number
+
 ## Bugs
 
+-   [ ] Pressing back while playing breaks things
 -   [x] Change size of small sample selection box on soundtrackerscreen as it's slightly too small for the sample names to fit inside
 -   [ ] Fix getting stuck scrolling (there may not be a fix rn)
 -   [x] Crash when clicking on setting inside of setting button

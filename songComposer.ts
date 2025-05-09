@@ -66,6 +66,7 @@ namespace micromusic {
     }
 
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
+        private static instance: SoundTrackerScreen | null = null
         private currentStep: number
         private currentTrack: number
         private trackData: string[][]
@@ -88,7 +89,11 @@ namespace micromusic {
         private playedNote: number
         private hasClickedBack: boolean
 
-        constructor(app: AppInterface, volume?: Setting, bpm?: Setting) {
+        private constructor(
+            app: AppInterface,
+            volume?: Setting,
+            bpm?: Setting
+        ) {
             super(
                 app,
                 function () {
@@ -142,6 +147,23 @@ namespace micromusic {
             }
         }
 
+        public static getInstance(
+            app?: AppInterface,
+            volume?: Setting,
+            bpm?: Setting
+        ) {
+            if (!SoundTrackerScreen.instance) {
+                if (app === undefined) {
+                    console.error(
+                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
+                    )
+                }
+                SoundTrackerScreen.instance = new SoundTrackerScreen(app)
+            }
+
+            return SoundTrackerScreen.instance
+        }
+
         /* override */ startup() {
             super.startup()
 
@@ -193,7 +215,7 @@ namespace micromusic {
                         this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
-                            new SettingsScreen(
+                            SettingsScreen.getInstance(
                                 this.app,
                                 this,
                                 this.volume,
@@ -239,6 +261,10 @@ namespace micromusic {
         }
 
         private backConfirmation() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
             this.hasClickedBack = true
             const ic = icons.get("placeholder")
             this.navigator.setBtns([
@@ -799,43 +825,6 @@ namespace micromusic {
                     this.moveCursor(CursorDir.Right)
                 }
             )
-        }
-
-        public save(slot: number) {
-            let sampleNames = [
-                this.samples[0].name,
-                this.samples[1].name,
-                this.samples[2].name,
-                this.samples[3].name,
-            ]
-
-            datalogger.log(
-                datalogger.createCV("track_data_" + slot, this.trackData),
-                datalogger.createCV("samples_" + slot, sampleNames)
-            )
-        }
-
-        public loadFromSave(
-            savedTrackData: string[][],
-            savedSamples: Sample[]
-        ) {
-            // Restore the track data
-            this.trackData = savedTrackData
-
-            // Restore the samples
-            for (
-                let i = 0;
-                i < Math.min(this.samples.length, savedSamples.length);
-                i++
-            ) {
-                this.samples[i] = savedSamples[i]
-            }
-
-            // Reset playback state
-            this.isPlaying = false
-            this.currentStep = 0
-            this.playedNote = 0
-            this.highlightHeight = 0
         }
     }
 }

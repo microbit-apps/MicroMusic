@@ -35,7 +35,9 @@ namespace micromusic {
                         y,
                         onClick: () => {
                             this.app.popScene()
-                            this.app.pushScene(new SoundTrackerScreen(this.app))
+                            this.app.pushScene(
+                                SoundTrackerScreen.getInstance(this.app)
+                            )
                         },
                     })),
                     (this.recordDataBtn = new Button({
@@ -45,16 +47,7 @@ namespace micromusic {
                         ariaId: "Saved Songs",
                         x: 0,
                         y,
-                        onClick: () => {
-                            this.app.popScene()
-                            this.app.pushScene(
-                                new SaveLoadScreen(
-                                    this.app,
-                                    new SoundTrackerScreen(this.app),
-                                    SaveLoadMode.LOAD
-                                )
-                            )
-                        },
+                        onClick: () => {},
                     })),
                     (this.distributedLoggingBtn = new Button({
                         parent: null,
@@ -66,7 +59,11 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                new SettingsScreen(this.app, this, this.volume)
+                                SettingsScreen.getInstance(
+                                    this.app,
+                                    this,
+                                    this.volume
+                                )
                             )
                         },
                     })),

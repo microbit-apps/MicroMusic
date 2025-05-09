@@ -18,8 +18,9 @@ namespace micromusic {
         private allBtns: Button[][]
         private settings: Setting[]
         private isSettingChanging: boolean
+        private static instance: SettingsScreen | null = null
 
-        constructor(
+        private constructor(
             app: AppInterface,
             previousScene: CursorScene,
             volume?: Setting,
@@ -80,47 +81,6 @@ namespace micromusic {
                     ],
                     [
                         new Button({
-                            // save button
-                            parent: null,
-                            style: ButtonStyles.Transparent,
-                            icon: "save_button_small",
-                            ariaId: "save",
-                            x: -40,
-                            y: 30,
-                            onClick: () => {
-                                // Go to Save screen
-                                this.app.popScene()
-                                this.app.pushScene(
-                                    new SaveLoadScreen(
-                                        this.app,
-                                        <SoundTrackerScreen>this.previousScene,
-                                        SaveLoadMode.SAVE
-                                    )
-                                )
-                            },
-                        }),
-                        new Button({
-                            // load button
-                            parent: null,
-                            style: ButtonStyles.Transparent,
-                            icon: "save_button_small",
-                            ariaId: "load",
-                            x: 40,
-                            y: 30,
-                            onClick: () => {
-                                this.app.popScene()
-                                this.app.pushScene(
-                                    new SaveLoadScreen(
-                                        this.app,
-                                        <SoundTrackerScreen>this.previousScene,
-                                        SaveLoadMode.LOAD
-                                    )
-                                )
-                            },
-                        }),
-                    ],
-                    [
-                        new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
                             icon: "back_arrow",
@@ -136,6 +96,25 @@ namespace micromusic {
                     ],
                 ])
             )
+        }
+
+        public static getInstance(
+            app?: AppInterface,
+            previousScene?: CursorScene,
+            volume?: Setting,
+            bpm?: Setting,
+            other?: Setting
+        ) {
+            if (!SettingsScreen.instance) {
+                if (app === undefined) {
+                    console.error(
+                        "Singleton not initialized. Call with parameters first."
+                    )
+                }
+                SettingsScreen.instance = new SettingsScreen(app, previousScene)
+            }
+
+            return SettingsScreen.instance
         }
 
         private activateSettingContext(setting: number) {
