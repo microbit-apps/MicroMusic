@@ -6,6 +6,7 @@ Console.log over serial
 -   Want a nice strong evaluation, start thinking about that now
 -   Playing at different octaves
 -   Switch through octaves on same number
+-   Pressing back while playing makes it stuck
 
 ## Bugs
 

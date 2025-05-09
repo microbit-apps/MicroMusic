@@ -50,7 +50,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                new SaveLoadScreen(
+                                SaveLoadScreen.getInstance(
                                     this.app,
                                     SoundTrackerScreen.getInstance(this.app),
                                     SaveLoadMode.LOAD

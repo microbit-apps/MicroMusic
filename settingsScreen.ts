@@ -87,17 +87,17 @@ namespace micromusic {
                             y: 30,
                             onClick: () => {
                                 // Go to Save screen
-                                // this.app.popScene()
-                                // this.app.pushScene(
-                                //     new SaveLoadScreen(
-                                //         this.app,
-                                //         <SoundTrackerScreen>this.previousScene,
-                                //         SaveLoadMode.SAVE
-                                //     )
-                                // )
-                                ;(<SoundTrackerScreen>(
-                                    this.previousScene
-                                )).openSaveScreen()
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    SaveLoadScreen.getInstance(
+                                        this.app,
+                                        <SoundTrackerScreen>this.previousScene,
+                                        SaveLoadMode.SAVE
+                                    )
+                                )
+                                // ;(<SoundTrackerScreen>(
+                                //     this.previousScene
+                                // )).openSaveScreen()
                             },
                         }),
                         new Button({
@@ -111,7 +111,7 @@ namespace micromusic {
                             onClick: () => {
                                 this.app.popScene()
                                 this.app.pushScene(
-                                    new SaveLoadScreen(
+                                    SaveLoadScreen.getInstance(
                                         this.app,
                                         <SoundTrackerScreen>this.previousScene,
                                         SaveLoadMode.LOAD

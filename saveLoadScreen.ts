@@ -18,14 +18,15 @@ namespace micromusic {
 
     export class SaveLoadScreen extends CursorSceneWithPriorPage {
         private previousScene: CursorScene
-        private mode: SaveLoadMode
+        private static mode: SaveLoadMode
         private selectedIndex: number
         private saveNames: string[]
         private saveExists: boolean[]
         private static instance: SaveLoadScreen | null = null
         private currentRowOffset: number
+        private dataLoggerHeader: string[]
 
-        constructor(
+        private constructor(
             app: AppInterface,
             previousScene: SoundTrackerScreen,
             mode: SaveLoadMode
@@ -41,7 +42,7 @@ namespace micromusic {
             )
 
             this.previousScene = previousScene
-            this.mode = mode
+            SaveLoadScreen.mode = mode
             this.selectedIndex = 0
             this.saveNames = []
             this.saveExists = []
@@ -55,18 +56,31 @@ namespace micromusic {
             }
         }
 
+        private static setMode(mode: SaveLoadMode) {
+            SaveLoadScreen.mode = mode
+        }
+
         public static getInstance(
             app?: AppInterface,
             previousScene?: CursorScene,
             mode?: SaveLoadMode
         ) {
             if (!SaveLoadScreen.instance) {
-                if (app === undefined) {
+                if (!app) {
                     console.error(
-                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
+                        "SaveLoadScreen singleton not initialized. Call with parameters first."
                     )
                 }
-                SaveLoadScreen.instance = SaveLoadScreen.getInstance(app)
+
+                SaveLoadScreen.instance = new SaveLoadScreen(
+                    app,
+                    <SoundTrackerScreen>previousScene,
+                    mode
+                )
+            }
+
+            if (mode) {
+                SaveLoadScreen.setMode(mode)
             }
 
             return SaveLoadScreen.instance
@@ -76,7 +90,6 @@ namespace micromusic {
             super.startup()
             this.checkSaveExists()
             this.resetNavigator()
-            // this.setControllerEvents()
         }
 
         private resetNavigator() {
@@ -107,104 +120,72 @@ namespace micromusic {
             ])
         }
 
-        // private setControllerEvents() {
-        //     control.onEvent(
-        //         ControllerButtonEvent.Pressed,
-        //         controller.up.id,
-        //         () => {
-        //             this.selectedIndex -= 1
-        //             if (this.selectedIndex < 0)
-        //                 this.selectedIndex = NUM_SAVE_SLOTS - 1
-        //         }
-        //     )
-        //     control.onEvent(
-        //         ControllerButtonEvent.Pressed,
-        //         controller.down.id,
-        //         () => {
-        //             this.selectedIndex += 1
-        //             if (this.selectedIndex >= NUM_SAVE_SLOTS)
-        //                 this.selectedIndex = 0
-        //         }
-        //     )
-        //     control.onEvent(
-        //         ControllerButtonEvent.Pressed,
-        //         controller.A.id,
-        //         () => {
-        //             this.processSlotAction()
-        //         }
-        //     )
-        //     control.onEvent(
-        //         ControllerButtonEvent.Pressed,
-        //         controller.B.id,
-        //         () => {
-        //             this.app.popScene()
-        //             this.app.pushScene(this.previousScene)
-        //         }
-        //     )
-        // }
-
         private processSlotAction() {
-            // if (this.mode === SaveLoadMode.SAVE) {
-            //     // Save the current track data to the selected slot
-            //     this.previousScene.save(this.selectedIndex)
-            //     this.saveExists[this.selectedIndex] = true
-            //     // Show a save confirmation
-            //     Screen.print("Saved!", 0, 0, 0x2)
-            //     basic.pause(500)
-            // } else {
-            //     // Load mode - only proceed if a save exists in the slot
-            //     if (this.saveExists[this.selectedIndex]) {
-            //         this.loadSave(this.selectedIndex)
-            //         this.app.popScene()
-            //         this.app.pushScene(this.previousScene)
-            //     } else {
-            //         // Indicate there's no save to load
-            //         Screen.print("No save found!", 0, 0, 0x2)
-            //         basic.pause(500)
-            //     }
-            // }
+            if (SaveLoadScreen.mode === SaveLoadMode.SAVE) {
+                // Save the current track data to the selected slot
+                ;(<SoundTrackerScreen>this.previousScene).save(
+                    this.selectedIndex
+                )
+                this.saveExists[this.selectedIndex] = true
+                // Show a save confirmation
+                Screen.print("Saved!", 0, 0, 0x2)
+                basic.pause(500)
+            } else {
+                // Load mode - only proceed if a save exists in the slot
+                if (this.saveExists[this.selectedIndex]) {
+                    this.loadSave(this.selectedIndex)
+                    this.app.popScene()
+                    this.app.pushScene(this.previousScene)
+                } else {
+                    // Indicate there's no save to load
+                    Screen.print("No save found!", 0, 0, 0x2)
+                    basic.pause(500)
+                }
+            }
         }
 
         private checkSaveExists(): boolean {
-            // let dataLoggerHeader = datalogger
-            //     .getRows(this.currentRowOffset, 1)
-            //     .split("\n")[0]
-            //     .split(",")
-            // Screen.print(dataLoggerHeader[0], 0, 0)
+            this.dataLoggerHeader = datalogger
+                .getRows(this.currentRowOffset, 1)
+                .split("\n")[0]
+                .split(",")
+
             return false // TODO: implement
         }
 
-        // private loadSave(slot: number) {
-        //     try {
-        //         // TODO: implement loading (datalogger)
-        //         console.log("Loading save from slot: " + slot)
+        private loadSave(slot: number) {
+            try {
+                // TODO: implement loading (datalogger)
+                console.log("Loading save from slot: " + slot)
 
-        //         // Temp results
-        //         // if no log do this
-        //         const defaultTrackData: string[][] = []
-        //         for (let i = 0; i < 4; i++) {
-        //             // 4 tracks
-        //             defaultTrackData[i] = []
-        //             for (let j = 0; j < 128; j++) {
-        //                 // 128 notes
-        //                 defaultTrackData[i][j] = j % 2 === 0 ? "-" : "C"
-        //             }
-        //         }
+                // Temp results
+                // if no log do this
+                const defaultTrackData: string[][] = []
+                for (let i = 0; i < 4; i++) {
+                    // 4 tracks
+                    defaultTrackData[i] = []
+                    for (let j = 0; j < 128; j++) {
+                        // 128 notes
+                        defaultTrackData[i][j] = j % 2 === 0 ? "-" : "C"
+                    }
+                }
 
-        //         // TODO: change defaults
-        //         const samples = [
-        //             new Sample("FunBass_L", 1),
-        //             new Sample("FunBass_L", 2),
-        //             new Sample("FunBass_L", 3),
-        //             new Sample("FunBass_L", 4),
-        //         ]
-
-        //         // Load the data into the SoundTrackerScreen
-        //         this.previousScene.loadFromSave(defaultTrackData, samples)
-        //     } catch (e) {
-        //         console.log("Error loading save: " + e)
-        //     }
-        // }
+                // TODO: change defaults
+                const samples = [
+                    new Sample("FunBass_L", 1),
+                    new Sample("FunBass_L", 2),
+                    new Sample("FunBass_L", 3),
+                    new Sample("FunBass_L", 4),
+                ]
+                // Load the data into the SoundTrackerScreen
+                ;(<SoundTrackerScreen>this.previousScene).loadFromSave(
+                    defaultTrackData,
+                    samples
+                )
+            } catch (e) {
+                console.log("Error loading save: " + e)
+            }
+        }
 
         draw() {
             Screen.fillRect(
@@ -216,7 +197,7 @@ namespace micromusic {
             )
 
             const title =
-                this.mode === SaveLoadMode.SAVE
+                SaveLoadScreen.mode === SaveLoadMode.SAVE
                     ? "Save Composition"
                     : "Load Composition"
             Screen.print(title, -40, -50, 0x1)
@@ -246,7 +227,7 @@ namespace micromusic {
                 let slotText = this.saveNames[slotIndex]
                 if (this.saveExists[slotIndex]) {
                     slotText += " [Saved]"
-                } else if (this.mode === SaveLoadMode.LOAD) {
+                } else if (SaveLoadScreen.mode === SaveLoadMode.LOAD) {
                     slotText += " [Empty]"
                 }
 
@@ -263,6 +244,10 @@ namespace micromusic {
             //         ? "Press A to save"
             //         : "Press A to load"
             // Screen.print(instruction, -36, 40, 0)
+
+            if (this.dataLoggerHeader) {
+                Screen.print(this.dataLoggerHeader[0], 0, 0)
+            }
 
             // Draw the cursor
             this.cursor.draw()

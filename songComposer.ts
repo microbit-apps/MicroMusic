@@ -128,7 +128,7 @@ namespace micromusic {
             bpm?: Setting
         ) {
             if (!SoundTrackerScreen.instance) {
-                if (app === undefined) {
+                if (!app) {
                     console.error(
                         "SoundTrackerScreen singleton not initialized. Call with parameters first."
                     )
@@ -247,6 +247,7 @@ namespace micromusic {
                         x: -22,
                         y: 18,
                         onClick: () => {
+                            this.hasClickedBack = false
                             this.app.popScene()
                             this.app.pushScene(new Home(this.app))
                         },
@@ -811,7 +812,7 @@ namespace micromusic {
         public openSaveScreen() {
             this.app.popScene()
             this.app.pushScene(
-                new SaveLoadScreen(this.app, this, SaveLoadMode.SAVE)
+                SaveLoadScreen.getInstance(this.app, this, SaveLoadMode.SAVE)
             )
         }
     }
