@@ -236,6 +236,10 @@ namespace micromusic {
         }
 
         private backConfirmation() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
             this.hasClickedBack = true
             const ic = icons.get("placeholder")
             this.navigator.setBtns([
@@ -279,8 +283,7 @@ namespace micromusic {
                         x: 0,
                         y: -40,
                         onClick: () => {
-                            // this.activateSampleSelection()
-                            // this.openSaveScreen()
+                            this.activateSampleSelection()
                         },
                     })),
                     new Button({
@@ -768,50 +771,6 @@ namespace micromusic {
                     this.backConfirmation()
                     this.moveCursor(CursorDir.Right)
                 }
-            )
-        }
-
-        public save(slot: number) {
-            let sampleNames = [
-                this.samples[0].name,
-                this.samples[1].name,
-                this.samples[2].name,
-                this.samples[3].name,
-            ]
-
-            datalogger.log(
-                datalogger.createCV("track_data_" + slot, this.trackData),
-                datalogger.createCV("samples_" + slot, sampleNames)
-            )
-        }
-
-        public loadFromSave(
-            savedTrackData: string[][],
-            savedSamples: Sample[]
-        ) {
-            // Restore the track data
-            this.trackData = savedTrackData
-
-            // Restore the samples
-            for (
-                let i = 0;
-                i < Math.min(this.samples.length, savedSamples.length);
-                i++
-            ) {
-                this.samples[i] = savedSamples[i]
-            }
-
-            // Reset playback state
-            this.isPlaying = false
-            this.currentStep = 0
-            this.playedNote = 0
-            this.highlightHeight = 0
-        }
-
-        public openSaveScreen() {
-            this.app.popScene()
-            this.app.pushScene(
-                new SaveLoadScreen(this.app, this, SaveLoadMode.SAVE)
             )
         }
     }

@@ -9,6 +9,7 @@ Console.log over serial
 
 ## Bugs
 
+-   [ ] Pressing back while playing breaks things
 -   [x] Change size of small sample selection box on soundtrackerscreen as it's slightly too small for the sample names to fit inside
 -   [ ] Fix getting stuck scrolling (there may not be a fix rn)
 -   [x] Crash when clicking on setting inside of setting button
