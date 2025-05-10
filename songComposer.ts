@@ -40,11 +40,18 @@ namespace micromusic {
         "Bb",
     ]
 
+    enum NoteDirection {
+        UP = 1,
+        DOWN = -1,
+    }
+
+    type Note = [string, number]
+
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
         private static instance: SoundTrackerScreen | null = null
         private currentStep: number
         private currentTrack: number
-        private trackData: string[][]
+        private trackData: Note[][]
         private controlBtns: Button[]
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
@@ -117,8 +124,8 @@ namespace micromusic {
             for (let i = 0; i < NUM_TRACKS; i++) {
                 this.trackData[i] = []
                 for (let j = 0; j < NUM_NOTES; j++) {
-                    if (j % 2 == 0) this.trackData[i][j] = "-"
-                    else this.trackData[i][j] = "C"
+                    this.trackData[i][j] = ["-", 3]
+                    console.log(this.trackData[i][j])
                 }
             }
         }
@@ -479,12 +486,27 @@ namespace micromusic {
 
                 // Draw left track
                 let x = startX + 0 * cellWidth
-                let note = this.trackData[this.leftTrack][tempStep]
+                let noteTuple = this.trackData[this.leftTrack][tempStep]
+                let note: any
+                if ((noteTuple as any[])[0] != "-") {
+                    note = `${(noteTuple as any[])[0]}${
+                        (noteTuple as any[])[1]
+                    }`
+                } else {
+                    note = "-"
+                }
                 Screen.print(note, x, y, 0, font)
 
                 // Draw right track
                 x = startX + 1 * cellWidth
-                note = this.trackData[this.rightTrack][tempStep]
+                noteTuple = this.trackData[this.leftTrack][tempStep]
+                if ((noteTuple as any[])[0] != "-") {
+                    note = `${(noteTuple as any[])[0]}${
+                        (noteTuple as any[])[1]
+                    }`
+                } else {
+                    note = "-"
+                }
                 Screen.print(note, x, y, 0, font)
             }
 
@@ -527,17 +549,54 @@ namespace micromusic {
             Screen.print(text, x, y, colour, _font)
         }
 
-        private changeNote(direction: number) {
-            const track = this.selectedTrack
-            const step = this.currentStep
+        private changeNote(direction: NoteDirection) {
+            let octave = (
+                this.trackData[this.selectedTrack][this.currentStep] as any[]
+            )[1]
+            let note = (
+                this.trackData[this.selectedTrack][this.currentStep] as any[]
+            )[0]
 
-            let noteIndex = NOTES.indexOf(this.trackData[track][step])
-            noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
+            let noteIndex = NOTES.indexOf(note)
+            noteIndex = noteIndex + direction
 
-            this.trackData[track][step] = NOTES[noteIndex]
+            // if index > length - 1
 
-            // Play the current note when it is changed
-            // TODO: Implement in main
+            switch (direction) {
+                case NoteDirection.UP: {
+                    if (!(noteIndex > NOTES.length - 1)) {
+                        break
+                    }
+
+                    noteIndex = 0
+                    if (octave == 4) {
+                        octave = 2
+                    } else {
+                        octave += 1
+                    }
+                }
+                case NoteDirection.DOWN: {
+                    // If index < 0, octave --, index = length-1
+                    // if octave == 2, octave = 4, index = length -1
+                    if (!(noteIndex < 0)) {
+                        break
+                    }
+                    noteIndex = NOTES.length - 1
+
+                    if (octave == 2) {
+                        octave = 4
+                    } else {
+                        octave -= 1
+                    }
+                }
+            }
+
+            this.trackData[this.selectedTrack][this.currentStep] = [
+                NOTES[noteIndex],
+                octave,
+            ]
+
+            console.log(this.trackData[this.selectedTrack][this.currentStep])
         }
 
         private activateNoteSelection() {
