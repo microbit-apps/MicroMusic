@@ -380,12 +380,11 @@ namespace micromusic {
 
         private play() {
             if (this.isPlaying == true) return
-            music.setVolume((this.volume.value / 100) * 255)
             this.isPlaying = true
             this.cursorVisible = true
 
             samples.enable()
-            music.setVolume(100)
+            music.setVolume((this.volume.value / 100) * 255)
 
             control.inBackground(() => {
                 const tickSpeed = 60000 / this.bpm.value
