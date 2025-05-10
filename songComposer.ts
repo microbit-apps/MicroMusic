@@ -95,6 +95,7 @@ namespace micromusic {
         private cursorVisible: boolean
         private playedNote: number
         private hasClickedBack: boolean
+        private octave: number
 
         private constructor(
             app: AppInterface,
