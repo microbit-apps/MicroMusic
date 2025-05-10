@@ -94,12 +94,6 @@ namespace micromusic {
         private hasClickedBack: boolean
         private octave: number
 
-        private clipboard: Note[] = [] // Store notes for copy-paste
-        private selectionStartStep: number = -1
-        private isSelectingForCopy: boolean = false
-        private selectionEndStep: number = -1
-        private sourceTrackForCopy: number = -1
-
         private constructor(
             app: AppInterface,
             volume?: Setting,
@@ -138,11 +132,6 @@ namespace micromusic {
             this.playedNote = 0
             this.hasClickedBack = false
             this.trackData = []
-            this.clipboard = []
-            this.selectionStartStep = -1
-            this.selectionEndStep = -1
-            this.isSelectingForCopy = false
-            this.sourceTrackForCopy = -1
 
             this.samples = [
                 // TODO: Temporary
@@ -157,6 +146,7 @@ namespace micromusic {
                 this.trackData[i] = []
                 for (let j = 0; j < NUM_NOTES; j++) {
                     this.trackData[i][j] = ["-", 3]
+                    console.log(this.trackData[i][j])
                 }
             }
         }
@@ -344,16 +334,6 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: "copy_button",
-                        x: 0,
-                        y: -25,
-                        onClick: () => {
-                            this.activateCopyMode()
-                        },
-                    }),
-                    new Button({
-                        parent: null,
-                        style: ButtonStyles.Transparent,
                         icon: "sample_selection_arrow_left",
                         x: -70,
                         y: -40,
@@ -434,11 +414,16 @@ namespace micromusic {
 
         private playNote(src: number, buf: Buffer) {
             const offset =
-                SEMITONE_OFFSETS[this.trackData[src][this.playedNote][0]]
+                SEMITONE_OFFSETS[
+                    (this.trackData[src][this.playedNote] as any[])[0]
+                ]
             if (offset == null) return // "-" or invalid note
 
             const multiplier =
-                2 ** (this.trackData[src][this.playedNote][1] - 3 + offset / 12)
+                2 **
+                ((this.trackData[src][this.playedNote] as any[])[1] -
+                    3 +
+                    offset / 12)
             const rate = 8800 * multiplier
 
             samples.setSampleRate(src, rate)
@@ -565,68 +550,13 @@ namespace micromusic {
 
                 // Draw right track
                 x = startX + 1 * cellWidth
-                noteTuple = this.trackData[this.rightTrack][tempStep]
+                noteTuple = this.trackData[this.leftTrack][tempStep]
                 if ((noteTuple as any[])[0] != "-") {
                     note = `${(noteTuple as any[])[0]}${(noteTuple as any[])[1]}`
                 } else {
                     note = "-"
                 }
                 Screen.print(note, x, y, 0, font)
-
-                // Highlight selected notes (for copy-paste)
-                if (
-                    this.isSelectingForCopy &&
-                    this.selectionStartStep !== -1 &&
-                    ((this.selectionEndStep === -1 &&
-                        tempStep === this.selectionStartStep) ||
-                        (this.selectionEndStep !== -1 &&
-                            tempStep >=
-                                Math.min(
-                                    this.selectionStartStep,
-                                    this.selectionEndStep,
-                                ) &&
-                            tempStep <=
-                                Math.max(
-                                    this.selectionStartStep,
-                                    this.selectionEndStep,
-                                ))) &&
-                    this.leftTrack === this.sourceTrackForCopy
-                ) {
-                    Screen.drawRect(
-                        startX + 0 * (cellWidth + 20) - 42,
-                        y - 1,
-                        70,
-                        10,
-                        0x7, // Different color for selection
-                    )
-                }
-
-                if (
-                    this.isSelectingForCopy &&
-                    this.selectionStartStep !== -1 &&
-                    ((this.selectionEndStep === -1 &&
-                        tempStep === this.selectionStartStep) ||
-                        (this.selectionEndStep !== -1 &&
-                            tempStep >=
-                                Math.min(
-                                    this.selectionStartStep,
-                                    this.selectionEndStep,
-                                ) &&
-                            tempStep <=
-                                Math.max(
-                                    this.selectionStartStep,
-                                    this.selectionEndStep,
-                                ))) &&
-                    this.rightTrack === this.sourceTrackForCopy
-                ) {
-                    Screen.drawRect(
-                        startX + 1 * (cellWidth + 20) - 42,
-                        y - 1,
-                        70,
-                        10,
-                        0x7, // Different color for selection
-                    )
-                }
             }
 
             if (this.isPlaying) {
@@ -669,36 +599,49 @@ namespace micromusic {
         }
 
         private changeNote(direction: NoteDirection) {
-            let octave = this.trackData[this.selectedTrack][this.currentStep][1]
-            let note = this.trackData[this.selectedTrack][this.currentStep][0]
+            let octave = (
+                this.trackData[this.selectedTrack][this.currentStep] as any[]
+            )[1]
+            let note = (
+                this.trackData[this.selectedTrack][this.currentStep] as any[]
+            )[0]
 
             let noteIndex = NOTES.indexOf(note)
             noteIndex = noteIndex + direction
 
-            if (direction == NoteDirection.UP) {
-                if (noteIndex > NOTES.length - 1 && octave < 4) {
+            switch (direction) {
+                case NoteDirection.UP: {
+                    if (!(noteIndex > NOTES.length - 1)) {
+                        break
+                    }
+
                     noteIndex = 0
-                    octave++
-                } else {
-                    noteIndex = 0
-                    octave = 2
+                    if (octave == 4) {
+                        octave = 2
+                    } else {
+                        octave += 1
+                    }
                 }
-            } else {
-                if (noteIndex < 0 && octave > 2) {
+                case NoteDirection.DOWN: {
+                    if (!(noteIndex < 0)) {
+                        break
+                    }
                     noteIndex = NOTES.length - 1
-                    octave--
-                } else {
-                    noteIndex = NOTES.length - 1
-                    octave = 4
+
+                    if (octave == 2) {
+                        octave = 4
+                    } else {
+                        octave -= 1
+                    }
                 }
             }
 
-            this.trackData[this.selectedTrack][this.currentStep][0] =
-                NOTES[noteIndex]
-            this.playNote(
-                this.selectedTrack,
-                this.samples[this.selectedTrack].audioBuffer,
-            )
+            this.trackData[this.selectedTrack][this.currentStep] = [
+                NOTES[noteIndex],
+                octave,
+            ]
+
+            console.log(this.trackData[this.selectedTrack][this.currentStep])
         }
 
         private activateNoteSelection() {
@@ -707,46 +650,14 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.right.id,
                 () => {
-                    if (this.isSelectingForCopy) {
-                        if (this.selectionEndStep !== -1) {
-                            // When in paste mode (after copying), right changes track
-                            this.selectedTrackPos =
-                                (this.selectedTrackPos + 1) % 2
-                            this.selectedTrack =
-                                this.selectedTrackPos === 0
-                                    ? this.leftTrack
-                                    : this.rightTrack
-                            this.drawGrid()
-                        } else {
-                            // When selecting, change note
-                            this.changeNote(1)
-                        }
-                    } else {
-                        this.changeNote(1)
-                    }
+                    this.changeNote(1)
                 },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
                 () => {
-                    if (this.isSelectingForCopy) {
-                        if (this.selectionEndStep !== -1) {
-                            // When in paste mode (after copying), left changes track
-                            this.selectedTrackPos =
-                                (this.selectedTrackPos + 1) % 2
-                            this.selectedTrack =
-                                this.selectedTrackPos === 0
-                                    ? this.leftTrack
-                                    : this.rightTrack
-                            this.drawGrid()
-                        } else {
-                            // When selecting, change note
-                            this.changeNote(-1)
-                        }
-                    } else {
-                        this.changeNote(-1)
-                    }
+                    this.changeNote(-1)
                 },
             )
             control.onEvent(
@@ -838,87 +749,13 @@ namespace micromusic {
                 controller.B.id,
                 () => {
                     this.resetControllerEvents()
-
-                    if (this.isSelectingForCopy) {
-                        // Cancel copy mode
-                        this.isSelectingForCopy = false
-                        this.selectionStartStep = -1
-                        this.selectionEndStep = -1
-                        this.sourceTrackForCopy = -1
-                        return
-                    }
-
                     this.isSelectingNote = false
                     this.currentStep = this.currentStep - this.highlightHeight
                     this.highlightHeight = 0
                     // Code for setting the buttons again
                 },
             )
-
-            // A button for confirming copy or paste
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
-                    if (this.isSelectingForCopy) {
-                        if (this.selectionStartStep === -1) {
-                            // Start selection
-                            this.selectionStartStep =
-                                this.currentStep - this.highlightHeight
-                            this.sourceTrackForCopy = this.selectedTrack
-                            this.drawGrid()
-                        } else if (this.selectionEndStep === -1) {
-                            // End selection and copy
-                            this.selectionEndStep =
-                                this.currentStep - this.highlightHeight
-
-                            // If start and end are the same, it's a single note
-                            if (
-                                this.selectionStartStep ===
-                                this.selectionEndStep
-                            ) {
-                                this.copySelectedNotes()
-                            } else {
-                                this.copySelectedNotes()
-                            }
-                            this.drawGrid()
-                        } else {
-                            // Paste
-                            this.pasteNotes()
-                            this.drawGrid()
-                        }
-                    }
-                },
-            )
             this.isSelectingNote = true
-
-            // A button for confirming copy or paste
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
-                    if (this.isSelectingForCopy) {
-                        if (this.selectionStartStep === -1) {
-                            // Start selection
-                            this.selectionStartStep =
-                                this.currentStep - this.highlightHeight
-                            this.sourceTrackForCopy = this.selectedTrack
-                        } else if (this.selectionEndStep === -1) {
-                            // End selection and copy
-                            this.selectionEndStep =
-                                this.currentStep - this.highlightHeight
-                            this.copySelectedNotes()
-                        } else {
-                            // Paste
-                            this.pasteNotes()
-                            this.isSelectingForCopy = false
-                            this.selectionStartStep = -1
-                            this.selectionEndStep = -1
-                            this.sourceTrackForCopy = -1
-                        }
-                    }
-                },
-            )
         }
 
         private activateSampleSelection() {
@@ -1036,103 +873,10 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
-                    if (this.isSelectingForCopy) {
-                        // Cancel copy mode
-                        this.isSelectingForCopy = false
-                        this.selectionStartStep = -1
-                        this.selectionEndStep = -1
-                        this.sourceTrackForCopy = -1
-                        this.resetNavigator()
-                        this.resetControllerEvents()
-                        return
-                    }
                     this.backConfirmation()
                     this.moveCursor(CursorDir.Right)
                 },
             )
-        }
-
-        // Activates the copy-paste mode
-        private activateCopyMode() {
-            this.isSelectingForCopy = true
-            this.selectionStartStep = -1
-            this.selectionEndStep = -1
-            this.sourceTrackForCopy = -1
-
-            // Activate note selection mode to allow movement
-            this.activateNoteSelection()
-
-            // Update state to indicate copy mode is active
-            this.isSelectingNote = true
-            this.cursorVisible = true
-
-            // Default to current track
-            this.sourceTrackForCopy = this.selectedTrack
-
-            // Refresh display
-            this.drawGrid()
-        }
-
-        // Copy selected notes to clipboard
-        private copySelectedNotes() {
-            // Clear the clipboard
-            this.clipboard = []
-
-            // Ensure start step is before end step
-            const startStep = Math.min(
-                this.selectionStartStep,
-                this.selectionEndStep,
-            )
-            const endStep = Math.max(
-                this.selectionStartStep,
-                this.selectionEndStep,
-            )
-
-            // Copy notes from source track
-            for (let i = startStep; i <= endStep; i++) {
-                // Deep copy the note
-                const originalNote = this.trackData[this.sourceTrackForCopy][i]
-                const noteCopy: Note = [originalNote[0], originalNote[1]]
-                this.clipboard.push(noteCopy)
-            }
-
-            // Show number of notes copied
-            const noteCount = endStep - startStep + 1
-
-            // Update UI to show we're ready to paste
-            this.drawGrid()
-        }
-
-        // Paste notes from clipboard to current position
-        private pasteNotes() {
-            if (this.clipboard.length === 0) {
-                return
-            }
-
-            const pasteStart = this.currentStep - this.highlightHeight
-
-            // Make sure we don't paste beyond the track limits
-            if (pasteStart + this.clipboard.length > NUM_NOTES) {
-                return
-            }
-
-            // Paste the notes
-            for (let i = 0; i < this.clipboard.length; i++) {
-                // Deep copy from clipboard to track
-                const clipboardNote = this.clipboard[i]
-                this.trackData[this.selectedTrack][pasteStart + i] = [
-                    clipboardNote[0],
-                    clipboardNote[1],
-                ]
-            }
-
-            // Reset copy mode
-            this.isSelectingForCopy = false
-            this.selectionStartStep = -1
-            this.selectionEndStep = -1
-            this.sourceTrackForCopy = -1
-
-            this.drawGrid()
         }
     }
 }
