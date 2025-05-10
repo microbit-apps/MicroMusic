@@ -376,6 +376,26 @@ namespace icondb {
     //-------------
     // Large Icons:
     //-------------
+    
+    // Copy button icon
+    export const copy_button = bmp`
+        . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . .
+        . . . f f f f f . f f f f f . .
+        . . f 1 1 1 1 f f f 1 1 1 1 f .
+        . . f 1 f f f f f f f f f 1 f .
+        . . f 1 f . . . . . . . f 1 f .
+        . . f 1 f . . . . . . . f 1 f .
+        . . f 1 f . . . . . . . f 1 f .
+        . . f 1 f . . . . . . . f 1 f .
+        . . f 1 f f f f f f f f f 1 f .
+        . . f 1 1 1 1 1 1 1 1 1 1 1 f .
+        . . . f f f f f f f f f f f . .
+        . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . .
+    `
 
     // export const largeEditIcon = bmp`
     //     .666666666666666666666666666666.

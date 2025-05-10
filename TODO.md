@@ -6,11 +6,15 @@ Console.log over serial
 -   [ ] Want a nice strong evaluation, start thinking about that now
 -   [ ] Intuitiveness, when selecting a note, A to come out of it and B to reset the note to "-"? Or A to reset, B to come out of it
 
+## Tests
+
+-   [ ] Different volumes
+
 ## Bugs
 
+-   [ ] Fix getting stuck scrolling (there may not be a fix rn)
 -   [x] Pressing back while playing breaks things
 -   [x] Change size of small sample selection box on soundtrackerscreen as it's slightly too small for the sample names to fit inside
--   [ ] Fix getting stuck scrolling (there may not be a fix rn)
 -   [x] Crash when clicking on setting inside of setting button
 
 ## General
