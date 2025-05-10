@@ -6,6 +6,12 @@ namespace micromusic {
         private _octaves: number[]
         private _sample: Sample
 
+        constructor() {
+            this._notes = []
+            this._octaves = []
+            this._sample = new Sample("ResBass")
+        }
+
         public get notes() {
             return this._notes
         }

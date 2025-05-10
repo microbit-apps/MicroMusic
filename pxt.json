@@ -20,7 +20,11 @@
         "settingsScreen.ts",
         "setting.ts",
         "sample.ts",
-        "sampleSelectionScreen.ts"
+        "sampleSelectionScreen.ts",
+        "patternComposer.ts",
+        "song.ts",
+        "pattern.ts",
+        "channel.ts"
     ],
     "testFiles": [],
     "targetVersions": {

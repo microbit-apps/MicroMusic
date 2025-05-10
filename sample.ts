@@ -2,12 +2,10 @@ namespace micromusic {
     export class Sample {
         private _audio: Buffer
         private _sampleName: string
-        private _channel: number
 
-        constructor(sample: string, channel: number) {
+        constructor(sample: string) {
             this._audio = getSample(sample)
             this._sampleName = sample
-            this._channel = channel
         }
 
         get audio() {
@@ -16,10 +14,6 @@ namespace micromusic {
 
         get name() {
             return this._sampleName
-        }
-
-        get channel() {
-            return this._channel
         }
     }
 
