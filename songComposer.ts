@@ -499,7 +499,7 @@ namespace micromusic {
 
                 // Draw right track
                 x = startX + 1 * cellWidth
-                noteTuple = this.trackData[this.leftTrack][tempStep]
+                noteTuple = this.trackData[this.rightTrack][tempStep]
                 if ((noteTuple as any[])[0] != "-") {
                     note = `${(noteTuple as any[])[0]}${
                         (noteTuple as any[])[1]
