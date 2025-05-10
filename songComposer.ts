@@ -542,7 +542,9 @@ namespace micromusic {
                 let noteTuple = this.trackData[this.leftTrack][tempStep]
                 let note: any
                 if ((noteTuple as any[])[0] != "-") {
-                    note = `${(noteTuple as any[])[0]}${(noteTuple as any[])[1]}`
+                    note = `${(noteTuple as any[])[0]}${
+                        (noteTuple as any[])[1]
+                    }`
                 } else {
                     note = "-"
                 }
@@ -552,7 +554,9 @@ namespace micromusic {
                 x = startX + 1 * cellWidth
                 noteTuple = this.trackData[this.leftTrack][tempStep]
                 if ((noteTuple as any[])[0] != "-") {
-                    note = `${(noteTuple as any[])[0]}${(noteTuple as any[])[1]}`
+                    note = `${(noteTuple as any[])[0]}${
+                        (noteTuple as any[])[1]
+                    }`
                 } else {
                     note = "-"
                 }
