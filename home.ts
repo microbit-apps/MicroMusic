@@ -36,7 +36,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                SoundTrackerScreen.getInstance(this.app)
+                                PatternScreen.getInstance(this.app)
                             )
                         },
                     })),

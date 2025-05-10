@@ -9,13 +9,11 @@ namespace micromusic {
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 
-<<<<<<< HEAD
     const NUM_TRACKS = 4
     const NUM_VISIBLE_STEPS = 8
-    const NUM_NOTES = 128
+    const TOTAL_BANKS = 4
     const LEFT_TRACK_INDEX = 0
     const RIGHT_TRACK_INDEX = 1
-    const TOTAL_BANKS = 4
     const NOTES = [
         "-",
         "C#",
@@ -41,46 +39,19 @@ namespace micromusic {
         "Bb",
     ]
 
-    const SEMITONE_OFFSETS: { [key: string]: number | null } = {
-        C: 0,
-        "C#": 1,
-        Db: 1,
-        D: 2,
-        "D#": 3,
-        Eb: 3,
-        E: 4,
-        Fb: 4,
-        "E#": 5,
-        F: 5,
-        "F#": 6,
-        Gb: 6,
-        G: 7,
-        "G#": 8,
-        Ab: 8,
-        A: 9,
-        "A#": 10,
-        Bb: 10,
-        B: 11,
-        Cb: 11,
-        "B#": 0, // enharmonic to C
-        "-": null,
-    }
-
     enum NoteDirection {
         UP = 1,
         DOWN = -1,
     }
 
-    type Note = [string, number]
-
-    export class SoundTrackerScreen extends CursorSceneWithPriorPage {
-        private static instance: SoundTrackerScreen | null = null
+    export class PatternScreen extends CursorSceneWithPriorPage {
+        private static instance: PatternScreen | null = null
         private currentStep: number
         private currentTrack: number
-        private trackData: Note[][][]
-        private currentBank: number
+        // private trackData: Note[][][]
         private controlBtns: Button[]
-        private samples: Sample[]
+        private sampleSelectBtn: Button
+        private noteSelectBtn: Button
         private icon: Bitmap
         private isPlaying: boolean
         private highlightHeight: number
@@ -95,12 +66,16 @@ namespace micromusic {
         private cursorVisible: boolean
         private playedNote: number
         private hasClickedBack: boolean
-        private octave: number
+        private currentBank: number
+
+        private pattern: Pattern
+        private channels: Channel[]
 
         private constructor(
             app: AppInterface,
+            pattern?: Pattern,
             volume?: Setting,
-            bpm?: Setting,
+            bpm?: Setting
         ) {
             super(
                 app,
@@ -108,7 +83,7 @@ namespace micromusic {
                     this.app.popScene()
                     this.app.pushScene(new Home(this.app))
                 },
-                new GridNavigator(),
+                new GridNavigator()
             )
 
             if (volume) {
@@ -120,6 +95,12 @@ namespace micromusic {
                 this.bpm = bpm
             } else {
                 this.bpm = new Setting(120)
+            }
+
+            if (pattern) {
+                this.pattern = pattern
+            } else {
+                this.pattern = new Pattern()
             }
 
             this.selectedTrackPos = 0
@@ -134,48 +115,30 @@ namespace micromusic {
             this.isSelectingSample = false
             this.playedNote = 0
             this.hasClickedBack = false
-            this.trackData = []
             this.currentBank = 0
-
-            this.samples = [
-                // TODO: Temporary
-                new Sample("FunBass_L", 1),
-                new Sample("ResBass", 2),
-                new Sample("ShortB", 3),
-                new Sample("r8_drum", 4),
-            ]
-
-            // Grid data
-            for (let b = 0; b < TOTAL_BANKS; b++) {
-                this.trackData[b] = []
-                for (let i = 0; i < NUM_TRACKS; i++) {
-                    this.trackData[b][i] = []
-                    for (let j = 0; j < NUM_NOTES; j++) {
-                        this.trackData[b][i][j] = ["-", 3]
-                    }
-                }
-            }
         }
 
         public static getInstance(
             app?: AppInterface,
             volume?: Setting,
-            bpm?: Setting,
+            bpm?: Setting
         ) {
-            if (!SoundTrackerScreen.instance) {
+            if (!PatternScreen.instance) {
                 if (app === undefined) {
                     console.error(
-                        "SoundTrackerScreen singleton not initialized. Call with parameters first.",
+                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
                     )
                 }
-                SoundTrackerScreen.instance = new SoundTrackerScreen(app)
+                PatternScreen.instance = new PatternScreen(app)
             }
 
-            return SoundTrackerScreen.instance
+            return PatternScreen.instance
         }
 
         /* override */ startup() {
             super.startup()
+
+            this.channels = this.pattern.channels
 
             this.icon = getIcon("placeholder", true)
                 .doubled()
@@ -189,7 +152,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "pause",
-                    x: 0,
+                    x: -25,
                     y: -54,
                     onClick: () => {
                         this.pause()
@@ -199,7 +162,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "stop",
-                    x: 12,
+                    x: -13,
                     y: -54,
                     onClick: () => {
                         this.stop()
@@ -209,7 +172,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "fast_forward",
-                    x: 26,
+                    x: 1,
                     y: -54,
                     onClick: () => {
                         this.fastForward()
@@ -229,8 +192,8 @@ namespace micromusic {
                                 this.app,
                                 this,
                                 this.volume,
-                                this.bpm,
-                            ),
+                                this.bpm
+                            )
                         )
                     },
                 }),
@@ -248,7 +211,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "rewind",
-                    x: -22,
+                    x: -47,
                     y: -54,
                     onClick: () => {
                         this.rewind()
@@ -258,7 +221,7 @@ namespace micromusic {
                     parent: null,
                     style: ButtonStyles.Transparent,
                     icon: "play",
-                    x: -12,
+                    x: -37,
                     y: -54,
                     onClick: () => {
                         this.play()
@@ -311,7 +274,7 @@ namespace micromusic {
         public resetNavigator() {
             this.navigator.setBtns([
                 [
-                    new Button({
+                    (this.sampleSelectBtn = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "sample_section_select",
@@ -320,7 +283,7 @@ namespace micromusic {
                         onClick: () => {
                             this.activateSampleSelection()
                         },
-                    }),
+                    })),
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
@@ -353,7 +316,7 @@ namespace micromusic {
                     }),
                 ],
                 [
-                    new Button({
+                    (this.noteSelectBtn = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: this.icon,
@@ -364,8 +327,8 @@ namespace micromusic {
                             this.selectedTrackPos = LEFT_TRACK_INDEX
                             this.selectedTrack = this.leftTrack
                         },
-                    }),
-                    new Button({
+                    })),
+                    (this.noteSelectBtn = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: this.icon,
@@ -376,7 +339,7 @@ namespace micromusic {
                             this.selectedTrackPos = RIGHT_TRACK_INDEX
                             this.selectedTrack = this.rightTrack
                         },
-                    }),
+                    })),
                 ],
                 this.controlBtns,
             ])
@@ -384,73 +347,40 @@ namespace micromusic {
 
         private play() {
             if (this.isPlaying == true) return
+            music.setVolume((this.volume.value / 100) * 255)
             this.isPlaying = true
             this.cursorVisible = true
-
-            samples.enable()
-            music.setVolume((this.volume.value / 100) * 255)
-
             control.inBackground(() => {
                 const tickSpeed = 60000 / this.bpm.value
-                while (this.isPlaying && this.playedNote < NUM_NOTES) {
-                    for (let i = 0; i < NUM_TRACKS; i++) {
-                        this.playNote(i, this.samples[i].audioBuffer)
-                    }
+                while (this.isPlaying && this.playedNote < MAX_NOTES) {
                     basic.pause(tickSpeed)
                     // Only increment highlightHeight if it's within bounds
                     if (this.highlightHeight < 3) this.highlightHeight++
                     else if (
-                        this.currentStep > NUM_NOTES - 6 &&
-                        this.currentStep < NUM_NOTES - 1
+                        this.currentStep > MAX_NOTES - 6 &&
+                        this.currentStep < MAX_NOTES - 1
                     ) {
                         if (this.highlightHeight < 7) {
                             this.highlightHeight++
                         }
                     }
 
-                    if (this.currentStep != NUM_NOTES - 1)
+                    if (this.currentStep != MAX_NOTES - 1)
                         this.currentStep =
-                            Math.abs(this.currentStep + 1) % NUM_NOTES
+                            Math.abs(this.currentStep + 1) % MAX_NOTES
 
+                    // this.draw()
                     this.playedNote += 1
                 }
                 this.isPlaying = false
             })
         }
 
-        private playNote(src: number, buf: Buffer) {
-            const offset =
-                SEMITONE_OFFSETS[
-                    (
-                        this.trackData[this.currentBank][src][
-                            this.playedNote
-                        ] as any[]
-                    )[0]
-                ]
-            if (offset == null) return // "-" or invalid note
-
-            const multiplier =
-                2 **
-                ((
-                    this.trackData[this.currentBank][src][
-                        this.playedNote
-                    ] as any[]
-                )[1] -
-                    3 +
-                    offset / 12)
-            const rate = 8800 * multiplier
-
-            samples.setSampleRate(src, rate)
-            samples.playAsync(src, buf)
-        }
-
         private pause() {
-            music.setVolume(0)
             this.isPlaying = false
         }
 
         private stop() {
-            music.setVolume(0)
             this.isPlaying = false
             this.cursorVisible = false
             basic.pause(200)
@@ -462,23 +392,16 @@ namespace micromusic {
 
         private rewind() {
             this.currentStep = this.currentStep - 8
-            this.playedNote = this.playedNote - 8
-            if (
-                this.currentStep < 0 ||
-                this.currentStep - this.highlightHeight < 0 ||
-                this.playedNote < 0
-            ) {
+            if (this.currentStep < 0) {
                 this.currentStep = 0
-                this.highlightHeight = 0
-                this.playedNote = 0
             }
             this.drawGrid()
         }
 
         private fastForward() {
             this.currentStep = this.currentStep + 8
-            if (this.currentStep > NUM_NOTES - 8) {
-                this.currentStep = NUM_NOTES - 8
+            if (this.currentStep > MAX_NOTES - 8) {
+                this.currentStep = MAX_NOTES - 8
             }
             this.drawGrid()
         }
@@ -487,17 +410,10 @@ namespace micromusic {
             const bankWidth = 20
             const bankHeight = 10
             const startX = -60
-            const y = 55
-
-            for (let i = 0; i < TOTAL_BANKS; i++) {
-                const x = startX + i * (bankWidth + 5)
-                const color = i === this.currentBank ? 0x2 : 0x1
-                Screen.fillRect(x, y, bankWidth, bankHeight, color)
-                Screen.print((i + 1).toString(), x + 7, y + 2, 0x0)
-            }
+            const y = 10
 
             // Add labels
-            Screen.print("BANK:", -90, y + 2, 0x1)
+            Screen.print("Blocks", 10, -56, 0x1, bitmaps.font5)
         }
 
         draw() {
@@ -506,7 +422,7 @@ namespace micromusic {
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc,
+                0xc
             )
 
             this.navigator.drawComponents()
@@ -543,8 +459,8 @@ namespace micromusic {
                 //     0x9
                 // )
             }
-            this.drawText(-60, -44, this.samples[this.leftTrack].name)
-            this.drawText(8, -44, this.samples[this.rightTrack].name)
+            this.drawText(-60, -44, this.channels[this.leftTrack].sample.name)
+            this.drawText(8, -44, this.channels[this.rightTrack].sample.name)
             Screen.drawLine(0, -44, 0, -36, 0xb)
             Screen.drawLine(0, -20, 0, 42, 0xb)
         }
@@ -571,30 +487,29 @@ namespace micromusic {
 
                 // Draw left track
                 let x = startX + 0 * cellWidth
-                let noteTuple =
-                    this.trackData[this.currentBank][this.leftTrack][tempStep]
-                let note: any
-                if ((noteTuple as any[])[0] != "-") {
-                    note = `${(noteTuple as any[])[0]}${
-                        (noteTuple as any[])[1]
-                    }`
+                let note = this.channels[this.leftTrack].notes[tempStep]
+
+                if (note == "-") {
+                    Screen.print("-", x, y, 0, font)
                 } else {
-                    note = "-"
+                    note = `${note}${
+                        this.channels[this.leftTrack].octaves[tempStep]
+                    }`
+                    Screen.print(note, x, y, 0, font)
                 }
-                Screen.print(note, x, y, 0, font)
 
                 // Draw right track
                 x = startX + 1 * cellWidth
-                noteTuple =
-                    this.trackData[this.currentBank][this.rightTrack][tempStep]
-                if ((noteTuple as any[])[0] != "-") {
-                    note = `${(noteTuple as any[])[0]}${
-                        (noteTuple as any[])[1]
-                    }`
+
+                note = this.channels[this.rightTrack].notes[tempStep]
+                if (note == "-") {
+                    Screen.print("-", x, y, 0, font)
                 } else {
-                    note = "-"
+                    note = `${note}${
+                        this.channels[this.leftTrack].octaves[tempStep]
+                    }`
+                    Screen.print(note, x, y, 0, font)
                 }
-                Screen.print(note, x, y, 0, font)
             }
 
             if (this.isPlaying) {
@@ -606,7 +521,7 @@ namespace micromusic {
                     startY + this.highlightHeight * cellHeight - 1,
                     70,
                     10,
-                    0x9,
+                    0x9
                 )
             } else if (this.cursorVisible) {
                 Screen.drawRect(
@@ -614,7 +529,7 @@ namespace micromusic {
                     startY + this.highlightHeight * cellHeight - 1,
                     145,
                     10,
-                    0x1,
+                    0x1
                 )
             }
         }
@@ -640,17 +555,12 @@ namespace micromusic {
             this.switchToBank((this.currentBank + 1) % TOTAL_BANKS)
         }
 
-        public setSampleForTrack(sample: Sample, track: number) {
-            this.samples[track] = sample
-            this.drawGrid()
-        }
-
         private drawText(
             x: number,
             y: number,
             text: string,
             colour?: number,
-            _font?: bitmaps.Font,
+            _font?: bitmaps.Font
         ) {
             if (!colour) colour = 0
             if (!_font) _font = font
@@ -658,16 +568,9 @@ namespace micromusic {
         }
 
         private changeNote(direction: NoteDirection) {
-            let octave = (
-                this.trackData[this.currentBank][this.selectedTrack][
-                    this.currentStep
-                ] as any[]
-            )[1]
-            let note = (
-                this.trackData[this.currentBank][this.selectedTrack][
-                    this.currentStep
-                ] as any[]
-            )[0]
+            let octave =
+                this.channels[this.selectedTrack].octaves[this.currentStep]
+            let note = this.channels[this.selectedTrack].notes[this.currentStep]
 
             let noteIndex = NOTES.indexOf(note)
             noteIndex = noteIndex + direction
@@ -699,14 +602,10 @@ namespace micromusic {
                 }
             }
 
-            this.trackData[this.currentBank][this.selectedTrack][
+            this.channels[this.selectedTrack].setNoteAndOctave(
+                NOTES[noteIndex],
+                octave,
                 this.currentStep
-            ] = [NOTES[noteIndex], octave]
-
-            console.log(
-                this.trackData[this.currentBank][this.selectedTrack][
-                    this.currentStep
-                ],
             )
         }
 
@@ -717,14 +616,14 @@ namespace micromusic {
                 controller.right.id,
                 () => {
                     this.changeNote(1)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
                 () => {
                     this.changeNote(-1)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -734,7 +633,7 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.up.id,
-                        () => (tick = false),
+                        () => (tick = false)
                     )
                     let counter = 0
                     // Control logic:
@@ -742,7 +641,7 @@ namespace micromusic {
                         if (this.highlightHeight > 0) this.highlightHeight--
                         if (this.currentStep != 0)
                             this.currentStep =
-                                (this.currentStep - 1) % NUM_NOTES
+                                (this.currentStep - 1) % MAX_NOTES
 
                         if (counter < 10) {
                             counter++
@@ -759,9 +658,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.up.id,
-                        () => {},
+                        () => {}
                     )
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -771,15 +670,15 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.down.id,
-                        () => (tick = false),
+                        () => (tick = false)
                     )
                     let counter = 0
                     // Control logic:
                     while (tick) {
                         if (this.highlightHeight < 3) this.highlightHeight++
                         else if (
-                            this.currentStep > NUM_NOTES - 6 &&
-                            this.currentStep < NUM_NOTES - 1
+                            this.currentStep > MAX_NOTES - 6 &&
+                            this.currentStep < MAX_NOTES - 1
                         ) {
                             // Prevent the highlightHeight from exceeding a reasonable maximum
                             if (this.highlightHeight < 7) {
@@ -787,9 +686,9 @@ namespace micromusic {
                             }
                         }
 
-                        if (this.currentStep != NUM_NOTES - 1)
+                        if (this.currentStep != MAX_NOTES - 1)
                             this.currentStep =
-                                Math.abs(this.currentStep + 1) % NUM_NOTES
+                                Math.abs(this.currentStep + 1) % MAX_NOTES
 
                         if (counter < 10) {
                             counter++
@@ -806,9 +705,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.down.id,
-                        () => {},
+                        () => {}
                     )
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -819,7 +718,7 @@ namespace micromusic {
                     this.currentStep = this.currentStep - this.highlightHeight
                     this.highlightHeight = 0
                     // Code for setting the buttons again
-                },
+                }
             )
             this.isSelectingNote = true
         }
@@ -841,8 +740,8 @@ namespace micromusic {
                                 new SampleSelectionScreen(
                                     this.app,
                                     this,
-                                    this.samples[this.leftTrack],
-                                ),
+                                    this.channels[this.leftTrack]
+                                )
                             )
                         },
                     }),
@@ -858,8 +757,8 @@ namespace micromusic {
                                 new SampleSelectionScreen(
                                     this.app,
                                     this,
-                                    this.samples[this.rightTrack],
-                                ),
+                                    this.channels[this.rightTrack]
+                                )
                             )
                         },
                     }),
@@ -903,7 +802,7 @@ namespace micromusic {
                     this.resetNavigator()
                     this.resetControllerEvents()
                     this.moveCursor(CursorDir.Right)
-                },
+                }
             )
 
             this.moveCursor(CursorDir.Down)
@@ -916,24 +815,24 @@ namespace micromusic {
                 controller.up.id,
                 () => {
                     if (!this.isPlaying) this.moveCursor(CursorDir.Up)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
                 () => {
                     if (!this.isPlaying) this.moveCursor(CursorDir.Down)
-                },
+                }
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.right.id,
-                () => this.moveCursor(CursorDir.Right),
+                () => this.moveCursor(CursorDir.Right)
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
-                () => this.moveCursor(CursorDir.Left),
+                () => this.moveCursor(CursorDir.Left)
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -941,26 +840,8 @@ namespace micromusic {
                 () => {
                     this.backConfirmation()
                     this.moveCursor(CursorDir.Right)
-                },
+                }
             )
         }
     }
-=======
-    /**
-     * PLAN FOR SONG PATTERNS
-     *
-     * Screen will open up for song
-     * By default, one block and a plus sign somewhere called "add block" or such
-     * Clicking add block visually adds a block and sets it up
-     * Perhaps some class to hold all our info
-     * Can click onto blocks
-     *
-     * For copy paste:
-     * Click copy, asks whether you want to copy a single channel from a pattern or a number of rows
-     * Paste into existing or new block, then which channel it should be pasted onto
-     *
-     */
-
-    export class SongComposerScreen extends CursorSceneWithPriorPage {}
->>>>>>> e1d8b8e6a8c632f1ed4c74980ec2b6c18445423e
 }

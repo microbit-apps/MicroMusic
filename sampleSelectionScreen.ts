@@ -10,15 +10,16 @@ namespace micromusic {
     const NUM_SAMPLES_SHOWN = 7
 
     export class SampleSelectionScreen extends CursorSceneWithPriorPage {
-        private previousScene: SoundTrackerScreen
+        private previousScene: PatternScreen
         private sampleNames: string[]
         private selectedIndex: number
         private currentSample: Sample
+        private channel: Channel
 
         constructor(
             app: AppInterface,
-            previousScene: SoundTrackerScreen,
-            currentSample: Sample,
+            previousScene: PatternScreen,
+            channel: Channel,
         ) {
             super(
                 app,
@@ -31,7 +32,8 @@ namespace micromusic {
             )
 
             this.sampleNames = listSamples()
-            this.currentSample = currentSample
+            this.channel = channel
+            this.currentSample = channel.sample
             this.previousScene = previousScene
             this.selectedIndex = this.sampleNames.indexOf(
                 this.currentSample.name,
@@ -85,10 +87,8 @@ namespace micromusic {
                     if (this.selectedIndex < 0)
                         this.selectedIndex = this.sampleNames.length - 1
 
-                    // Play the selected sample so user can hear it
                     const sample = new Sample(
                         this.sampleNames[this.selectedIndex],
-                        this.currentSample.channel,
                     )
                     // TODO: sort this out on a different branch
                     // this.draw()
@@ -105,7 +105,6 @@ namespace micromusic {
                     // Play the selected sample so user can hear it
                     const sample = new Sample(
                         this.sampleNames[this.selectedIndex],
-                        this.currentSample.channel,
                     )
                     // T
                     console.log(this.selectedIndex + " : Index")
@@ -159,16 +158,16 @@ namespace micromusic {
 
         private selectSample() {
             const sampleName = this.sampleNames[this.selectedIndex]
-            const sample = new Sample(sampleName, this.currentSample.channel)
-            this.previousScene.setSampleForTrack(sample, sample.channel)
+            const sample = new Sample(sampleName)
+            this.channel.sample = sample
             this.app.popScene()
             this.app.pushScene(this.previousScene)
         }
 
         private playNote(sampleName: string) {
-            const sample = new Sample(sampleName, this.currentSample.channel)
-            samples.setSampleRate(sample.channel, 8800)
-            samples.playAsync(sample.channel, sample.audioBuffer)
+            const sample = new Sample(sampleName)
+            samples.setSampleRate(1, 8800)
+            samples.playAsync(1, sample.audioBuffer)
         }
 
         draw() {
