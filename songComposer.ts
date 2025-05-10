@@ -65,6 +65,11 @@ namespace micromusic {
         "-": null,
     }
 
+    enum NoteDirection {
+        UP = 1,
+        DOWN = -1,
+    }
+
     type Note = [string, number]
 
     export class SoundTrackerScreen extends CursorSceneWithPriorPage {
@@ -142,8 +147,7 @@ namespace micromusic {
             for (let i = 0; i < NUM_TRACKS; i++) {
                 this.trackData[i] = []
                 for (let j = 0; j < NUM_NOTES; j++) {
-                    this.trackData[i][j] = ["-", 2]
-                    // else this.trackData[i][j] = "C"
+                    this.trackData[i][j] = ["-", 3]
                 }
             }
         }
@@ -416,7 +420,7 @@ namespace micromusic {
             if (offset == null) return // "-" or invalid note
 
             const multiplier =
-                2 ** (this.trackData[src][this.playedNote][1] - 2 + offset / 12)
+                2 ** (this.trackData[src][this.playedNote][1] - 3 + offset / 12)
             const rate = 8800 * multiplier
 
             samples.setSampleRate(src, rate)
@@ -591,11 +595,30 @@ namespace micromusic {
             Screen.print(text, x, y, colour, _font)
         }
 
-        private changeNote(direction: number) {
-            let noteIndex = NOTES.indexOf(
-                this.trackData[this.selectedTrack][this.currentStep][0],
-            )
-            noteIndex = (noteIndex + direction + NOTES.length) % NOTES.length
+        private changeNote(direction: NoteDirection) {
+            let octave = this.trackData[this.selectedTrack][this.currentStep][1]
+            let note = this.trackData[this.selectedTrack][this.currentStep][0]
+
+            let noteIndex = NOTES.indexOf(note)
+            noteIndex = noteIndex + direction
+
+            if (direction == NoteDirection.UP) {
+                if (noteIndex > NOTES.length - 1 && octave < 4) {
+                    noteIndex = 0
+                    octave++
+                } else {
+                    noteIndex = 0
+                    octave = 2
+                }
+            } else {
+                if (noteIndex < 0 && octave > 2) {
+                    noteIndex = NOTES.length - 1
+                    octave--
+                } else {
+                    noteIndex = NOTES.length - 1
+                    octave = 4
+                }
+            }
 
             this.trackData[this.selectedTrack][this.currentStep][0] =
                 NOTES[noteIndex]
