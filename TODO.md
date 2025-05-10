@@ -9,6 +9,8 @@ Console.log over serial
 ## Tests
 
 -   [ ] Different volumes
+-   [ ] Confirm that changing samples plays a noise
+-   [ ] Confirm that octave changing plays correctly
 
 ## Bugs
 

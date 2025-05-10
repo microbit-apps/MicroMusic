@@ -14,6 +14,7 @@ namespace micromusic {
     const NUM_NOTES = 128
     const LEFT_TRACK_INDEX = 0
     const RIGHT_TRACK_INDEX = 1
+    const TOTAL_BANKS = 4
     const NOTES = [
         "-",
         "C#",
@@ -75,7 +76,8 @@ namespace micromusic {
         private static instance: SoundTrackerScreen | null = null
         private currentStep: number
         private currentTrack: number
-        private trackData: Note[][]
+        private trackData: Note[][][]
+        private currentBank: number
         private controlBtns: Button[]
         private samples: Sample[]
         private icon: Bitmap
@@ -132,6 +134,7 @@ namespace micromusic {
             this.playedNote = 0
             this.hasClickedBack = false
             this.trackData = []
+            this.currentBank = 0
 
             this.samples = [
                 // TODO: Temporary
@@ -142,11 +145,13 @@ namespace micromusic {
             ]
 
             // Grid data
-            for (let i = 0; i < NUM_TRACKS; i++) {
-                this.trackData[i] = []
-                for (let j = 0; j < NUM_NOTES; j++) {
-                    this.trackData[i][j] = ["-", 3]
-                    console.log(this.trackData[i][j])
+            for (let b = 0; b < TOTAL_BANKS; b++) {
+                this.trackData[b] = []
+                for (let i = 0; i < NUM_TRACKS; i++) {
+                    this.trackData[b][i] = []
+                    for (let j = 0; j < NUM_NOTES; j++) {
+                        this.trackData[b][i][j] = ["-", 3]
+                    }
                 }
             }
         }
@@ -415,13 +420,21 @@ namespace micromusic {
         private playNote(src: number, buf: Buffer) {
             const offset =
                 SEMITONE_OFFSETS[
-                    (this.trackData[src][this.playedNote] as any[])[0]
+                    (
+                        this.trackData[this.currentBank][src][
+                            this.playedNote
+                        ] as any[]
+                    )[0]
                 ]
             if (offset == null) return // "-" or invalid note
 
             const multiplier =
                 2 **
-                ((this.trackData[src][this.playedNote] as any[])[1] -
+                ((
+                    this.trackData[this.currentBank][src][
+                        this.playedNote
+                    ] as any[]
+                )[1] -
                     3 +
                     offset / 12)
             const rate = 8800 * multiplier
@@ -469,6 +482,23 @@ namespace micromusic {
             this.drawGrid()
         }
 
+        private drawBankSelector() {
+            const bankWidth = 20
+            const bankHeight = 10
+            const startX = -60
+            const y = 55
+
+            for (let i = 0; i < TOTAL_BANKS; i++) {
+                const x = startX + i * (bankWidth + 5)
+                const color = i === this.currentBank ? 0x2 : 0x1
+                Screen.fillRect(x, y, bankWidth, bankHeight, color)
+                Screen.print((i + 1).toString(), x + 7, y + 2, 0x0)
+            }
+
+            // Add labels
+            Screen.print("BANK:", -90, y + 2, 0x1)
+        }
+
         draw() {
             Screen.fillRect(
                 Screen.LEFT_EDGE,
@@ -498,6 +528,7 @@ namespace micromusic {
 
             this.drawSamples()
             this.drawGrid()
+            this.drawBankSelector()
             super.draw()
         }
 
@@ -539,7 +570,8 @@ namespace micromusic {
 
                 // Draw left track
                 let x = startX + 0 * cellWidth
-                let noteTuple = this.trackData[this.leftTrack][tempStep]
+                let noteTuple =
+                    this.trackData[this.currentBank][this.leftTrack][tempStep]
                 let note: any
                 if ((noteTuple as any[])[0] != "-") {
                     note = `${(noteTuple as any[])[0]}${
@@ -552,7 +584,8 @@ namespace micromusic {
 
                 // Draw right track
                 x = startX + 1 * cellWidth
-                noteTuple = this.trackData[this.rightTrack][tempStep]
+                noteTuple =
+                    this.trackData[this.currentBank][this.rightTrack][tempStep]
                 if ((noteTuple as any[])[0] != "-") {
                     note = `${(noteTuple as any[])[0]}${
                         (noteTuple as any[])[1]
@@ -585,6 +618,27 @@ namespace micromusic {
             }
         }
 
+        private switchToBank(bankIndex: number) {
+            if (bankIndex >= 0 && bankIndex < TOTAL_BANKS) {
+                // If playing, stop before switching banks
+                if (this.isPlaying) {
+                    this.pause()
+                }
+
+                this.currentBank = bankIndex
+
+                // Reset current step when switching banks
+                this.currentStep = 0
+
+                // Redraw the screen
+                this.draw()
+            }
+        }
+
+        private nextBank() {
+            this.switchToBank((this.currentBank + 1) % TOTAL_BANKS)
+        }
+
         public setSampleForTrack(sample: Sample, track: number) {
             this.samples[track] = sample
             this.drawGrid()
@@ -604,10 +658,14 @@ namespace micromusic {
 
         private changeNote(direction: NoteDirection) {
             let octave = (
-                this.trackData[this.selectedTrack][this.currentStep] as any[]
+                this.trackData[this.currentBank][this.selectedTrack][
+                    this.currentStep
+                ] as any[]
             )[1]
             let note = (
-                this.trackData[this.selectedTrack][this.currentStep] as any[]
+                this.trackData[this.currentBank][this.selectedTrack][
+                    this.currentStep
+                ] as any[]
             )[0]
 
             let noteIndex = NOTES.indexOf(note)
@@ -640,12 +698,15 @@ namespace micromusic {
                 }
             }
 
-            this.trackData[this.selectedTrack][this.currentStep] = [
-                NOTES[noteIndex],
-                octave,
-            ]
+            this.trackData[this.currentBank][this.selectedTrack][
+                this.currentStep
+            ] = [NOTES[noteIndex], octave]
 
-            console.log(this.trackData[this.selectedTrack][this.currentStep])
+            console.log(
+                this.trackData[this.currentBank][this.selectedTrack][
+                    this.currentStep
+                ],
+            )
         }
 
         private activateNoteSelection() {
