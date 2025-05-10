@@ -1,17 +1,17 @@
 namespace micromusic {
     export class Sample {
-        private _audio: Buffer
+        private _audioBuffer: Buffer
         private _sampleName: string
         private _channel: number
 
         constructor(sample: string, channel: number) {
-            this._audio = getSample(sample)
+            this._audioBuffer = getSample(sample)
             this._sampleName = sample
             this._channel = channel
         }
 
-        get audio() {
-            return this._audio
+        get audioBuffer() {
+            return this._audioBuffer
         }
 
         get name() {

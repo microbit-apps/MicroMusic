@@ -390,7 +390,7 @@ namespace micromusic {
                 const tickSpeed = 60000 / this.bpm.value
                 while (this.isPlaying && this.playedNote < NUM_NOTES) {
                     for (let i = 0; i < NUM_TRACKS; i++) {
-                        this.playNote(i, this.samples[i].audio)
+                        this.playNote(i, this.samples[i].audioBuffer)
                     }
                     basic.pause(tickSpeed)
                     // Only increment highlightHeight if it's within bounds
@@ -624,7 +624,7 @@ namespace micromusic {
                 NOTES[noteIndex]
             this.playNote(
                 this.selectedTrack,
-                this.samples[this.selectedTrack].audio,
+                this.samples[this.selectedTrack].audioBuffer,
             )
         }
 

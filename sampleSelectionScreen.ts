@@ -18,7 +18,7 @@ namespace micromusic {
         constructor(
             app: AppInterface,
             previousScene: SoundTrackerScreen,
-            currentSample: Sample
+            currentSample: Sample,
         ) {
             super(
                 app,
@@ -27,14 +27,14 @@ namespace micromusic {
                     this.previousScene.navigator = new GridNavigator()
                     this.app.pushScene(this.previousScene)
                 },
-                new GridNavigator()
+                new GridNavigator(),
             )
 
             this.sampleNames = listSamples()
             this.currentSample = currentSample
             this.previousScene = previousScene
             this.selectedIndex = this.sampleNames.indexOf(
-                this.currentSample.name
+                this.currentSample.name,
             )
         }
 
@@ -88,11 +88,11 @@ namespace micromusic {
                     // Play the selected sample so user can hear it
                     const sample = new Sample(
                         this.sampleNames[this.selectedIndex],
-                        this.currentSample.channel
+                        this.currentSample.channel,
                     )
                     // TODO: sort this out on a different branch
                     // this.draw()
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -105,19 +105,19 @@ namespace micromusic {
                     // Play the selected sample so user can hear it
                     const sample = new Sample(
                         this.sampleNames[this.selectedIndex],
-                        this.currentSample.channel
+                        this.currentSample.channel,
                     )
                     // T
                     console.log(this.selectedIndex + " : Index")
                     // this.draw()
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.A.id,
                 () => {
                     this.selectSample()
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -125,7 +125,7 @@ namespace micromusic {
                 () => {
                     this.app.popScene()
                     this.app.pushScene(this.previousScene)
-                }
+                },
             )
         }
 
@@ -133,19 +133,19 @@ namespace micromusic {
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.up.id,
-                () => {}
+                () => {},
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
-                () => {}
+                () => {},
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.A.id,
                 () => {
                     this.selectSample()
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -153,7 +153,7 @@ namespace micromusic {
                 () => {
                     this.app.popScene()
                     this.app.pushScene(this.previousScene)
-                }
+                },
             )
         }
 
@@ -165,13 +165,19 @@ namespace micromusic {
             this.app.pushScene(this.previousScene)
         }
 
+        private playNote(sampleName: string) {
+            const sample = new Sample(sampleName, this.currentSample.channel)
+            samples.setSampleRate(sample.channel, 8800)
+            samples.playAsync(sample.channel, sample.audioBuffer)
+        }
+
         draw() {
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc
+                0xc,
             ) // Background color
             this.navigator.drawComponents()
             const startY = -30
