@@ -15,12 +15,15 @@ Console.log over serial
 
 ## General
 
+-   [ ] Song list page, make current main page a "pattern editor" can save patterns and order them on the song page
+-   [ ] Song screen will have a number of pattern "blocks" and you can click into them to edit them
+-   [ ] Each song has patterns; Each pattern has 4 channels; Each channel has a Sample, 64 rows of notes and octaves
 -   [ ] Music that repeats notes, select multiple notes at once?
 -   [ ] Copy paste feature, can copy 8 notes on screen and paste into another part of one sample or to another sample's track
 -   [ ] Keyboard screen
 -   [ ] Add saving fully with save names and then add Loading
 -   [ ] Enable playing sample sound when it's changed
--   [ ] Sample groupings
+-   [ ] Sample groupings - Should have small groups of sample types, inside the grid then another column that has a number and that plays different sounds based on the set picked
 -   [x] Enable playing the current note as it is changed
 -   [x] Playing at different octaves
 -   [x] Switch through octaves on same number

@@ -20,5 +20,9 @@ namespace micromusic {
         public get channels() {
             return this._channels
         }
+
+        public getChannel(index: number) {
+            return this._channels[index]
+        }
     }
 }

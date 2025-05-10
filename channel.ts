@@ -9,6 +9,11 @@ namespace micromusic {
         constructor() {
             this._notes = []
             this._octaves = []
+
+            for (let i = 0; i < MAX_NOTES; i++) {
+                this._notes[i] = "-"
+                this._octaves[i] = 3
+            }
             this._sample = new Sample("ResBass")
         }
 
