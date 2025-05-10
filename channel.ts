@@ -1,5 +1,5 @@
 namespace micromusic {
-    export const NUM_NOTES = 64
+    export const MAX_NOTES = 64 // Max number of notes per channel
 
     export class Channel {
         private _notes: string[]
@@ -11,6 +11,10 @@ namespace micromusic {
         }
 
         public setNote(note: string, index: number, octave?: number): void {
+            if (index > MAX_NOTES) {
+                console.error(`Max index for a channel is: ${MAX_NOTES - 1}`)
+                return
+            }
             this._notes[index] = note
         }
 
@@ -19,6 +23,10 @@ namespace micromusic {
         }
 
         public setOctave(octave: number, index: number): void {
+            if (index > MAX_NOTES) {
+                console.error(`Max index for a channel is: ${MAX_NOTES - 1}`)
+                return
+            }
             this._octaves[index] = octave
         }
 
@@ -35,6 +43,10 @@ namespace micromusic {
             octave: number,
             index: number
         ): void {
+            if (index > MAX_NOTES) {
+                console.error(`Max index for a channel is: ${MAX_NOTES - 1}`)
+                return
+            }
             this._notes[index] = note
             this._octaves[index] = octave
         }
