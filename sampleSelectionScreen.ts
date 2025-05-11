@@ -213,6 +213,7 @@ namespace micromusic {
             Screen.print("Select Sample", -40, -50, 0x1)
 
             this.cursor.draw()
+            super.draw()
         }
     }
 }
