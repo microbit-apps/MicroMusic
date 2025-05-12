@@ -5,6 +5,8 @@ Console.log over serial
 -   [ ] More than 1 bank of track data important one, can have them playing after eachother
 -   [ ] Want a nice strong evaluation, start thinking about that now
 -   [ ] Intuitiveness, when selecting a note, A to come out of it and B to reset the note to "-"? Or A to reset, B to come out of it
+-   [ ] Pattern at the top of the screen so you can swap straight in the patterns editor
+-   [ ] Change size of invisible buttons on confirmation pages
 
 ## Bugs
 

@@ -111,21 +111,24 @@ namespace micromusic {
         }
 
         public static getInstance(
+            pattern: Pattern,
             app?: AppInterface,
             volume?: Setting,
             bpm?: Setting
         ) {
-            // TODO: replace temp value
-            let pattern = new Pattern(0)
-
             if (!PatternScreen.instance) {
-                if (app === undefined) {
+                if (app === undefined || pattern === undefined) {
                     console.error(
-                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
+                        "PatternScreen singleton not initialized. Call with parameters first."
                     )
                 }
                 PatternScreen.instance = new PatternScreen(app, pattern)
             }
+
+            if (!pattern) {
+                console.error("Pattern required")
+            }
+            PatternScreen.instance.setPattern(pattern)
 
             return PatternScreen.instance
         }
@@ -228,6 +231,10 @@ namespace micromusic {
             this.resetControllerEvents()
         }
 
+        private setPattern(pattern: Pattern) {
+            this.pattern = pattern
+        }
+
         private backConfirmation() {
             if (this.isPlaying) {
                 this.resetControllerEvents()
@@ -244,8 +251,9 @@ namespace micromusic {
                         x: -22,
                         y: 18,
                         onClick: () => {
+                            this.hasClickedBack = false
                             this.app.popScene()
-                            this.app.pushScene(new Home(this.app))
+                            this.app.pushScene(SongComposerScreen.getInstance())
                         },
                     }),
                     new Button({
