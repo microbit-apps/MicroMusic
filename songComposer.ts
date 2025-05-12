@@ -28,6 +28,7 @@ namespace micromusic {
         private static instance: SongComposerScreen | null = null
         private song: Song
         private controlBtns: Button[]
+        private patternBtns: Button[]
         private bpm: Setting
         private volume: Setting
         private hasClickedBack: boolean
@@ -158,21 +159,8 @@ namespace micromusic {
                 }),
             ]
 
-            this.navigator.setBtns([
-                this.controlBtns,
-                [
-                    new Button({
-                        parent: null,
-                        style: ButtonStyles.Transparent,
-                        icon: "invisiblePatternButton",
-                        x: -53,
-                        y: 6,
-                        onClick: () => {
-                            this.play()
-                        },
-                    }),
-                ],
-            ])
+            this.fillPatternBtns()
+            this.resetNavigator()
         }
 
         draw() {
@@ -287,6 +275,66 @@ namespace micromusic {
                 ],
             ])
             this.moveCursor(CursorDir.Down)
+        }
+
+        private patternClicked() {}
+
+        private plusClicked() {}
+
+        private fillPatternBtns() {
+            this.patternBtns = []
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+
+            let count = 0
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+
+                    if (count < this.song.patternSequence.length) {
+                        this.patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.patternClicked()
+                            },
+                        })
+                    } else if (count == this.song.patternSequence.length) {
+                        this.patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.plusClicked()
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count > this.song.patternSequence.length) {
+                        break
+                    }
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
+
+            this.resetNavigator()
+        }
+
+        private resetNavigator() {
+            this.navigator.setBtns([this.controlBtns, this.patternBtns])
         }
 
         private resetControllerEvents() {
