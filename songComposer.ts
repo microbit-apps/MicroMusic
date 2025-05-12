@@ -379,6 +379,7 @@ namespace micromusic {
                         x: 21,
                         y: 18,
                         onClick: () => {
+                            // TODO: Replace, this should let you swap it out or create a new one ideally
                             this.newPattern(clickedPatternIndex)
                             this.resetBooleans()
                         },
@@ -405,7 +406,6 @@ namespace micromusic {
                         x: -30,
                         y: 18,
                         onClick: () => {
-                            console.log("pick")
                             this.newPattern(clickedPatternIndex)
                             this.resetBooleans()
                         },
@@ -514,6 +514,7 @@ namespace micromusic {
                     this.resetBooleans()
                     this.resetControllerEvents()
                     this.resetNavigator()
+                    this.cursor.setOutlineColour(0x9)
                     this.moveCursor(CursorDir.Left)
                     this.moveCursor(CursorDir.Right)
                 }
