@@ -28,7 +28,7 @@ namespace micromusic {
             this.patterns[this.patterns.length] = new Pattern(
                 this.patterns.length
             )
-            console.log(this.patterns.length)
+
             return this.patterns[this.patterns.length - 1]
         }
 

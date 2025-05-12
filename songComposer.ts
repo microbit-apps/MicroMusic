@@ -32,8 +32,10 @@ namespace micromusic {
         private bpm: Setting
         private volume: Setting
         private hasClickedBack: boolean
+        private isTemp: boolean
         private hasClickedNumber: boolean
         private hasClickedPlus: boolean
+        private hasClickedReplace: boolean
         private isPlaying: boolean
         private clickedPattern: number // TODO: Get pattern for click
 
@@ -194,11 +196,60 @@ namespace micromusic {
                 return
             }
 
+            if (this.isTemp) {
+                this.drawTemp()
+                this.navigator.drawComponents()
+                return
+            }
+
             this.drawBoxes()
 
             this.navigator.drawComponents()
             this.cursor.draw()
             super.draw()
+        }
+
+        private drawTemp() {
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+
+            let count = 0
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+
+                    if (count == this.song.patternSequence.length) {
+                        break
+                    }
+
+                    if (count < this.song.patterns.length) {
+                        const x = startX + i * cellWidth
+
+                        Screen.print(i.toString(), x, y, 0, bitmaps.font12)
+                    }
+
+                    const digitCount = count.toString().length
+                    const rightX = x - (digitCount - 1) * 2
+
+                    Screen.drawRect(x - 5, y - 2, 17, 17, 0)
+                    Screen.print(
+                        (count + 1).toString(),
+                        rightX,
+                        y + 16,
+                        0,
+                        bitmaps.font5
+                    )
+
+                    count += 1
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
         }
 
         private drawPatternConfirmation() {
@@ -333,6 +384,8 @@ namespace micromusic {
                         y: 18,
                         onClick: () => {
                             this.hasClickedBack = false
+                            this.resetNavigator()
+                            this.resetControllerEvents()
                             this.moveCursor(CursorDir.Up)
                             this.moveCursor(CursorDir.Down)
                         },
@@ -380,13 +433,23 @@ namespace micromusic {
                         y: 18,
                         onClick: () => {
                             // TODO: Replace, this should let you swap it out or create a new one ideally
-                            this.newPattern(clickedPatternIndex)
-                            this.resetBooleans()
+                            this.replaceClicked(clickedPatternIndex)
                         },
                     }),
                 ],
             ])
             this.moveCursor(CursorDir.Down)
+        }
+
+        private replaceClicked(clickedPatternIndex: number) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.unbindBackButton()
+
+            this.pickPattern(clickedPatternIndex)
         }
 
         private plusClicked(clickedPatternIndex: number) {
@@ -417,7 +480,7 @@ namespace micromusic {
                         x: 21,
                         y: 18,
                         onClick: () => {
-                            this.pickPattern()
+                            this.pickPattern(clickedPatternIndex)
                             this.resetBooleans()
                         },
                     }),
@@ -427,7 +490,121 @@ namespace micromusic {
             this.moveCursor(CursorDir.Down)
         }
 
-        private pickPattern() {}
+        private temp(clickedPatternIndex: number) {
+            this.resetBooleans()
+            this.isTemp = true
+        }
+
+        private pickPattern(clickedPatternIndex: number) {
+            this.resetBooleans()
+            // Create a UI to display all available patterns
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-49, -30, "Select a pattern:")
+
+            const patterns = this.song.patterns
+            const navButtons = []
+            const buttonRow = []
+
+            // Display pattern options based on available patterns
+            const startX = -40
+            const startY = -10
+            const spacing = 25
+            const maxPerRow = 3
+
+            for (let i = 0; i < patterns.length; i++) {
+                const rowIndex = Math.floor(i / maxPerRow)
+                const colIndex = i % maxPerRow
+                const x = startX + colIndex * spacing
+                const y = startY + rowIndex * 20
+
+                const patternButton = new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "green_tick_2",
+                    x: x,
+                    y: y,
+                    onClick: () => {
+                        // Replace the pattern in the sequence
+                        if (
+                            this.hasClickedReplace &&
+                            clickedPatternIndex !== undefined
+                        ) {
+                            this.song.patternSequence[clickedPatternIndex] =
+                                patterns[i]
+                            this.resetBooleans()
+                            this.fillPatternBtns()
+                        }
+                    },
+                })
+
+                buttonRow.push(patternButton)
+
+                // Display pattern ID or other identifier
+                Screen.print(
+                    `ID: ${patterns[i].id}`,
+                    x - 8,
+                    y,
+                    0,
+                    bitmaps.font5
+                )
+            }
+
+            // Add a button to create a new pattern
+            const newPatternButton = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: "invisiblePatternButton",
+                x: startX,
+                y: startY + Math.ceil(patterns.length / maxPerRow) * 20,
+                onClick: () => {
+                    const newPattern = this.song.newPattern()
+                    if (
+                        this.hasClickedReplace &&
+                        this.clickedPattern !== undefined
+                    ) {
+                        this.song.patternSequence[this.clickedPattern] =
+                            newPattern
+                    }
+                    this.resetBooleans()
+                    this.fillPatternBtns()
+                },
+            })
+
+            buttonRow.push(newPatternButton)
+            Screen.print(
+                "New Pattern",
+                startX - 12,
+                startY + Math.ceil(patterns.length / maxPerRow) * 20,
+                0,
+                bitmaps.font5
+            )
+
+            // Add a cancel button
+            const cancelButton = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: "back_arrow",
+                x: 20,
+                y: startY + Math.ceil(patterns.length / maxPerRow) * 20,
+                onClick: () => {
+                    this.resetBooleans()
+                },
+            })
+
+            buttonRow.push(cancelButton)
+            Screen.print(
+                "Cancel",
+                10,
+                startY + Math.ceil(patterns.length / maxPerRow) * 20,
+                0,
+                bitmaps.font5
+            )
+
+            navButtons.push(buttonRow)
+            this.navigator.setBtns(navButtons)
+            this.cursor.setOutlineColour(0x2)
+        }
 
         private editPattern(clickedPattern: Pattern) {
             this.app.popScene()
@@ -504,6 +681,8 @@ namespace micromusic {
             this.hasClickedBack = false
             this.hasClickedNumber = false
             this.hasClickedPlus = false
+            this.hasClickedReplace = false
+            this.cursor.setOutlineColour(0x9)
         }
 
         private unbindBackButton() {
