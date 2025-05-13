@@ -30,7 +30,7 @@ namespace micromusic {
             datalogger.includeTimestamp(FlashLogTimeStampFormat.None)
 
             // if (shieldhelpers.shieldPresent())
-            this.pushScene(SongComposerScreen.getInstance(this))
+            this.pushScene(new Home(this))
         }
 
         public save(slot: string, buffer: Buffer): boolean {

@@ -19,28 +19,17 @@ namespace micromusic {
         private settings: Setting[]
         private static instance: SettingsScreen | null = null
 
-        private constructor(
-            app: AppInterface,
-            previousScene: CursorScene,
-            volume?: Setting,
-            bpm?: Setting,
-            other?: Setting
-        ) {
+        private constructor(app: AppInterface, previousScene: CursorScene) {
             super(
                 app,
                 function () {
                     this.app.popScene()
-                    this.previousScene.navigator = new GridNavigator()
                     this.app.pushScene(this.previousScene)
                 },
                 new GridNavigator()
             )
 
-            if (!volume) volume = new Setting(100)
-            if (!bpm) bpm = new Setting(100)
-            if (!other) other = new Setting(100)
-
-            this.settings = [volume, bpm, other]
+            this.settings = [Settings.volume, Settings.bpm]
 
             this.previousScene = previousScene
         }
@@ -80,13 +69,11 @@ namespace micromusic {
                         new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "back_arrow",
+                            icon: "back_button",
                             x: -68,
                             y: -52,
                             onClick: () => {
                                 this.app.popScene()
-                                this.previousScene.navigator =
-                                    new GridNavigator() // Has to be given a new GridNavigator, old one stops working
                                 this.app.pushScene(this.previousScene)
                             },
                         }),
@@ -96,11 +83,8 @@ namespace micromusic {
         }
 
         public static getInstance(
-            app?: AppInterface,
-            previousScene?: CursorScene,
-            volume?: Setting,
-            bpm?: Setting,
-            other?: Setting
+            previousScene: CursorScene,
+            app?: AppInterface
         ) {
             if (!SettingsScreen.instance) {
                 if (app === undefined) {
@@ -109,6 +93,10 @@ namespace micromusic {
                     )
                 }
                 SettingsScreen.instance = new SettingsScreen(app, previousScene)
+            }
+
+            if (previousScene) {
+                SettingsScreen.instance.previousScene = previousScene
             }
 
             return SettingsScreen.instance

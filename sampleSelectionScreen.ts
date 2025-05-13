@@ -25,7 +25,6 @@ namespace micromusic {
                 app,
                 function () {
                     this.app.popScene()
-                    this.previousScene.navigator = new GridNavigator()
                     this.app.pushScene(this.previousScene)
                 },
                 new GridNavigator()

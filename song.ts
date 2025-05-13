@@ -3,7 +3,6 @@ namespace micromusic {
         private _patterns: Pattern[]
         private _patternSequence: Pattern[]
         private patternsMade: number
-        public name: string
 
         constructor() {
             this._patternSequence = []
@@ -34,8 +33,29 @@ namespace micromusic {
             return this.patterns[this.patterns.length - 1]
         }
 
+        /**
+         * Remove a pattern from the sequence,
+         * does not delete the pattern
+         * */
+        public removeSequenceItem(index: number) {
+            this.patternSequence.splice(index, 1)
+        }
+
+        /**
+         * Fully deletes a pattern and removes parts of sequence that include it
+         * @param pattern the pattern that should be removed entirely
+         */
         public removePattern(pattern: Pattern) {
-            this.patterns.removeElement(pattern)
+            this.patterns.splice(this.patterns.indexOf(pattern), 1)
+
+            for (let p of this.patternSequence) {
+                if (p === pattern) {
+                    this.patternSequence.splice(
+                        this.patterns.indexOf(pattern),
+                        1
+                    )
+                }
+            }
         }
     }
 }

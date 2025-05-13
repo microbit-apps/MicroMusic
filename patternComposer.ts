@@ -186,12 +186,7 @@ namespace micromusic {
                         this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
-                            SettingsScreen.getInstance(
-                                this.app,
-                                this,
-                                this.volume,
-                                this.bpm
-                            )
+                            SettingsScreen.getInstance(this, this.app)
                         )
                     },
                 }),
