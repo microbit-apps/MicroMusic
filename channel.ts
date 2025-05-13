@@ -15,7 +15,7 @@ namespace micromusic {
                 this._notes[i] = "-"
                 this._octaves[i] = 3
             }
-            this._sample = new Sample("ResBass")
+            this._sample = new Sample("ShortB")
         }
 
         public get id() {
