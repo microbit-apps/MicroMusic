@@ -2,11 +2,13 @@ namespace micromusic {
     export class Song {
         private _patterns: Pattern[]
         private _patternSequence: Pattern[]
+        private patternsMade: number
         public name: string
 
         constructor() {
             this._patternSequence = []
             this._patterns = []
+            this.patternsMade = 0
 
             // this._patternSequence[0] = new Pattern(0)
             // this._patternSequence[1] = new Pattern(1)
@@ -25,9 +27,9 @@ namespace micromusic {
         }
 
         public newPattern(): Pattern {
-            this.patterns[this.patterns.length] = new Pattern(
-                this.patterns.length
-            )
+            this.patterns[this.patterns.length] = new Pattern(this.patternsMade)
+
+            this.patternsMade += 1
 
             return this.patterns[this.patterns.length - 1]
         }

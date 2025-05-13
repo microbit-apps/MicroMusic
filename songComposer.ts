@@ -199,6 +199,8 @@ namespace micromusic {
             if (this.isTemp) {
                 this.drawTemp()
                 this.navigator.drawComponents()
+                this.cursor.draw()
+                this.moveCursor(CursorDir.Down)
                 return
             }
 
@@ -217,19 +219,28 @@ namespace micromusic {
 
             let count = 0
 
+            this.drawText(-50, -55, "Select a pattern")
+            this.drawText(-60, -45, "Or press B to cancel")
+
             for (let j = 0; j < 2; j++) {
                 for (let i = 0; i < 6; i++) {
                     const y = startY + j * cellHeight
                     const x = startX + i * cellWidth
 
-                    if (count == this.song.patternSequence.length) {
+                    if (count == this.song.patterns.length) {
                         break
                     }
 
                     if (count < this.song.patterns.length) {
                         const x = startX + i * cellWidth
 
-                        Screen.print(i.toString(), x, y, 0, bitmaps.font12)
+                        Screen.print(
+                            this.song.patterns[count].id.toString(),
+                            x,
+                            y,
+                            0,
+                            bitmaps.font12
+                        )
                     }
 
                     const digitCount = count.toString().length
@@ -314,7 +325,13 @@ namespace micromusic {
                     if (count < this.song.patternSequence.length) {
                         const x = startX + i * cellWidth
 
-                        Screen.print(i.toString(), x, y, 0, bitmaps.font12)
+                        Screen.print(
+                            this.song.patternSequence[count].id.toString(),
+                            x,
+                            y,
+                            0,
+                            bitmaps.font12
+                        )
                     } else if (count == this.song.patternSequence.length) {
                         const x = startX + i * cellWidth
                         Screen.print("+", x + 1, y + 2, 0, bitmaps.font8)
@@ -428,12 +445,13 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: ic.doubledX(),
+                        icon: ic.doubledX().doubledY(),
                         x: 21,
                         y: 18,
                         onClick: () => {
                             // TODO: Replace, this should let you swap it out or create a new one ideally
-                            this.replaceClicked(clickedPatternIndex)
+                            this.temp(clickedPatternIndex)
+                            // this.replaceClicked(clickedPatternIndex)
                         },
                     }),
                 ],
@@ -493,6 +511,57 @@ namespace micromusic {
         private temp(clickedPatternIndex: number) {
             this.resetBooleans()
             this.isTemp = true
+            let patternSelections = []
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+            let count = 0
+
+            let patternBtns = []
+
+            for (let j = 0; j < 2; j++) {
+                // TODO: patterns won't necessarily be in order due to their id, i can index normally but then display via their id? Potentially won't work, need to know what happens to an array when i remove the middle one - if i Array.splice(count, index) it works and removes the middle one, nice!
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patterns.length) {
+                        console.log("testing here")
+                        patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.song.patternSequence[clickedPatternIndex] =
+                                    this.song.patterns[index]
+                                this.resetBooleans()
+                                this.resetNavigator()
+                                this.moveCursor(CursorDir.Left)
+                                this.moveCursor(CursorDir.Right)
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count > this.song.patternSequence.length) {
+                        break
+                    }
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
+
+            this.navigator.setBtns([
+                // TODO: Make this add enough buttons for the number of patterns available
+                patternBtns,
+            ])
+            // Way of making isTemp false, also buttons for actually selecting and replacing
         }
 
         private pickPattern(clickedPatternIndex: number) {
@@ -682,6 +751,7 @@ namespace micromusic {
             this.hasClickedNumber = false
             this.hasClickedPlus = false
             this.hasClickedReplace = false
+            this.isTemp = false
             this.cursor.setOutlineColour(0x9)
         }
 

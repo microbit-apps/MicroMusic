@@ -265,8 +265,8 @@ namespace micromusic {
                         onClick: () => {
                             this.hasClickedBack = false
                             this.resetNavigator()
-                            this.moveCursor(CursorDir.Up)
-                            this.moveCursor(CursorDir.Down)
+                            this.moveCursor(CursorDir.Left)
+                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                 ],
@@ -433,9 +433,10 @@ namespace micromusic {
             if (this.hasClickedBack) {
                 Screen.fillRect(-57, -37, 120, 80, 0)
                 Screen.fillRect(-60, -40, 120, 80, 0x6)
-                this.drawText(-36, -30, "Return Home?")
-                Screen.print("Any unsaved work", -48, -20, 0x2)
-                Screen.print("will be lost", -38, -10, 0x2)
+                this.drawText(-36, -15, "Return Home?")
+                this.cursor.setOutlineColour(0x2)
+                // Screen.print("Any unsaved work", -48, -20, 0x2)
+                // Screen.print("will be lost", -38, -10, 0x2)
                 this.drawText(-30, 15, "Yes")
                 this.drawText(15, 15, "No")
                 this.cursor.draw()
@@ -449,6 +450,7 @@ namespace micromusic {
             this.drawSamples()
             this.drawGrid()
             this.drawBankSelector()
+            this.cursor.setOutlineColour(0x9)
             super.draw()
         }
 
