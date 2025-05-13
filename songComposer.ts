@@ -227,11 +227,13 @@ namespace micromusic {
         private drawPatternConfirmation() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
-            this.drawText(-51, -30, "Would you like to")
-            Screen.print("edit or replace", -45, -20, 0)
-            Screen.print("this pattern?", -34, -10, 0)
-            this.drawText(-40, 15, "Edit")
-            this.drawText(2, 15, "Replace")
+            this.drawText(-51, -36, "Would you like to")
+            Screen.print("edit, replace", -40, -26, 0)
+            Screen.print("or remove", -26, -16, 0)
+            Screen.print("this pattern?", -36, -6, 0)
+            this.drawText(-40, 14, "Edit")
+            this.drawText(2, 14, "Replace")
+            this.drawText(-20, 24, "Remove")
             this.cursor.draw()
             this.cursor.setOutlineColour(0x2)
         }
@@ -239,8 +241,8 @@ namespace micromusic {
         private drawPlusConfirmation() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
-            this.drawText(-46, -30, "Create new pattern")
-            Screen.print("or use an", -38, -20, 0)
+            this.drawText(-54, -30, "Create new pattern")
+            Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
             this.drawText(-40, 15, "new")
             this.drawText(2, 15, "existing")
@@ -398,12 +400,8 @@ namespace micromusic {
                         style: ButtonStyles.Transparent,
                         icon: ic,
                         x: -22,
-                        y: 18,
+                        y: 25,
                         onClick: () => {
-                            console.log(
-                                this.song.patternSequence[clickedPatternIndex]
-                                    .id
-                            )
                             this.editPattern(
                                 this.song.patternSequence[clickedPatternIndex]
                             )
@@ -415,7 +413,7 @@ namespace micromusic {
                         style: ButtonStyles.Transparent,
                         icon: ic.doubledX().doubledY(),
                         x: 21,
-                        y: 18,
+                        y: 25,
                         onClick: () => {
                             // TODO: Replace, this should let you swap it out or create a new one ideally. New dialogue for this
                             this.pickClicked(clickedPatternIndex)
@@ -550,7 +548,6 @@ namespace micromusic {
                     const y = startY + j * cellHeight
                     const x = startX + i * cellWidth
                     const index = count
-                    console.log("PATTERN COUNT: " + count)
                     if (count < this.song.patternSequence.length) {
                         this.patternBtns[count] = new Button({
                             parent: null,

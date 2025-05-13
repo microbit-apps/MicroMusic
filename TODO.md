@@ -4,16 +4,19 @@
 
 -   [ ] Fix all dialogue boxes
 -   [x] Rename temp to pick
--   [ ] Pattern on top of screen to swap out in the pattern viewer - May include passing in song and pattern index instead of just passing in a pattern
+-   [x] Pattern on top of screen to swap out in the pattern viewer - May include passing in song and pattern index instead of just passing in a pattern
 -   [ ] Implement copy-paste
 -   [ ] Arrow showing which pattern is being played currently
 -   [ ] Ensure playing full song works on main, aka, test on microbit
 -   [ ] Fix the way settings work on main
 
+-   [ ] Button locations for all confirmation windows
+-   [ ] Add remove button to pattern clicked
+
 ## Specs of song screen
 
--   [ ] Should be able to open up with a song
--   [ ] Song has a number of patterns, patterns are shown
+-   [x] Should be able to open up with a song
+-   [x] Song has a number of patterns, patterns are shown
 -   [ ] Click on a pattern and should either be able to replace it or edit it
 -   [ ] Replace gives the option to pick a pattern from all our patterns or to let us make a new one
 -   [ ] Edit brings up patternComposer screen letting us edit it
@@ -84,7 +87,7 @@ Console.log over serial
 
 ## Saving
 
--   [ ] Had some saving and loading functionality written, application seemed to freeze randomly with those screens included even without implementation in, need to debug but finish other features first
+-   [x] Had some saving and loading functionality written, application seemed to freeze randomly with those screens included even without implementation in, need to debug but finish other features first
 -   [ ] Saving functionality
 -   [ ] Loading functionality
 -   [ ] If not saved before load, confirmation on load
@@ -102,7 +105,7 @@ Console.log over serial
 
 ## Other
 
--   [ ] 128-block length, can extend songs with different blocks/repeat blocks
+-   [x] 64-block length, can extend songs with different blocks/repeat blocks
 -   [ ] Continuing on - multiple screens of data, song structure view and defining samples - Possibly bigger than time left
 -   [ ] Sample/simpleEffect (echo or something, decay, holding a note for longer) - Scrapped for now as I don't know how I'd implement this
 -   [x] Play stops using other buttons
