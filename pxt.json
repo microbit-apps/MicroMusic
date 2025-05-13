@@ -25,7 +25,8 @@
         "patternComposer.ts",
         "song.ts",
         "pattern.ts",
-        "channel.ts"
+        "channel.ts",
+        "settings.ts"
     ],
     "testFiles": [],
     "targetVersions": {

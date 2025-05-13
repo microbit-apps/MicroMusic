@@ -12,12 +12,9 @@ namespace micromusic {
         private liveDataBtn: Button
         private recordDataBtn: Button
         private distributedLoggingBtn: Button
-        private volume: Setting
-        // private viewBtn: Button
 
         constructor(app: AppInterface) {
             super(app)
-            this.volume = new Setting(100)
         }
 
         /* override */ startup() {
@@ -36,7 +33,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                PatternScreen.getInstance(this.app)
+                                SongComposerScreen.getInstance(this.app)
                             )
                         },
                     })),
@@ -59,11 +56,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                SettingsScreen.getInstance(
-                                    this.app,
-                                    this,
-                                    this.volume
-                                )
+                                SettingsScreen.getInstance(this, this.app)
                             )
                         },
                     })),
@@ -133,7 +126,6 @@ namespace micromusic {
             this.liveDataBtn.draw()
             this.recordDataBtn.draw()
             this.distributedLoggingBtn.draw()
-            // this.viewBtn.draw()
 
             this.drawVersion()
             super.draw()

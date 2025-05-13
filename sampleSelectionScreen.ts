@@ -25,7 +25,6 @@ namespace micromusic {
                 app,
                 function () {
                     this.app.popScene()
-                    this.previousScene.navigator = new GridNavigator()
                     this.app.pushScene(this.previousScene)
                 },
                 new GridNavigator(),
@@ -219,6 +218,7 @@ namespace micromusic {
             Screen.print("Select Sample", -40, -50, 0x1)
 
             this.cursor.draw()
+            super.draw()
         }
     }
 }

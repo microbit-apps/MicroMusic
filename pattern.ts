@@ -3,14 +3,21 @@ namespace micromusic {
 
     export class Pattern {
         private _channels: Channel[]
+        private _id: number
 
-        constructor() {
+        constructor(id: number) {
             this._channels = [
-                new Channel(),
-                new Channel(),
-                new Channel(),
-                new Channel(),
+                new Channel(0),
+                new Channel(1),
+                new Channel(2),
+                new Channel(3),
             ]
+
+            this._id = id
+        }
+
+        public get id() {
+            return this._id
         }
 
         public setChannel(channel: Channel, index: number) {
@@ -23,6 +30,10 @@ namespace micromusic {
 
         public getChannel(index: number) {
             return this._channels[index]
+        }
+
+        public playAsync() {
+            // starts playing on all channels, each one has their own control.inbackground?
         }
     }
 }

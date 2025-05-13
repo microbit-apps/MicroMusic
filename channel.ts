@@ -5,8 +5,9 @@ namespace micromusic {
         private _notes: string[]
         private _octaves: number[]
         private _sample: Sample
+        private _id: number
 
-        constructor() {
+        constructor(id: number) {
             this._notes = []
             this._octaves = []
 
@@ -15,6 +16,10 @@ namespace micromusic {
                 this._octaves[i] = 3
             }
             this._sample = new Sample("ResBass")
+        }
+
+        public get id() {
+            return this._id
         }
 
         public get notes() {
