@@ -200,6 +200,7 @@ namespace micromusic {
         }
 
         draw() {
+            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,

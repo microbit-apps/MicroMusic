@@ -34,7 +34,7 @@ namespace micromusic {
                             this.app.popScene()
                             this.app.pushScene(
                                 // SongComposerScreen.getInstance(this.app)
-                                new SongComposerScreen(this.app)
+                                SongComposerScreen.getInstance(this.app)
                             )
                         },
                     })),
@@ -78,6 +78,7 @@ namespace micromusic {
 
         private yOffset = -Screen.HEIGHT >> 1
         draw() {
+            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
@@ -85,7 +86,6 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
-            control.dmesg("working?2\n")
 
             this.yOffset = Math.min(0, this.yOffset + 2)
             const t = control.millis()

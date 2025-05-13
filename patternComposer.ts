@@ -249,7 +249,9 @@ namespace micromusic {
                             this.hasClickedBack = false
                             this.app.popScene()
                             // this.app.pushScene(SongComposerScreen.getInstance())
-                            this.app.pushScene(new SongComposerScreen(this.app))
+                            this.app.pushScene(
+                                SongComposerScreen.getInstance(this.app)
+                            )
                         },
                     }),
                     new Button({
@@ -416,6 +418,7 @@ namespace micromusic {
         }
 
         draw() {
+            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,

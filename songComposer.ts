@@ -23,7 +23,7 @@ namespace micromusic {
         private isPlaying: boolean
         private clickedPattern: number // TODO: Get pattern for click
 
-        constructor(app: AppInterface) {
+        private constructor(app: AppInterface) {
             super(
                 app,
                 function () {
@@ -149,7 +149,7 @@ namespace micromusic {
         }
 
         draw() {
-            // basic.pause(20)
+            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
@@ -160,21 +160,21 @@ namespace micromusic {
             if (this.hasClickedBack) {
                 this.drawBackConfirmation()
                 this.navigator.drawComponents()
-                super.draw()
+                // super.draw()
                 return
             }
 
             if (this.hasClickedNumber) {
                 this.drawPatternConfirmation()
                 this.navigator.drawComponents()
-                super.draw()
+                // super.draw()
                 return
             }
 
             if (this.hasClickedPlus) {
                 this.drawPlusConfirmation()
                 this.navigator.drawComponents()
-                super.draw()
+                // super.draw()
                 return
             }
 
@@ -183,14 +183,13 @@ namespace micromusic {
                 this.navigator.drawComponents()
                 this.cursor.draw()
                 this.moveCursor(CursorDir.Down)
-                super.draw()
+                // super.draw()
                 return
             }
 
             this.drawBoxes()
 
             this.navigator.drawComponents()
-            this.cursor.draw()
             super.draw()
         }
 
