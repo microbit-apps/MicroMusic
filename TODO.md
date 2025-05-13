@@ -32,6 +32,9 @@ Console.log over serial
 -   [ ] Want a nice strong evaluation, start thinking about that now
 -   [ ] Intuitiveness, when selecting a note, A to come out of it and B to reset the note to "-"? Or A to reset, B to come out of it
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bf2d054f9a4278301f9858b61e2f46bb6c665d22
 -   [ ] Scrolling over samples plays sample
 
 ## Tests
@@ -39,10 +42,15 @@ Console.log over serial
 -   [ ] Different volumes
 -   [ ] Confirm that changing samples plays a noise
 -   [ ] Confirm that octave changing plays correctly
+<<<<<<< HEAD
 =======
 -   [ ] Pattern at the top of the screen so you can swap straight in the patterns editor
 -   [ ] Change size of invisible buttons on confirmation pages
 >>>>>>> a2c7a471f0c0041e5ba1893016d84c032021aaea
+=======
+-   [ ] Pattern at the top of the screen so you can swap straight in the patterns editor
+-   [ ] Change size of invisible buttons on confirmation pages
+>>>>>>> bf2d054f9a4278301f9858b61e2f46bb6c665d22
 
 ## Bugs
 
