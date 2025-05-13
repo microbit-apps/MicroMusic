@@ -233,6 +233,7 @@ namespace micromusic {
 
             this.resetNavigator()
             this.resetControllerEvents()
+            basic.pause(1)
         }
 
         private backConfirmation() {
@@ -407,6 +408,7 @@ namespace micromusic {
         }
 
         draw() {
+            // basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,

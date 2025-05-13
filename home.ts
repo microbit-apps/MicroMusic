@@ -93,6 +93,7 @@ namespace micromusic {
 
         private yOffset = -Screen.HEIGHT >> 1
         draw() {
+            // basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
