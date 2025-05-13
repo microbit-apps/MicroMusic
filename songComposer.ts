@@ -14,14 +14,11 @@ namespace micromusic {
         private song: Song
         private controlBtns: Button[]
         private patternBtns: Button[]
-        private bpm: Setting
-        private volume: Setting
         private hasClickedBack: boolean
         private hasClickedPick: boolean
         private hasClickedNumber: boolean
         private hasClickedPlus: boolean
         private isPlaying: boolean
-        private clickedPattern: number // TODO: Get pattern for click
 
         private constructor(app: AppInterface) {
             super(
@@ -34,8 +31,7 @@ namespace micromusic {
             )
 
             this.song = new Song()
-            this.volume = new Setting(100)
-            this.bpm = new Setting(120)
+
             this.hasClickedBack = false
         }
 
@@ -47,7 +43,6 @@ namespace micromusic {
                     )
                 }
                 SongComposerScreen.instance = new SongComposerScreen(app)
-                SongComposerScreen.instance.setSong(new Song())
             }
 
             if (song) {
@@ -160,30 +155,24 @@ namespace micromusic {
             if (this.hasClickedBack) {
                 this.drawBackConfirmation()
                 this.navigator.drawComponents()
-                // super.draw()
                 return
             }
 
             if (this.hasClickedNumber) {
                 this.drawPatternConfirmation()
                 this.navigator.drawComponents()
-                // super.draw()
                 return
             }
 
             if (this.hasClickedPlus) {
                 this.drawPlusConfirmation()
                 this.navigator.drawComponents()
-                // super.draw()
                 return
             }
 
             if (this.hasClickedPick) {
                 this.drawPick()
                 this.navigator.drawComponents()
-                this.cursor.draw()
-                this.moveCursor(CursorDir.Down)
-                // super.draw()
                 return
             }
 
@@ -223,26 +212,16 @@ namespace micromusic {
                             0,
                             bitmaps.font12
                         )
+                        Screen.drawRect(x - 5, y - 2, 17, 17, 0)
                     }
-
-                    const digitCount = count.toString().length
-                    const rightX = x - (digitCount - 1) * 2
-
-                    Screen.drawRect(x - 5, y - 2, 17, 17, 0)
-                    Screen.print(
-                        (count + 1).toString(),
-                        rightX,
-                        y + 16,
-                        0,
-                        bitmaps.font5
-                    )
 
                     count += 1
                 }
-                if (count > this.song.patternSequence.length) {
+                if (count == this.song.patterns.length) {
                     break
                 }
             }
+            this.cursor.draw()
         }
 
         private drawPatternConfirmation() {
@@ -298,6 +277,13 @@ namespace micromusic {
             const cellHeight = 31
 
             let count = 0
+            let len = 0
+
+            if (this.hasClickedPick) {
+                len = this.song.patterns.length
+            } else {
+                len = this.song.patternSequence.length
+            }
 
             for (let j = 0; j < 2; j++) {
                 for (let i = 0; i < 6; i++) {
@@ -470,7 +456,6 @@ namespace micromusic {
                         y: 18,
                         onClick: () => {
                             this.pickClicked(clickedPatternIndex)
-                            this.resetBooleans()
                         },
                     }),
                 ],
@@ -507,8 +492,10 @@ namespace micromusic {
                             onClick: () => {
                                 this.song.patternSequence[clickedPatternIndex] =
                                     this.song.patterns[index]
+                                this.hasClickedPick = false
                                 this.resetBooleans()
                                 this.resetNavigator()
+                                this.fillPatternBtns()
                                 this.moveCursor(CursorDir.Left)
                                 this.moveCursor(CursorDir.Right)
                             },
@@ -516,11 +503,11 @@ namespace micromusic {
                     }
 
                     count += 1
-                    if (count > this.song.patternSequence.length) {
+                    if (count == this.song.patterns.length) {
                         break
                     }
                 }
-                if (count > this.song.patternSequence.length) {
+                if (count == this.song.patterns.length) {
                     break
                 }
             }
@@ -529,7 +516,9 @@ namespace micromusic {
                 // TODO: Make this add enough buttons for the number of patterns available
                 patternBtns,
             ])
-            // Way of making hasClickedPick false, also buttons for actually selecting and replacing
+
+            this.moveCursor(CursorDir.Up)
+            this.moveCursor(CursorDir.Down)
         }
 
         private editPattern(clickedPattern: Pattern) {
@@ -561,7 +550,7 @@ namespace micromusic {
                     const y = startY + j * cellHeight
                     const x = startX + i * cellWidth
                     const index = count
-
+                    console.log("PATTERN COUNT: " + count)
                     if (count < this.song.patternSequence.length) {
                         this.patternBtns[count] = new Button({
                             parent: null,
