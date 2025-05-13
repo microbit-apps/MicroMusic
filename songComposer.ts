@@ -63,6 +63,7 @@ namespace micromusic {
 
         /*override*/ startup() {
             super.startup()
+            basic.pause(1)
 
             this.cursor.setBorderThickness(1)
 
@@ -149,7 +150,6 @@ namespace micromusic {
         }
 
         draw() {
-            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,

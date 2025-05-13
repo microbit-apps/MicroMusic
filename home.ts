@@ -19,6 +19,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
+            basic.pause(1)
             this.cursor.setBorderThickness(2)
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
             this.navigator.setBtns([
@@ -33,7 +34,6 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                // SongComposerScreen.getInstance(this.app)
                                 SongComposerScreen.getInstance(this.app)
                             )
                         },
@@ -78,7 +78,6 @@ namespace micromusic {
 
         private yOffset = -Screen.HEIGHT >> 1
         draw() {
-            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,

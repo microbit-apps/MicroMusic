@@ -19,7 +19,7 @@ namespace micromusic {
         private settings: Setting[]
         private static instance: SettingsScreen | null = null
 
-        constructor(app: AppInterface, previousScene: CursorScene) {
+        private constructor(app: AppInterface, previousScene: CursorScene) {
             super(
                 app,
                 function () {
@@ -36,6 +36,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
+            basic.pause(1)
 
             this.cursor.setBorderThickness(1)
 
@@ -200,7 +201,6 @@ namespace micromusic {
         }
 
         draw() {
-            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,

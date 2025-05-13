@@ -68,7 +68,7 @@ namespace micromusic {
         private pattern: Pattern
         private channels: Channel[]
 
-        constructor(
+        private constructor(
             app: AppInterface,
             pattern: Pattern,
             volume?: Setting,
@@ -135,6 +135,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
+            basic.pause(1)
 
             this.channels = this.pattern.channels
 
@@ -248,7 +249,6 @@ namespace micromusic {
                         onClick: () => {
                             this.hasClickedBack = false
                             this.app.popScene()
-                            // this.app.pushScene(SongComposerScreen.getInstance())
                             this.app.pushScene(
                                 SongComposerScreen.getInstance(this.app)
                             )
@@ -418,7 +418,6 @@ namespace micromusic {
         }
 
         draw() {
-            basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
@@ -431,10 +430,9 @@ namespace micromusic {
             if (this.hasClickedBack) {
                 Screen.fillRect(-57, -37, 120, 80, 0)
                 Screen.fillRect(-60, -40, 120, 80, 0x6)
-                this.drawText(-36, -15, "Return Home?")
+                this.drawText(-53, -25, "Return to previous")
+                this.drawText(-15, -8, "page?")
                 this.cursor.setOutlineColour(0x2)
-                // Screen.print("Any unsaved work", -48, -20, 0x2)
-                // Screen.print("will be lost", -38, -10, 0x2)
                 this.drawText(-30, 15, "Yes")
                 this.drawText(15, 15, "No")
                 this.cursor.draw()
