@@ -12,6 +12,8 @@ namespace micromusic {
             if (name == "largeDisk") return icondb.largeDisk
 
             if (name == "volume") return icondb.volumeLogo
+            if (name == "invisiblePatternButton")
+                return icondb.invisiblePatternButton
 
             if (name == "green_tick_2") return icondb.green_tick_transparent
 
@@ -151,6 +153,24 @@ namespace icondb {
     //------------------------
     // "ICONLESS" BUTTON ICONS
     //------------------------
+    export const invisiblePatternButton = bmp`
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . .     
+    `
+
     export const invisibleButtonPlaceholder = bmp`
         . . . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . . . .

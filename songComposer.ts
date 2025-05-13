@@ -10,6 +10,7 @@ namespace micromusic {
     import font = user_interface_base.font
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     const NUM_TRACKS = 4
     const NUM_VISIBLE_STEPS = 8
     const NUM_NOTES = 128
@@ -963,4 +964,655 @@ namespace micromusic {
 
     export class SongComposerScreen extends CursorSceneWithPriorPage {}
 >>>>>>> e1d8b8e6a8c632f1ed4c74980ec2b6c18445423e
+=======
+    export class SongComposerScreen extends CursorSceneWithPriorPage {
+        private static instance: SongComposerScreen | null = null
+        private song: Song
+        private controlBtns: Button[]
+        private patternBtns: Button[]
+        private bpm: Setting
+        private volume: Setting
+        private hasClickedBack: boolean
+        private hasClickedPick: boolean
+        private hasClickedNumber: boolean
+        private hasClickedPlus: boolean
+        private isPlaying: boolean
+        private clickedPattern: number // TODO: Get pattern for click
+
+        private constructor(app: AppInterface) {
+            super(
+                app,
+                function () {
+                    this.app.popScene()
+                    this.app.pushScene(new Home(this.app))
+                },
+                new GridNavigator()
+            )
+
+            this.volume = new Setting(100)
+            this.bpm = new Setting(120)
+            this.hasClickedBack = false
+        }
+
+        public static getInstance(app?: AppInterface, song?: Song) {
+            if (!SongComposerScreen.instance) {
+                if (app === undefined) {
+                    console.error(
+                        "SongComposerScreen singleton not initialized. Call with parameters first."
+                    )
+                }
+                SongComposerScreen.instance = new SongComposerScreen(app)
+                SongComposerScreen.instance.setSong(new Song())
+            }
+
+            if (song) {
+                SongComposerScreen.instance.setSong(song)
+            }
+
+            return SongComposerScreen.instance
+        }
+
+        private setSong(song: Song) {
+            this.song = song
+        }
+
+        /*override*/ startup() {
+            super.startup()
+
+            this.cursor.setBorderThickness(1)
+
+            this.controlBtns = [
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "pause",
+                    x: -25,
+                    y: -54,
+                    onClick: () => {
+                        this.pause()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "stop",
+                    x: -13,
+                    y: -54,
+                    onClick: () => {
+                        this.stop()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "fast_forward",
+                    x: 1,
+                    y: -54,
+                    onClick: () => {
+                        this.fastForward()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "settings_cog_small",
+                    x: 70,
+                    y: -52,
+                    onClick: () => {
+                        this.isPlaying = false
+                        this.app.popScene()
+                        this.app.pushScene(
+                            SettingsScreen.getInstance(this, this.app)
+                        )
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "back_button",
+                    x: -68,
+                    y: -52,
+                    onClick: () => {
+                        this.backConfirmation()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "rewind",
+                    x: -47,
+                    y: -54,
+                    onClick: () => {
+                        this.rewind()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
+                    icon: "play",
+                    x: -37,
+                    y: -54,
+                    onClick: () => {
+                        this.play()
+                    },
+                }),
+            ]
+
+            this.fillPatternBtns()
+            this.resetNavigator()
+            this.resetControllerEvents()
+        }
+
+        draw() {
+            Screen.fillRect(
+                Screen.LEFT_EDGE,
+                Screen.TOP_EDGE,
+                Screen.WIDTH,
+                Screen.HEIGHT,
+                0xc
+            )
+
+            if (this.hasClickedBack) {
+                this.drawBackConfirmation()
+                this.navigator.drawComponents()
+                return
+            }
+
+            if (this.hasClickedNumber) {
+                this.drawPatternConfirmation()
+                this.navigator.drawComponents()
+                return
+            }
+
+            if (this.hasClickedPlus) {
+                this.drawPlusConfirmation()
+                this.navigator.drawComponents()
+                return
+            }
+
+            if (this.hasClickedPick) {
+                this.drawPick()
+                this.navigator.drawComponents()
+                this.cursor.draw()
+                this.moveCursor(CursorDir.Down)
+                return
+            }
+
+            this.drawBoxes()
+
+            this.navigator.drawComponents()
+            this.cursor.draw()
+            super.draw()
+        }
+
+        private drawPick() {
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+
+            let count = 0
+
+            this.drawText(-50, -55, "Select a pattern")
+            this.drawText(-60, -45, "Or press B to cancel")
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+
+                    if (count == this.song.patterns.length) {
+                        break
+                    }
+
+                    if (count < this.song.patterns.length) {
+                        const x = startX + i * cellWidth
+
+                        Screen.print(
+                            this.song.patterns[count].id.toString(),
+                            x,
+                            y,
+                            0,
+                            bitmaps.font12
+                        )
+                    }
+
+                    const digitCount = count.toString().length
+                    const rightX = x - (digitCount - 1) * 2
+
+                    Screen.drawRect(x - 5, y - 2, 17, 17, 0)
+                    Screen.print(
+                        (count + 1).toString(),
+                        rightX,
+                        y + 16,
+                        0,
+                        bitmaps.font5
+                    )
+
+                    count += 1
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
+        }
+
+        private drawPatternConfirmation() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-51, -30, "Would you like to")
+            Screen.print("edit or replace", -45, -20, 0)
+            Screen.print("this pattern?", -34, -10, 0)
+            this.drawText(-40, 15, "Edit")
+            this.drawText(2, 15, "Replace")
+            this.cursor.draw()
+            this.cursor.setOutlineColour(0x2)
+        }
+
+        private drawPlusConfirmation() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-46, -30, "Create new pattern")
+            Screen.print("or use an", -38, -20, 0)
+            Screen.print("existing one?", -38, -10, 0)
+            this.drawText(-40, 15, "new")
+            this.drawText(2, 15, "existing")
+            this.cursor.draw()
+        }
+
+        private drawBackConfirmation() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-36, -30, "Return Home?")
+            Screen.print("Any unsaved work", -48, -20, 0x2)
+            Screen.print("will be lost", -38, -10, 0x2)
+            this.drawText(-30, 15, "Yes")
+            this.drawText(15, 15, "No")
+            this.cursor.draw()
+        }
+
+        private drawText(
+            x: number,
+            y: number,
+            text: string,
+            colour?: number,
+            _font?: bitmaps.Font
+        ) {
+            if (!colour) colour = 0
+            if (!_font) _font = font
+            Screen.print(text, x, y, colour, _font)
+        }
+
+        private drawBoxes() {
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+
+            let count = 0
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+
+                    if (count < this.song.patternSequence.length) {
+                        const x = startX + i * cellWidth
+
+                        Screen.print(
+                            this.song.patternSequence[count].id.toString(),
+                            x,
+                            y,
+                            0,
+                            bitmaps.font12
+                        )
+                    } else if (count == this.song.patternSequence.length) {
+                        const x = startX + i * cellWidth
+                        Screen.print("+", x + 1, y + 2, 0, bitmaps.font8)
+                    }
+
+                    const digitCount = count.toString().length
+                    const rightX = x - (digitCount - 1) * 2
+
+                    Screen.drawRect(x - 5, y - 2, 17, 17, 0)
+                    Screen.print(
+                        (count + 1).toString(),
+                        rightX,
+                        y + 16,
+                        0,
+                        bitmaps.font5
+                    )
+
+                    count += 1
+                    if (count > this.song.patternSequence.length) {
+                        break
+                    }
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
+        }
+
+        private play() {}
+
+        private pause() {}
+
+        private stop() {}
+
+        private fastForward() {}
+
+        private rewind() {}
+
+        private backConfirmation() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.hasClickedBack = true
+            this.unbindBackButton()
+            const ic = icons.get("placeholder")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -22,
+                        y: 18,
+                        onClick: () => {
+                            this.app.popScene()
+                            this.app.pushScene(new Home(this.app))
+                            this.hasClickedBack = false
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: 21,
+                        y: 18,
+                        onClick: () => {
+                            this.hasClickedBack = false
+                            this.resetNavigator()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
+                        },
+                    }),
+                ],
+            ])
+            this.unbindBackButton()
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private patternClicked(clickedPatternIndex: number) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.unbindBackButton()
+
+            this.hasClickedNumber = true
+            const ic = icons.get("placeholder")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -22,
+                        y: 18,
+                        onClick: () => {
+                            console.log(
+                                this.song.patternSequence[clickedPatternIndex]
+                                    .id
+                            )
+                            this.editPattern(
+                                this.song.patternSequence[clickedPatternIndex]
+                            )
+                            this.resetBooleans()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic.doubledX().doubledY(),
+                        x: 21,
+                        y: 18,
+                        onClick: () => {
+                            // TODO: Replace, this should let you swap it out or create a new one ideally. New dialogue for this
+                            this.pickClicked(clickedPatternIndex)
+                            // this.replaceClicked(clickedPatternIndex)
+                        },
+                    }),
+                ],
+            ])
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private plusClicked(clickedPatternIndex: number) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+            this.hasClickedPlus = true
+            this.unbindBackButton()
+            const ic = icons.get("placeholder")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -30,
+                        y: 18,
+                        onClick: () => {
+                            this.newPattern(clickedPatternIndex)
+                            this.resetBooleans()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic.doubledX(),
+                        x: 21,
+                        y: 18,
+                        onClick: () => {
+                            this.pickClicked(clickedPatternIndex)
+                            this.resetBooleans()
+                        },
+                    }),
+                ],
+            ])
+            this.cursor.setOutlineColour(0x2)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private pickClicked(clickedPatternIndex: number) {
+            this.resetBooleans()
+            this.hasClickedPick = true
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+            let count = 0
+
+            let patternBtns = []
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patterns.length) {
+                        patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.song.patternSequence[clickedPatternIndex] =
+                                    this.song.patterns[index]
+                                this.resetBooleans()
+                                this.resetNavigator()
+                                this.moveCursor(CursorDir.Left)
+                                this.moveCursor(CursorDir.Right)
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count > this.song.patternSequence.length) {
+                        break
+                    }
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
+
+            this.navigator.setBtns([
+                // TODO: Make this add enough buttons for the number of patterns available
+                patternBtns,
+            ])
+            // Way of making hasClickedPick false, also buttons for actually selecting and replacing
+        }
+
+        private editPattern(clickedPattern: Pattern) {
+            this.app.popScene()
+            this.app.pushScene(
+                PatternScreen.getInstance(clickedPattern, this.app)
+            )
+        }
+
+        private newPattern(clickedPatternIndex: number) {
+            let pattern = this.song.newPattern()
+            this.song.patternSequence[clickedPatternIndex] = pattern
+            this.app.popScene()
+            this.app.pushScene(PatternScreen.getInstance(pattern, this.app))
+        }
+
+        private fillPatternBtns() {
+            this.patternBtns = []
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+
+            let count = 0
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patternSequence.length) {
+                        this.patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.patternClicked(index)
+                            },
+                        })
+                    } else if (count == this.song.patternSequence.length) {
+                        this.patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.plusClicked(index)
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count > this.song.patternSequence.length) {
+                        break
+                    }
+                }
+                if (count > this.song.patternSequence.length) {
+                    break
+                }
+            }
+
+            this.resetNavigator()
+        }
+
+        private resetNavigator() {
+            this.navigator.setBtns([this.controlBtns, this.patternBtns])
+        }
+
+        private resetBooleans() {
+            this.hasClickedBack = false
+            this.hasClickedNumber = false
+            this.hasClickedPlus = false
+            this.hasClickedPick = false
+            this.cursor.setOutlineColour(0x9)
+        }
+
+        private unbindBackButton() {
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.resetBooleans()
+                    this.resetControllerEvents()
+                    this.resetNavigator()
+                    this.cursor.setOutlineColour(0x9)
+                    this.moveCursor(CursorDir.Left)
+                    this.moveCursor(CursorDir.Right)
+                }
+            )
+        }
+
+        private resetControllerEvents() {
+            this.cursor.visible = true
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.up.id,
+                () => {
+                    if (!this.isPlaying) this.moveCursor(CursorDir.Up)
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.down.id,
+                () => {
+                    if (!this.isPlaying) this.moveCursor(CursorDir.Down)
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => this.moveCursor(CursorDir.Right)
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.left.id,
+                () => this.moveCursor(CursorDir.Left)
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.backConfirmation()
+                    this.moveCursor(CursorDir.Right)
+                }
+            )
+        }
+    }
+>>>>>>> a2c7a471f0c0041e5ba1893016d84c032021aaea
 }

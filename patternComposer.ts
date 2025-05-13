@@ -11,7 +11,6 @@ namespace micromusic {
 
     const NUM_TRACKS = 4
     const NUM_VISIBLE_STEPS = 8
-    const TOTAL_BANKS = 4
     const LEFT_TRACK_INDEX = 0
     const RIGHT_TRACK_INDEX = 1
     const NOTES = [
@@ -48,7 +47,6 @@ namespace micromusic {
         private static instance: PatternScreen | null = null
         private currentStep: number
         private currentTrack: number
-        // private trackData: Note[][][]
         private controlBtns: Button[]
         private sampleSelectBtn: Button
         private noteSelectBtn: Button
@@ -66,14 +64,13 @@ namespace micromusic {
         private cursorVisible: boolean
         private playedNote: number
         private hasClickedBack: boolean
-        private currentBank: number
 
         private pattern: Pattern
         private channels: Channel[]
 
         private constructor(
             app: AppInterface,
-            pattern?: Pattern,
+            pattern: Pattern,
             volume?: Setting,
             bpm?: Setting
         ) {
@@ -97,11 +94,7 @@ namespace micromusic {
                 this.bpm = new Setting(120)
             }
 
-            if (pattern) {
-                this.pattern = pattern
-            } else {
-                this.pattern = new Pattern()
-            }
+            this.pattern = pattern
 
             this.selectedTrackPos = 0
             this.currentStep = 0
@@ -115,22 +108,27 @@ namespace micromusic {
             this.isSelectingSample = false
             this.playedNote = 0
             this.hasClickedBack = false
-            this.currentBank = 0
         }
 
         public static getInstance(
+            pattern: Pattern,
             app?: AppInterface,
             volume?: Setting,
             bpm?: Setting
         ) {
             if (!PatternScreen.instance) {
-                if (app === undefined) {
+                if (app === undefined || pattern === undefined) {
                     console.error(
-                        "SoundTrackerScreen singleton not initialized. Call with parameters first."
+                        "PatternScreen singleton not initialized. Call with parameters first."
                     )
                 }
-                PatternScreen.instance = new PatternScreen(app)
+                PatternScreen.instance = new PatternScreen(app, pattern)
             }
+
+            if (!pattern) {
+                console.error("Pattern required")
+            }
+            PatternScreen.instance.setPattern(pattern)
 
             return PatternScreen.instance
         }
@@ -188,12 +186,7 @@ namespace micromusic {
                         this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
-                            SettingsScreen.getInstance(
-                                this.app,
-                                this,
-                                this.volume,
-                                this.bpm
-                            )
+                            SettingsScreen.getInstance(this, this.app)
                         )
                     },
                 }),
@@ -233,6 +226,10 @@ namespace micromusic {
             this.resetControllerEvents()
         }
 
+        private setPattern(pattern: Pattern) {
+            this.pattern = pattern
+        }
+
         private backConfirmation() {
             if (this.isPlaying) {
                 this.resetControllerEvents()
@@ -249,8 +246,9 @@ namespace micromusic {
                         x: -22,
                         y: 18,
                         onClick: () => {
+                            this.hasClickedBack = false
                             this.app.popScene()
-                            this.app.pushScene(new Home(this.app))
+                            this.app.pushScene(SongComposerScreen.getInstance())
                         },
                     }),
                     new Button({
@@ -262,8 +260,8 @@ namespace micromusic {
                         onClick: () => {
                             this.hasClickedBack = false
                             this.resetNavigator()
-                            this.moveCursor(CursorDir.Up)
-                            this.moveCursor(CursorDir.Down)
+                            this.moveCursor(CursorDir.Left)
+                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                 ],
@@ -430,9 +428,10 @@ namespace micromusic {
             if (this.hasClickedBack) {
                 Screen.fillRect(-57, -37, 120, 80, 0)
                 Screen.fillRect(-60, -40, 120, 80, 0x6)
-                this.drawText(-36, -30, "Return Home?")
-                Screen.print("Any unsaved work", -48, -20, 0x2)
-                Screen.print("will be lost", -38, -10, 0x2)
+                this.drawText(-36, -15, "Return Home?")
+                this.cursor.setOutlineColour(0x2)
+                // Screen.print("Any unsaved work", -48, -20, 0x2)
+                // Screen.print("will be lost", -38, -10, 0x2)
                 this.drawText(-30, 15, "Yes")
                 this.drawText(15, 15, "No")
                 this.cursor.draw()
@@ -446,6 +445,7 @@ namespace micromusic {
             this.drawSamples()
             this.drawGrid()
             this.drawBankSelector()
+            this.cursor.setOutlineColour(0x9)
             super.draw()
         }
 
@@ -532,27 +532,6 @@ namespace micromusic {
                     0x1
                 )
             }
-        }
-
-        private switchToBank(bankIndex: number) {
-            if (bankIndex >= 0 && bankIndex < TOTAL_BANKS) {
-                // If playing, stop before switching banks
-                if (this.isPlaying) {
-                    this.pause()
-                }
-
-                this.currentBank = bankIndex
-
-                // Reset current step when switching banks
-                this.currentStep = 0
-
-                // Redraw the screen
-                this.draw()
-            }
-        }
-
-        private nextBank() {
-            this.switchToBank((this.currentBank + 1) % TOTAL_BANKS)
         }
 
         private drawText(
