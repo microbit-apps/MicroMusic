@@ -7,9 +7,8 @@
         "radio": "*",
         "microphone": "*",
         "datalogger": "*",
-        "user-interface-base": "github:microbit-apps/user-interface-base#589d51e8901fe16bc4c1dfb6c81d3ffc86edb2fe",
-        "microgui": "github:microbit-apps/microgui#cd5827ba0a3b8e87c12750612218aea7b320b98d",
-        "audio-samples": "*"
+        "user-interface-base": "github:RThom6/user-interface-base#16960db449c8edc2e08363d964c7dbe4b880ab4f",
+        "microgui": "github:microbit-apps/microgui#368075311b56032ab096e15d3175c0a2e7cb697a"
     },
     "files": [
         "main.ts",

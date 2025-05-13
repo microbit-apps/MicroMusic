@@ -68,7 +68,7 @@ namespace micromusic {
         private pattern: Pattern
         private channels: Channel[]
 
-        private constructor(
+        constructor(
             app: AppInterface,
             pattern: Pattern,
             volume?: Setting,
@@ -248,7 +248,8 @@ namespace micromusic {
                         onClick: () => {
                             this.hasClickedBack = false
                             this.app.popScene()
-                            this.app.pushScene(SongComposerScreen.getInstance())
+                            // this.app.pushScene(SongComposerScreen.getInstance())
+                            this.app.pushScene(new SongComposerScreen(this.app))
                         },
                     }),
                     new Button({
@@ -422,7 +423,6 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
-
             this.navigator.drawComponents()
 
             if (this.hasClickedBack) {
@@ -435,6 +435,7 @@ namespace micromusic {
                 this.drawText(-30, 15, "Yes")
                 this.drawText(15, 15, "No")
                 this.cursor.draw()
+                super.draw()
                 return
             }
 

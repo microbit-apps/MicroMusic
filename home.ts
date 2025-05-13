@@ -33,7 +33,8 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                SongComposerScreen.getInstance(this.app)
+                                // SongComposerScreen.getInstance(this.app)
+                                new SongComposerScreen(this.app)
                             )
                         },
                     })),
@@ -84,6 +85,7 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
+            control.dmesg("working?2\n")
 
             this.yOffset = Math.min(0, this.yOffset + 2)
             const t = control.millis()

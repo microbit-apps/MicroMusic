@@ -20,7 +20,7 @@ namespace micromusic {
         private isSettingChanging: boolean
         private static instance: SettingsScreen | null = null
 
-        private constructor(app: AppInterface, previousScene: CursorScene) {
+        constructor(app: AppInterface, previousScene: CursorScene) {
             super(
                 app,
                 function () {
@@ -212,7 +212,6 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
-
             for (let btns of this.allBtns) {
                 for (let btn of btns) {
                     btn.draw()
