@@ -24,6 +24,7 @@ namespace micromusic {
         private hasClickedPlus: boolean
         private hasClickedRemove: boolean
         private isPlaying: boolean
+        private isPaused: boolean
         private arrowVisible: boolean
 
         private constructor(app: AppInterface) {
@@ -42,15 +43,6 @@ namespace micromusic {
             this.playedPattern = 0
 
             this.hasClickedBack = false
-
-            this.arrow = new Button({
-                parent: null,
-                style: ButtonStyles.Transparent,
-                icon: "down_arrow",
-                x: -53,
-                y: -6,
-                onClick: () => {},
-            })
         }
 
         public static getInstance(app?: AppInterface, song?: Song) {
@@ -174,17 +166,18 @@ namespace micromusic {
                 0xc
             )
 
-            if (this.isPlaying) {
-                if (this.arrowLocation != -53 + this.playedPattern * 21) {
+            if (this.isPlaying || this.isPaused) {
+                if (this.arrowLocation != -53 + (this.playedPattern % 6) * 21) {
+                    let y = this.playedPattern < 6 ? -6 : 25
                     this.arrow = new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: "down_arrow",
-                        x: -53 + this.playedPattern * 21,
-                        y: -6,
+                        x: -53 + (this.playedPattern % 6) * 21,
+                        y: y,
                         onClick: () => {},
                     })
-                    this.arrowLocation = -53 + this.playedPattern * 21
+                    this.arrowLocation = -53 + (this.playedPattern % 6) * 21
                 }
                 this.arrow.draw()
             }
@@ -390,6 +383,7 @@ namespace micromusic {
             if (this.isPlaying == true) return
             music.setVolume((Settings.volume.value / 100) * 255)
             this.isPlaying = true
+            this.isPaused = false
             control.inBackground(() => {
                 const tickSpeed = 60000 / Settings.bpm.value
 
@@ -412,11 +406,15 @@ namespace micromusic {
         }
 
         private pause() {
-            this.isPlaying = false
+            if (this.isPlaying) {
+                this.isPaused = true
+                this.isPlaying = false
+            }
         }
 
         private stop() {
             this.isPlaying = false
+            this.isPaused = false
             this.arrowVisible = false
             basic.pause(200)
             this.playedNote = 0
