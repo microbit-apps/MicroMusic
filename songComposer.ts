@@ -25,6 +25,7 @@ namespace micromusic {
         private hasClickedRemove: boolean
         private isPlaying: boolean
         private isPaused: boolean
+        private patternClickedSwap: boolean
         private arrowVisible: boolean
 
         private constructor(app: AppInterface) {
@@ -207,6 +208,12 @@ namespace micromusic {
             }
 
             if (this.hasClickedPick) {
+                this.drawPick()
+                this.navigator.drawComponents()
+                return
+            }
+
+            if (this.patternClickedSwap) {
                 this.drawPick()
                 this.navigator.drawComponents()
                 return
@@ -687,6 +694,58 @@ namespace micromusic {
                 patternBtns,
             ])
 
+            this.moveCursor(CursorDir.Up)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        public swapPattern() {
+            this.resetBooleans()
+            this.patternClickedSwap = true
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+            let count = 0
+
+            let patternBtns = []
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patterns.length) {
+                        patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.patternClickedSwap = false
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    PatternScreen.getInstance(
+                                        this.song.patterns[index]
+                                    )
+                                )
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count == this.song.patterns.length) {
+                        break
+                    }
+                }
+                if (count == this.song.patterns.length) {
+                    break
+                }
+            }
+
+            this.navigator.setBtns([patternBtns])
             this.moveCursor(CursorDir.Up)
             this.moveCursor(CursorDir.Down)
         }

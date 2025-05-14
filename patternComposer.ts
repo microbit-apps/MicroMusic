@@ -177,6 +177,18 @@ namespace micromusic {
                 new Button({
                     parent: null,
                     style: ButtonStyles.Transparent,
+                    icon: "small_pattern_button",
+                    x: 34,
+                    y: -54,
+                    onClick: () => {
+                        this.app.popScene()
+                        this.app.pushScene(SongComposerScreen.getInstance())
+                        SongComposerScreen.getInstance().swapPattern()
+                    },
+                }),
+                new Button({
+                    parent: null,
+                    style: ButtonStyles.Transparent,
                     icon: "settings_cog_small",
                     x: 70,
                     y: -52,
@@ -367,7 +379,6 @@ namespace micromusic {
                         this.currentStep =
                             Math.abs(this.currentStep + 1) % MAX_NOTES
 
-                    // this.draw()
                     this.playedNote += 1
                 }
                 this.isPlaying = false
@@ -405,13 +416,11 @@ namespace micromusic {
         }
 
         private drawBankSelector() {
-            const bankWidth = 20
-            const bankHeight = 10
-            const startX = -60
-            const y = 10
+            let y = -56
+            let x = 32
+            Screen.print(this.pattern.id.toString(), x, y, 0, bitmaps.font5)
 
-            // Add labels
-            Screen.print("Blocks", 10, -56, 0x1, bitmaps.font5)
+            Screen.drawRect(x - 3, y - 3, 10, 11, 0)
         }
 
         draw() {

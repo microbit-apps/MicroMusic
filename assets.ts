@@ -14,6 +14,8 @@ namespace micromusic {
             if (name == "volume") return icondb.volumeLogo
             if (name == "invisiblePatternButton")
                 return icondb.invisiblePatternButton
+            if (name == "small_pattern_button")
+                return icondb.invisiblePatternButtonSmall
 
             if (name == "green_tick_2") return icondb.green_tick_transparent
 
@@ -170,6 +172,18 @@ namespace icondb {
         . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . .     
+    `
+
+    export const invisiblePatternButtonSmall = bmp`
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . . 
     `
 
     export const invisibleButtonPlaceholder = bmp`
