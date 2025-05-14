@@ -61,11 +61,6 @@ namespace micromusic {
             super.startup()
             basic.pause(1)
 
-            let arr = [1, 2, 3]
-            console.log(arr)
-            arr.splice(0, 1)
-            console.log(arr)
-
             this.cursor.setBorderThickness(1)
 
             this.controlBtns = [
@@ -266,12 +261,12 @@ namespace micromusic {
         private drawRemoveConfirmation() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
-            this.drawText(-45, -30, "Remove pattern?")
-            Screen.print("The pattern will", -48, -20, 0x2)
-            Screen.print("be removed from", -43, -10, 0x2)
-            Screen.print("the sequence", -35, 0, 0x2)
-            this.drawText(-30, 15, "Yes")
-            this.drawText(15, 15, "No")
+            this.drawText(-44, -30, "Delete pattern", 0x2)
+            Screen.print("or remove from", -44, -20, 0x2)
+            Screen.print("the sequence?", -40, -10, 0x2)
+            this.drawText(-39, 0, "(B to cancel)", 0, bitmaps.font5)
+            this.drawText(-50, 15, "Fully")
+            this.drawText(0, 15, "Sequence")
             this.cursor.draw()
         }
 
@@ -486,7 +481,7 @@ namespace micromusic {
                         x: -22,
                         y: 18,
                         onClick: () => {
-                            this.song.removePattern(pattern)
+                            this.song.deletePattern(pattern)
                             this.resetBooleans()
                             this.fillPatternBtns()
                             this.resetControllerEvents()
@@ -501,8 +496,9 @@ namespace micromusic {
                         x: 21,
                         y: 18,
                         onClick: () => {
+                            this.song.removePattern(pattern)
                             this.resetBooleans()
-                            this.resetNavigator()
+                            this.fillPatternBtns()
                             this.resetControllerEvents()
                             this.moveCursor(CursorDir.Up)
                             this.moveCursor(CursorDir.Down)

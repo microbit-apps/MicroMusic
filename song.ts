@@ -51,7 +51,6 @@ namespace micromusic {
                         this.patternSequence.indexOf(pattern),
                         1
                     )
-                    console.log(this.patternSequence)
                 }
             }
         }
@@ -61,16 +60,13 @@ namespace micromusic {
          * @param pattern the pattern that should be removed entirely
          */
         public deletePattern(pattern: Pattern) {
-            this.patterns.splice(this.patterns.indexOf(pattern), 1)
-            console.log(this.patternSequence)
-            for (let p of this.patternSequence) {
-                if (p === pattern) {
-                    this.patternSequence.splice(
-                        this.patternSequence.indexOf(pattern),
-                        1
-                    )
-                    console.log(this.patternSequence)
-                }
+            this._patternSequence = this.patternSequence.filter(
+                p => p !== pattern
+            )
+
+            const patternIndex = this.patterns.indexOf(pattern)
+            if (patternIndex !== -1) {
+                this.patterns.splice(patternIndex, 1)
             }
         }
     }
