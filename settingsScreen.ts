@@ -20,7 +20,7 @@ namespace micromusic {
         private isSettingChanging: boolean
         private static instance: SettingsScreen | null = null
 
-        constructor(app: AppInterface, previousScene: CursorScene) {
+        private constructor(app: AppInterface, previousScene: CursorScene) {
             super(
                 app,
                 function () {
@@ -37,6 +37,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
+            basic.pause(1)
 
             this.cursor.setBorderThickness(1)
 

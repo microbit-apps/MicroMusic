@@ -14,16 +14,21 @@ namespace micromusic {
         private song: Song
         private controlBtns: Button[]
         private patternBtns: Button[]
-        private bpm: Setting
-        private volume: Setting
+        private arrow: Button
+        private arrowLocation: number
+        private playedNote: number
+        private playedPattern: number
         private hasClickedBack: boolean
         private hasClickedPick: boolean
-        private hasClickedNumber: boolean
+        private hasClickedPattern: boolean
         private hasClickedPlus: boolean
+        private hasClickedRemove: boolean
         private isPlaying: boolean
-        private clickedPattern: number // TODO: Get pattern for click
+        private isPaused: boolean
+        private patternClickedSwap: boolean
+        private arrowVisible: boolean
 
-        constructor(app: AppInterface) {
+        private constructor(app: AppInterface) {
             super(
                 app,
                 function () {
@@ -34,8 +39,10 @@ namespace micromusic {
             )
 
             this.song = new Song()
-            this.volume = new Setting(100)
-            this.bpm = new Setting(120)
+
+            this.playedNote = 0
+            this.playedPattern = 0
+
             this.hasClickedBack = false
         }
 
@@ -47,7 +54,6 @@ namespace micromusic {
                     )
                 }
                 SongComposerScreen.instance = new SongComposerScreen(app)
-                SongComposerScreen.instance.setSong(new Song())
             }
 
             if (song) {
@@ -63,6 +69,10 @@ namespace micromusic {
 
         /*override*/ startup() {
             super.startup()
+            basic.pause(1)
+
+            this.playedNote = 0
+            this.playedPattern = 0
 
             this.cursor.setBorderThickness(1)
 
@@ -149,7 +159,6 @@ namespace micromusic {
         }
 
         draw() {
-            // basic.pause(20)
             Screen.fillRect(
                 Screen.LEFT_EDGE,
                 Screen.TOP_EDGE,
@@ -157,40 +166,62 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
+
+            if (this.isPlaying || this.isPaused) {
+                if (this.arrowLocation != -53 + (this.playedPattern % 6) * 21) {
+                    let y = this.playedPattern < 6 ? -6 : 25
+                    this.arrow = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "down_arrow",
+                        x: -53 + (this.playedPattern % 6) * 21,
+                        y: y,
+                        onClick: () => {},
+                    })
+                    this.arrowLocation = -53 + (this.playedPattern % 6) * 21
+                }
+                this.arrow.draw()
+            }
+
             if (this.hasClickedBack) {
                 this.drawBackConfirmation()
                 this.navigator.drawComponents()
-                super.draw()
                 return
             }
 
-            if (this.hasClickedNumber) {
+            if (this.hasClickedPattern) {
                 this.drawPatternConfirmation()
                 this.navigator.drawComponents()
-                super.draw()
                 return
             }
 
             if (this.hasClickedPlus) {
                 this.drawPlusConfirmation()
                 this.navigator.drawComponents()
-                super.draw()
+                return
+            }
+
+            if (this.hasClickedRemove) {
+                this.drawRemoveConfirmation()
+                this.navigator.drawComponents()
                 return
             }
 
             if (this.hasClickedPick) {
                 this.drawPick()
                 this.navigator.drawComponents()
-                this.cursor.draw()
-                this.moveCursor(CursorDir.Down)
-                super.draw()
+                return
+            }
+
+            if (this.patternClickedSwap) {
+                this.drawPick()
+                this.navigator.drawComponents()
                 return
             }
 
             this.drawBoxes()
 
             this.navigator.drawComponents()
-            this.cursor.draw()
             super.draw()
         }
 
@@ -224,36 +255,28 @@ namespace micromusic {
                             0,
                             bitmaps.font12
                         )
+                        Screen.drawRect(x - 5, y - 2, 17, 17, 0)
                     }
-
-                    const digitCount = count.toString().length
-                    const rightX = x - (digitCount - 1) * 2
-
-                    Screen.drawRect(x - 5, y - 2, 17, 17, 0)
-                    Screen.print(
-                        (count + 1).toString(),
-                        rightX,
-                        y + 16,
-                        0,
-                        bitmaps.font5
-                    )
 
                     count += 1
                 }
-                if (count > this.song.patternSequence.length) {
+                if (count == this.song.patterns.length) {
                     break
                 }
             }
+            this.cursor.draw()
         }
 
         private drawPatternConfirmation() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
-            this.drawText(-51, -30, "Would you like to")
-            Screen.print("edit or replace", -45, -20, 0)
-            Screen.print("this pattern?", -34, -10, 0)
-            this.drawText(-40, 15, "Edit")
-            this.drawText(2, 15, "Replace")
+            this.drawText(-51, -36, "Would you like to")
+            Screen.print("edit, replace", -40, -26, 0)
+            Screen.print("or remove", -26, -16, 0)
+            Screen.print("this pattern?", -36, -6, 0)
+            this.drawText(-40, 14, "Edit")
+            this.drawText(2, 14, "Replace")
+            this.drawText(-20, 24, "Remove")
             this.cursor.draw()
             this.cursor.setOutlineColour(0x2)
         }
@@ -261,11 +284,24 @@ namespace micromusic {
         private drawPlusConfirmation() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
-            this.drawText(-46, -30, "Create new pattern")
-            Screen.print("or use an", -38, -20, 0)
+            this.drawText(-54, -30, "Create new pattern")
+            Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
             this.drawText(-40, 15, "new")
-            this.drawText(2, 15, "existing")
+            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            this.drawText(2, 15, "existing", col)
+            this.cursor.draw()
+        }
+
+        private drawRemoveConfirmation() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-44, -30, "Delete pattern", 0x2)
+            Screen.print("or remove from", -44, -20, 0x2)
+            Screen.print("the sequence?", -40, -10, 0x2)
+            this.drawText(-39, 0, "(B to cancel)", 0, bitmaps.font5)
+            this.drawText(-50, 15, "Fully")
+            this.drawText(0, 15, "Sequence")
             this.cursor.draw()
         }
 
@@ -299,6 +335,13 @@ namespace micromusic {
             const cellHeight = 31
 
             let count = 0
+            let len = 0
+
+            if (this.hasClickedPick) {
+                len = this.song.patterns.length
+            } else {
+                len = this.song.patternSequence.length
+            }
 
             for (let j = 0; j < 2; j++) {
                 for (let i = 0; i < 6; i++) {
@@ -343,15 +386,63 @@ namespace micromusic {
             }
         }
 
-        private play() {}
+        private play() {
+            if (this.isPlaying == true) return
+            music.setVolume((Settings.volume.value / 100) * 255)
+            this.isPlaying = true
+            this.isPaused = false
+            control.inBackground(() => {
+                const tickSpeed = 60000 / Settings.bpm.value
 
-        private pause() {}
+                while (
+                    this.isPlaying &&
+                    this.playedPattern < this.song.patternSequence.length
+                ) {
+                    basic.pause(tickSpeed)
 
-        private stop() {}
+                    this.playedNote += 1
+                    if (this.playedNote == MAX_NOTES) {
+                        this.playedPattern += 1
+                    }
+                }
+                this.isPlaying = false
+                this.resetNavigator()
+                this.playedNote = 0
+                this.playedPattern = 0
+            })
+        }
 
-        private fastForward() {}
+        private pause() {
+            if (this.isPlaying) {
+                this.isPaused = true
+                this.isPlaying = false
+            }
+        }
 
-        private rewind() {}
+        private stop() {
+            this.isPlaying = false
+            this.isPaused = false
+            this.arrowVisible = false
+            basic.pause(200)
+            this.playedNote = 0
+            this.playedPattern = 0
+        }
+
+        private fastForward() {
+            this.playedNote = 0
+            this.playedPattern += 1
+            if (this.playedPattern >= this.song.patternSequence.length) {
+                this.playedPattern = this.song.patternSequence.length - 1
+            }
+        }
+
+        private rewind() {
+            this.playedNote = 0
+            this.playedPattern -= 1
+            if (this.playedPattern < 0) {
+                this.playedPattern = 0
+            }
+        }
 
         private backConfirmation() {
             if (this.isPlaying) {
@@ -404,21 +495,19 @@ namespace micromusic {
 
             this.unbindBackButton()
 
-            this.hasClickedNumber = true
+            this.hasClickedPattern = true
             const ic = icons.get("placeholder")
+            const ic2 = icons.get("placeholder_long")
             this.navigator.setBtns([
                 [
                     new Button({
+                        // Edit
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: ic,
-                        x: -22,
-                        y: 18,
+                        icon: ic2,
+                        x: -28,
+                        y: 17,
                         onClick: () => {
-                            console.log(
-                                this.song.patternSequence[clickedPatternIndex]
-                                    .id
-                            )
                             this.editPattern(
                                 this.song.patternSequence[clickedPatternIndex]
                             )
@@ -426,15 +515,83 @@ namespace micromusic {
                         },
                     }),
                     new Button({
+                        // Replace
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: ic.doubledX().doubledY(),
-                        x: 21,
+                        icon: ic2.doubledX(),
+                        x: 23,
+                        y: 17,
+                        onClick: () => {
+                            this.resetBooleans()
+                            this.plusClicked(clickedPatternIndex)
+                        },
+                    }),
+                ],
+                [
+                    new Button({
+                        // Remove
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic.doubledX(),
+                        x: -2,
+                        y: 28,
+                        onClick: () => {
+                            this.removeClicked(clickedPatternIndex)
+                        },
+                    }),
+                ],
+            ])
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private removeClicked(clickedPatternIndex: number) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.resetBooleans()
+            this.hasClickedRemove = true
+            this.cursor.setOutlineColour(0x2)
+
+            this.unbindBackButton()
+
+            const ic = icons.get("placeholder")
+            const ic2 = icons.get("placeholder_long")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        // Fully
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic.doubledX(),
+                        x: -35,
                         y: 18,
                         onClick: () => {
-                            // TODO: Replace, this should let you swap it out or create a new one ideally. New dialogue for this
-                            this.pickClicked(clickedPatternIndex)
-                            // this.replaceClicked(clickedPatternIndex)
+                            this.song.deletePattern(
+                                this.song.patternSequence[clickedPatternIndex]
+                            )
+                            this.resetBooleans()
+                            this.fillPatternBtns()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
+                        },
+                    }),
+                    new Button({
+                        // Sequence
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic2.doubledX(),
+                        x: 24,
+                        y: 18,
+                        onClick: () => {
+                            this.song.removeSequenceItem(clickedPatternIndex)
+                            this.resetBooleans()
+                            this.fillPatternBtns()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
                         },
                     }),
                 ],
@@ -450,13 +607,15 @@ namespace micromusic {
             this.hasClickedPlus = true
             this.unbindBackButton()
             const ic = icons.get("placeholder")
+            const ic2 = icons.get("placeholder_long")
             this.navigator.setBtns([
                 [
                     new Button({
+                        // New
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: ic,
-                        x: -30,
+                        x: -31,
                         y: 18,
                         onClick: () => {
                             this.newPattern(clickedPatternIndex)
@@ -464,14 +623,16 @@ namespace micromusic {
                         },
                     }),
                     new Button({
+                        // Existing
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: ic.doubledX(),
-                        x: 21,
+                        icon: ic2.doubledX(),
+                        x: 26,
                         y: 18,
                         onClick: () => {
-                            this.pickClicked(clickedPatternIndex)
-                            this.resetBooleans()
+                            if (this.song.patterns.length > 0) {
+                                this.pickClicked(clickedPatternIndex)
+                            }
                         },
                     }),
                 ],
@@ -508,8 +669,10 @@ namespace micromusic {
                             onClick: () => {
                                 this.song.patternSequence[clickedPatternIndex] =
                                     this.song.patterns[index]
+                                this.hasClickedPick = false
                                 this.resetBooleans()
                                 this.resetNavigator()
+                                this.fillPatternBtns()
                                 this.moveCursor(CursorDir.Left)
                                 this.moveCursor(CursorDir.Right)
                             },
@@ -517,11 +680,11 @@ namespace micromusic {
                     }
 
                     count += 1
-                    if (count > this.song.patternSequence.length) {
+                    if (count == this.song.patterns.length) {
                         break
                     }
                 }
-                if (count > this.song.patternSequence.length) {
+                if (count == this.song.patterns.length) {
                     break
                 }
             }
@@ -530,7 +693,61 @@ namespace micromusic {
                 // TODO: Make this add enough buttons for the number of patterns available
                 patternBtns,
             ])
-            // Way of making hasClickedPick false, also buttons for actually selecting and replacing
+
+            this.moveCursor(CursorDir.Up)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        public swapPattern() {
+            this.resetBooleans()
+            this.patternClickedSwap = true
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+            let count = 0
+
+            let patternBtns = []
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patterns.length) {
+                        patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.patternClickedSwap = false
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    PatternScreen.getInstance(
+                                        this.song.patterns[index]
+                                    )
+                                )
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count == this.song.patterns.length) {
+                        break
+                    }
+                }
+                if (count == this.song.patterns.length) {
+                    break
+                }
+            }
+
+            this.navigator.setBtns([patternBtns])
+            this.moveCursor(CursorDir.Up)
+            this.moveCursor(CursorDir.Down)
         }
 
         private editPattern(clickedPattern: Pattern) {
@@ -562,7 +779,6 @@ namespace micromusic {
                     const y = startY + j * cellHeight
                     const x = startX + i * cellWidth
                     const index = count
-
                     if (count < this.song.patternSequence.length) {
                         this.patternBtns[count] = new Button({
                             parent: null,
@@ -606,9 +822,10 @@ namespace micromusic {
 
         private resetBooleans() {
             this.hasClickedBack = false
-            this.hasClickedNumber = false
+            this.hasClickedPattern = false
             this.hasClickedPlus = false
             this.hasClickedPick = false
+            this.hasClickedRemove = false
             this.cursor.setOutlineColour(0x9)
         }
 

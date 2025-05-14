@@ -41,11 +41,11 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
+            basic.pause(1)
 
             this.cursor.setBorderThickness(1)
             console.log(this.sampleNames)
             this.resetNavigator()
-            // this.resetControllerEvents()
             this.setControllerEvents()
         }
 
@@ -90,7 +90,6 @@ namespace micromusic {
                         this.sampleNames[this.selectedIndex],
                     )
                     // TODO: sort this out on a different branch
-                    // this.draw()
                 },
             )
             control.onEvent(
@@ -105,9 +104,6 @@ namespace micromusic {
                     const sample = new Sample(
                         this.sampleNames[this.selectedIndex],
                     )
-                    // T
-                    console.log(this.selectedIndex + " : Index")
-                    // this.draw()
                 },
             )
             control.onEvent(

@@ -14,10 +14,13 @@ namespace micromusic {
             if (name == "volume") return icondb.volumeLogo
             if (name == "invisiblePatternButton")
                 return icondb.invisiblePatternButton
+            if (name == "small_pattern_button")
+                return icondb.invisiblePatternButtonSmall
 
             if (name == "green_tick_2") return icondb.green_tick_transparent
 
             if (name == "placeholder") return icondb.invisibleButtonPlaceholder
+            if (name == "placeholder_long") return icondb.invisibleButtonLong
             if (name == "sample_button_small")
                 return icondb.sampleSectionSelectSmall
             if (name == "sample_selection_arrow_left")
@@ -29,6 +32,7 @@ namespace micromusic {
             if (name == "save_button_small") return icondb.saveButtonSmall
             if (name == "sample_section_select")
                 return icondb.sampleSectionSelect
+            if (name == "down_arrow") return icondb.sampleSelectionArrowDown
 
             if (name == "play") return icondb.play
             if (name == "stop") return icondb.stop
@@ -45,7 +49,6 @@ namespace micromusic {
 
             if (name == "tile_button_a") return icondb.tile_button_a
             if (name == "tile_button_b") return icondb.tile_button_b
-            // if (name == "compass") return icondb.compass
 
             if (name == "radio_set_group") return icondb.radio_set_group
             if (name == "largeSettingsGear") return icondb.largeSettingsGear
@@ -171,6 +174,18 @@ namespace icondb {
         . . . . . . . . . . . . . . .     
     `
 
+    export const invisiblePatternButtonSmall = bmp`
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . .
+        . . . . . . . . 
+    `
+
     export const invisibleButtonPlaceholder = bmp`
         . . . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . . . .
@@ -183,6 +198,20 @@ namespace icondb {
         . . . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . . . .
+    `
+
+    export const invisibleButtonLong = bmp`
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
     `
 
     export const sampleSectionSelect = bmp`
@@ -267,6 +296,14 @@ namespace icondb {
         . . 1 1 .
         . . . 1 .
         . . . . .
+    `
+
+    export const sampleSelectionArrowDown = bmp`
+        . . . . . . .
+        . 1 1 1 1 1 .
+        . . 1 1 1 . .
+        . . . 1 . . .
+        . . . . . . .
     `
 
     export const backButton = bmp`
