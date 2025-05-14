@@ -42,18 +42,34 @@ namespace micromusic {
         }
 
         /**
-         * Fully deletes a pattern and removes parts of sequence that include it
-         * @param pattern the pattern that should be removed entirely
+         * Removes a pattern from the sequence but not from song
          */
         public removePattern(pattern: Pattern) {
-            this.patterns.splice(this.patterns.indexOf(pattern), 1)
-
             for (let p of this.patternSequence) {
                 if (p === pattern) {
                     this.patternSequence.splice(
-                        this.patterns.indexOf(pattern),
+                        this.patternSequence.indexOf(pattern),
                         1
                     )
+                    console.log(this.patternSequence)
+                }
+            }
+        }
+
+        /**
+         * Fully deletes a pattern and removes parts of sequence that include it
+         * @param pattern the pattern that should be removed entirely
+         */
+        public deletePattern(pattern: Pattern) {
+            this.patterns.splice(this.patterns.indexOf(pattern), 1)
+            console.log(this.patternSequence)
+            for (let p of this.patternSequence) {
+                if (p === pattern) {
+                    this.patternSequence.splice(
+                        this.patternSequence.indexOf(pattern),
+                        1
+                    )
+                    console.log(this.patternSequence)
                 }
             }
         }

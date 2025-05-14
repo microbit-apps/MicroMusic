@@ -16,8 +16,9 @@ namespace micromusic {
         private patternBtns: Button[]
         private hasClickedBack: boolean
         private hasClickedPick: boolean
-        private hasClickedNumber: boolean
+        private hasClickedPattern: boolean
         private hasClickedPlus: boolean
+        private hasClickedRemove: boolean
         private isPlaying: boolean
 
         private constructor(app: AppInterface) {
@@ -59,6 +60,11 @@ namespace micromusic {
         /*override*/ startup() {
             super.startup()
             basic.pause(1)
+
+            let arr = [1, 2, 3]
+            console.log(arr)
+            arr.splice(0, 1)
+            console.log(arr)
 
             this.cursor.setBorderThickness(1)
 
@@ -158,7 +164,7 @@ namespace micromusic {
                 return
             }
 
-            if (this.hasClickedNumber) {
+            if (this.hasClickedPattern) {
                 this.drawPatternConfirmation()
                 this.navigator.drawComponents()
                 return
@@ -166,6 +172,12 @@ namespace micromusic {
 
             if (this.hasClickedPlus) {
                 this.drawPlusConfirmation()
+                this.navigator.drawComponents()
+                return
+            }
+
+            if (this.hasClickedRemove) {
+                this.drawRemoveConfirmation()
                 this.navigator.drawComponents()
                 return
             }
@@ -246,6 +258,20 @@ namespace micromusic {
             Screen.print("existing one?", -38, -10, 0)
             this.drawText(-40, 15, "new")
             this.drawText(2, 15, "existing")
+            this.cursor.draw()
+        }
+
+        private drawDeleteConfirmation() {}
+
+        private drawRemoveConfirmation() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-45, -30, "Remove pattern?")
+            Screen.print("The pattern will", -48, -20, 0x2)
+            Screen.print("be removed from", -43, -10, 0x2)
+            Screen.print("the sequence", -35, 0, 0x2)
+            this.drawText(-30, 15, "Yes")
+            this.drawText(15, 15, "No")
             this.cursor.draw()
         }
 
@@ -391,7 +417,7 @@ namespace micromusic {
 
             this.unbindBackButton()
 
-            this.hasClickedNumber = true
+            this.hasClickedPattern = true
             const ic = icons.get("placeholder")
             this.navigator.setBtns([
                 [
@@ -399,8 +425,8 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: ic,
-                        x: -22,
-                        y: 25,
+                        x: -28,
+                        y: 17,
                         onClick: () => {
                             this.editPattern(
                                 this.song.patternSequence[clickedPatternIndex]
@@ -411,13 +437,75 @@ namespace micromusic {
                     new Button({
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: ic.doubledX().doubledY(),
-                        x: 21,
-                        y: 25,
+                        icon: ic.doubledX(),
+                        x: 20,
+                        y: 17,
                         onClick: () => {
                             // TODO: Replace, this should let you swap it out or create a new one ideally. New dialogue for this
                             this.pickClicked(clickedPatternIndex)
                             // this.replaceClicked(clickedPatternIndex)
+                        },
+                    }),
+                ],
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic.doubledX(),
+                        x: 0,
+                        y: 28,
+                        onClick: () => {
+                            this.removeClicked(
+                                this.song.patternSequence[clickedPatternIndex]
+                            )
+                        },
+                    }),
+                ],
+            ])
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private removeClicked(pattern: Pattern) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.resetBooleans()
+            this.hasClickedRemove = true
+
+            this.unbindBackButton()
+
+            const ic = icons.get("placeholder")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -22,
+                        y: 18,
+                        onClick: () => {
+                            this.song.removePattern(pattern)
+                            this.resetBooleans()
+                            this.fillPatternBtns()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: 21,
+                        y: 18,
+                        onClick: () => {
+                            this.resetBooleans()
+                            this.resetNavigator()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Up)
+                            this.moveCursor(CursorDir.Down)
                         },
                     }),
                 ],
@@ -591,9 +679,10 @@ namespace micromusic {
 
         private resetBooleans() {
             this.hasClickedBack = false
-            this.hasClickedNumber = false
+            this.hasClickedPattern = false
             this.hasClickedPlus = false
             this.hasClickedPick = false
+            this.hasClickedRemove = false
             this.cursor.setOutlineColour(0x9)
         }
 
