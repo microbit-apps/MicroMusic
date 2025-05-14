@@ -86,10 +86,7 @@ namespace micromusic {
                     if (this.selectedIndex < 0)
                         this.selectedIndex = this.sampleNames.length - 1
 
-                    const sample = new Sample(
-                        this.sampleNames[this.selectedIndex],
-                    )
-                    // TODO: sort this out on a different branch
+                    this.playNote(this.sampleNames[this.selectedIndex])
                 },
             )
             control.onEvent(
@@ -100,39 +97,8 @@ namespace micromusic {
                     if (this.selectedIndex == this.sampleNames.length)
                         this.selectedIndex = 0
 
-                    // Play the selected sample so user can hear it
-                    const sample = new Sample(
-                        this.sampleNames[this.selectedIndex],
-                    )
+                    this.playNote(this.sampleNames[this.selectedIndex])
                 },
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
-                    this.selectSample()
-                },
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.B.id,
-                () => {
-                    this.app.popScene()
-                    this.app.pushScene(this.previousScene)
-                },
-            )
-        }
-
-        private resetControllerEvents() {
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.up.id,
-                () => {},
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.down.id,
-                () => {},
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -202,13 +168,6 @@ namespace micromusic {
                 i++
                 counter++
             }
-            // for (let i = this.selectedIndex; i < i + NUM_SAMPLES_SHOWN; i++) {
-            //     if (i > this.sampleNames.length) {
-            //         i = 0
-            //     } else if (i) const y = startY + i * 12
-            //     const colour = i === this.selectedIndex ? 0x1 : 0
-            //     Screen.print(this.sampleNames[i], -40, y, colour)
-            // }
 
             // Draw title at top of screen
             Screen.print("Select Sample", -40, -50, 0x1)

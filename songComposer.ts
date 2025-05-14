@@ -35,7 +35,7 @@ namespace micromusic {
                     this.app.popScene()
                     this.app.pushScene(new Home(this.app))
                 },
-                new GridNavigator()
+                new GridNavigator(),
             )
 
             this.song = new Song()
@@ -50,7 +50,7 @@ namespace micromusic {
             if (!SongComposerScreen.instance) {
                 if (app === undefined) {
                     console.error(
-                        "SongComposerScreen singleton not initialized. Call with parameters first."
+                        "SongComposerScreen singleton not initialized. Call with parameters first.",
                     )
                 }
                 SongComposerScreen.instance = new SongComposerScreen(app)
@@ -117,7 +117,7 @@ namespace micromusic {
                         this.isPlaying = false
                         this.app.popScene()
                         this.app.pushScene(
-                            SettingsScreen.getInstance(this, this.app)
+                            SettingsScreen.getInstance(this, this.app),
                         )
                     },
                 }),
@@ -164,7 +164,7 @@ namespace micromusic {
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc
+                0xc,
             )
 
             if (this.isPlaying || this.isPaused) {
@@ -253,7 +253,7 @@ namespace micromusic {
                             x,
                             y,
                             0,
-                            bitmaps.font12
+                            bitmaps.font12,
                         )
                         Screen.drawRect(x - 5, y - 2, 17, 17, 0)
                     }
@@ -321,7 +321,7 @@ namespace micromusic {
             y: number,
             text: string,
             colour?: number,
-            _font?: bitmaps.Font
+            _font?: bitmaps.Font,
         ) {
             if (!colour) colour = 0
             if (!_font) _font = font
@@ -356,7 +356,7 @@ namespace micromusic {
                             x,
                             y,
                             0,
-                            bitmaps.font12
+                            bitmaps.font12,
                         )
                     } else if (count == this.song.patternSequence.length) {
                         const x = startX + i * cellWidth
@@ -372,7 +372,7 @@ namespace micromusic {
                         rightX,
                         y + 16,
                         0,
-                        bitmaps.font5
+                        bitmaps.font5,
                     )
 
                     count += 1
@@ -398,6 +398,13 @@ namespace micromusic {
                     this.isPlaying &&
                     this.playedPattern < this.song.patternSequence.length
                 ) {
+                    for (let i = 0; i < NUM_TRACKS; i++) {
+                        this.playNote(
+                            i,
+                            this.song.patterns[this.playedPattern].channels[i]
+                                .sample.audioBuffer,
+                        )
+                    }
                     basic.pause(tickSpeed)
 
                     this.playedNote += 1
@@ -410,6 +417,28 @@ namespace micromusic {
                 this.playedNote = 0
                 this.playedPattern = 0
             })
+        }
+
+        private playNote(src: number, buf: Buffer) {
+            const offset =
+                SEMITONE_OFFSETS[
+                    this.song.patterns[this.playedPattern].channels[src].notes[
+                        this.playedNote
+                    ]
+                ]
+            if (offset == null) return // "-" or invalid note
+
+            const multiplier =
+                2 **
+                (this.song.patterns[this.playedPattern].channels[src].octaves[
+                    this.playedNote
+                ] -
+                    3 +
+                    offset / 12)
+            const rate = 8800 * multiplier
+
+            samples.setSampleRate(src, rate)
+            samples.playAsync(src, buf)
         }
 
         private pause() {
@@ -509,7 +538,7 @@ namespace micromusic {
                         y: 17,
                         onClick: () => {
                             this.editPattern(
-                                this.song.patternSequence[clickedPatternIndex]
+                                this.song.patternSequence[clickedPatternIndex],
                             )
                             this.resetBooleans()
                         },
@@ -569,7 +598,7 @@ namespace micromusic {
                         y: 18,
                         onClick: () => {
                             this.song.deletePattern(
-                                this.song.patternSequence[clickedPatternIndex]
+                                this.song.patternSequence[clickedPatternIndex],
                             )
                             this.resetBooleans()
                             this.fillPatternBtns()
@@ -728,8 +757,8 @@ namespace micromusic {
                                 this.app.popScene()
                                 this.app.pushScene(
                                     PatternScreen.getInstance(
-                                        this.song.patterns[index]
-                                    )
+                                        this.song.patterns[index],
+                                    ),
                                 )
                             },
                         })
@@ -753,7 +782,7 @@ namespace micromusic {
         private editPattern(clickedPattern: Pattern) {
             this.app.popScene()
             this.app.pushScene(
-                PatternScreen.getInstance(clickedPattern, this.app)
+                PatternScreen.getInstance(clickedPattern, this.app),
             )
         }
 
@@ -840,7 +869,7 @@ namespace micromusic {
                     this.cursor.setOutlineColour(0x9)
                     this.moveCursor(CursorDir.Left)
                     this.moveCursor(CursorDir.Right)
-                }
+                },
             )
         }
 
@@ -851,24 +880,24 @@ namespace micromusic {
                 controller.up.id,
                 () => {
                     if (!this.isPlaying) this.moveCursor(CursorDir.Up)
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
                 () => {
                     if (!this.isPlaying) this.moveCursor(CursorDir.Down)
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.right.id,
-                () => this.moveCursor(CursorDir.Right)
+                () => this.moveCursor(CursorDir.Right),
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
-                () => this.moveCursor(CursorDir.Left)
+                () => this.moveCursor(CursorDir.Left),
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -876,7 +905,7 @@ namespace micromusic {
                 () => {
                     this.backConfirmation()
                     this.moveCursor(CursorDir.Right)
-                }
+                },
             )
         }
     }
