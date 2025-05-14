@@ -66,7 +66,6 @@ namespace micromusic {
         private hasClickedBack: boolean
 
         private pattern: Pattern
-        private channels: Channel[]
 
         private constructor(
             app: AppInterface,
@@ -136,8 +135,6 @@ namespace micromusic {
         /* override */ startup() {
             super.startup()
             basic.pause(1)
-
-            this.channels = this.pattern.channels
 
             this.icon = getIcon("placeholder", true)
                 .doubled()
@@ -461,8 +458,16 @@ namespace micromusic {
                 //     0x9
                 // )
             }
-            this.drawText(-60, -44, this.channels[this.leftTrack].sample.name)
-            this.drawText(8, -44, this.channels[this.rightTrack].sample.name)
+            this.drawText(
+                -60,
+                -44,
+                this.pattern.channels[this.leftTrack].sample.name
+            )
+            this.drawText(
+                8,
+                -44,
+                this.pattern.channels[this.rightTrack].sample.name
+            )
             Screen.drawLine(0, -44, 0, -36, 0xb)
             Screen.drawLine(0, -20, 0, 42, 0xb)
         }
@@ -489,13 +494,13 @@ namespace micromusic {
 
                 // Draw left track
                 let x = startX + 0 * cellWidth
-                let note = this.channels[this.leftTrack].notes[tempStep]
+                let note = this.pattern.channels[this.leftTrack].notes[tempStep]
 
                 if (note == "-") {
                     Screen.print("-", x, y, 0, font)
                 } else {
                     note = `${note}${
-                        this.channels[this.leftTrack].octaves[tempStep]
+                        this.pattern.channels[this.leftTrack].octaves[tempStep]
                     }`
                     Screen.print(note, x, y, 0, font)
                 }
@@ -503,12 +508,12 @@ namespace micromusic {
                 // Draw right track
                 x = startX + 1 * cellWidth
 
-                note = this.channels[this.rightTrack].notes[tempStep]
+                note = this.pattern.channels[this.rightTrack].notes[tempStep]
                 if (note == "-") {
                     Screen.print("-", x, y, 0, font)
                 } else {
                     note = `${note}${
-                        this.channels[this.leftTrack].octaves[tempStep]
+                        this.pattern.channels[this.rightTrack].octaves[tempStep]
                     }`
                     Screen.print(note, x, y, 0, font)
                 }
@@ -550,8 +555,13 @@ namespace micromusic {
 
         private changeNote(direction: NoteDirection) {
             let octave =
-                this.channels[this.selectedTrack].octaves[this.currentStep]
-            let note = this.channels[this.selectedTrack].notes[this.currentStep]
+                this.pattern.channels[this.selectedTrack].octaves[
+                    this.currentStep
+                ]
+            let note =
+                this.pattern.channels[this.selectedTrack].notes[
+                    this.currentStep
+                ]
 
             let noteIndex = NOTES.indexOf(note)
             noteIndex = noteIndex + direction
@@ -583,7 +593,7 @@ namespace micromusic {
                 }
             }
 
-            this.channels[this.selectedTrack].setNoteAndOctave(
+            this.pattern.channels[this.selectedTrack].setNoteAndOctave(
                 NOTES[noteIndex],
                 octave,
                 this.currentStep
@@ -721,7 +731,7 @@ namespace micromusic {
                                 new SampleSelectionScreen(
                                     this.app,
                                     this,
-                                    this.channels[this.leftTrack]
+                                    this.pattern.channels[this.leftTrack]
                                 )
                             )
                         },
@@ -738,7 +748,7 @@ namespace micromusic {
                                 new SampleSelectionScreen(
                                     this.app,
                                     this,
-                                    this.channels[this.rightTrack]
+                                    this.pattern.channels[this.rightTrack]
                                 )
                             )
                         },

@@ -2,7 +2,7 @@
 
 ## Things today (13/05/2025)
 
--   [ ] Fix all dialogue boxes
+-   [x] Fix all dialogue boxes
 -   [x] Rename temp to pick
 -   [x] Pattern on top of screen to swap out in the pattern viewer - May include passing in song and pattern index instead of just passing in a pattern
 -   [ ] Implement copy-paste
@@ -11,18 +11,18 @@
 -   [ ] Fix the way settings work on main
 
 -   [ ] Button locations for all confirmation windows
--   [ ] Add remove button to pattern clicked
+-   [x] Add remove button to pattern clicked
 
 ## Specs of song screen
 
 -   [x] Should be able to open up with a song
 -   [x] Song has a number of patterns, patterns are shown
--   [ ] Click on a pattern and should either be able to replace it or edit it
--   [ ] Replace gives the option to pick a pattern from all our patterns or to let us make a new one
--   [ ] Edit brings up patternComposer screen letting us edit it
--   [ ] Click on an empty pattern, brings up choice to use existing or new, existing brings up same page as replace for selection
--   [ ] Need a way to naturally scroll through if we have a lot of patterns
--   [ ] Limit song size to 12, that would be 3 minutes at 220bpm if all were full
+-   [x] Click on a pattern and should either be able to replace it or edit it
+-   [x] Replace gives the option to pick a pattern from all our patterns or to let us make a new one
+-   [x] Edit brings up patternComposer screen letting us edit it
+-   [x] Click on an empty pattern, brings up choice to use existing or new, existing brings up same page as replace for selection
+-   [x] Need a way to naturally scroll through if we have a lot of patterns - decided to limit number
+-   [x] Limit song size to 12, that would be 3 minutes at 220bpm if all were full
 -   [ ] Consider limit on number of patterns, max 12 we can swap out? Or maybe 24, would then need a natural way to scroll through
 -   [ ] Copy-paste, select copying a channel or copying an entire pattern into a new one, since channels are now 64 rows i don't think I need further copying, maybe add a way to copy a certain amount but would take more [If I have the man hours I'll do it]
 -   [ ] Need to add options to option buttons for removing patterns or sequence, on the boxes for seq but elsewhere on the screen for pattern..?
