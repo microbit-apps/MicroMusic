@@ -42,20 +42,6 @@ namespace micromusic {
         }
 
         /**
-         * Removes a pattern from the sequence but not from song
-         */
-        public removePattern(pattern: Pattern) {
-            for (let p of this.patternSequence) {
-                if (p === pattern) {
-                    this.patternSequence.splice(
-                        this.patternSequence.indexOf(pattern),
-                        1
-                    )
-                }
-            }
-        }
-
-        /**
          * Fully deletes a pattern and removes parts of sequence that include it
          * @param pattern the pattern that should be removed entirely
          */

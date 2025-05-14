@@ -18,6 +18,7 @@ namespace micromusic {
             if (name == "green_tick_2") return icondb.green_tick_transparent
 
             if (name == "placeholder") return icondb.invisibleButtonPlaceholder
+            if (name == "placeholder_long") return icondb.invisibleButtonLong
             if (name == "sample_button_small")
                 return icondb.sampleSectionSelectSmall
             if (name == "sample_selection_arrow_left")
@@ -183,6 +184,20 @@ namespace icondb {
         . . . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . . . .
         . . . . . . . . . . . . . . . . . .
+    `
+
+    export const invisibleButtonLong = bmp`
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
     `
 
     export const sampleSectionSelect = bmp`
