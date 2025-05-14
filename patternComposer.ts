@@ -345,11 +345,11 @@ namespace micromusic {
 
         private play() {
             if (this.isPlaying == true) return
-            music.setVolume((this.volume.value / 100) * 255)
+            music.setVolume((Settings.volume.value / 100) * 255)
             this.isPlaying = true
             this.cursorVisible = true
             control.inBackground(() => {
-                const tickSpeed = 60000 / this.bpm.value
+                const tickSpeed = 60000 / Settings.bpm.value
                 while (this.isPlaying && this.playedNote < MAX_NOTES) {
                     basic.pause(tickSpeed)
                     // Only increment highlightHeight if it's within bounds

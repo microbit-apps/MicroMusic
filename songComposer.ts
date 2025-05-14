@@ -14,12 +14,15 @@ namespace micromusic {
         private song: Song
         private controlBtns: Button[]
         private patternBtns: Button[]
+        private playedNote: number
+        private playedPattern: number
         private hasClickedBack: boolean
         private hasClickedPick: boolean
         private hasClickedPattern: boolean
         private hasClickedPlus: boolean
         private hasClickedRemove: boolean
         private isPlaying: boolean
+        private arrowVisible: boolean
 
         private constructor(app: AppInterface) {
             super(
@@ -32,6 +35,9 @@ namespace micromusic {
             )
 
             this.song = new Song()
+
+            this.playedNote = 0
+            this.playedPattern = 0
 
             this.hasClickedBack = false
         }
@@ -60,6 +66,9 @@ namespace micromusic {
         /*override*/ startup() {
             super.startup()
             basic.pause(1)
+
+            this.playedNote = 0
+            this.playedPattern = 0
 
             this.cursor.setBorderThickness(1)
 
@@ -350,15 +359,57 @@ namespace micromusic {
             }
         }
 
-        private play() {}
+        private play() {
+            if (this.isPlaying == true) return
+            music.setVolume((Settings.volume.value / 100) * 255)
+            this.isPlaying = true
+            control.inBackground(() => {
+                const tickSpeed = 60000 / Settings.bpm.value
 
-        private pause() {}
+                while (
+                    this.isPlaying &&
+                    this.playedPattern < this.song.patternSequence.length
+                ) {
+                    basic.pause(tickSpeed)
 
-        private stop() {}
+                    this.playedNote += 1
+                    if (this.playedNote == MAX_NOTES) {
+                        this.playedPattern += 1
+                    }
+                }
+                this.isPlaying = false
+                this.playedNote = 0
+                this.playedPattern = 0
+            })
+        }
 
-        private fastForward() {}
+        private pause() {
+            this.isPlaying = false
+        }
 
-        private rewind() {}
+        private stop() {
+            this.isPlaying = false
+            this.arrowVisible = false
+            basic.pause(200)
+            this.playedNote = 0
+            this.playedPattern = 0
+        }
+
+        private fastForward() {
+            this.playedNote = 0
+            this.playedPattern += 1
+            if (this.playedPattern >= this.song.patternSequence.length) {
+                this.playedPattern = this.song.patternSequence.length - 1
+            }
+        }
+
+        private rewind() {
+            this.playedNote = 0
+            this.playedPattern -= 1
+            if (this.playedPattern < 0) {
+                this.playedPattern = 0
+            }
+        }
 
         private backConfirmation() {
             if (this.isPlaying) {

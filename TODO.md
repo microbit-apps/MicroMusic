@@ -25,17 +25,17 @@
 -   [x] Limit song size to 12, that would be 3 minutes at 220bpm if all were full
 -   [ ] Consider limit on number of patterns, max 12 we can swap out? Or maybe 24, would then need a natural way to scroll through
 -   [ ] Copy-paste, select copying a channel or copying an entire pattern into a new one, since channels are now 64 rows i don't think I need further copying, maybe add a way to copy a certain amount but would take more [If I have the man hours I'll do it]
--   [ ] Need to add options to option buttons for removing patterns or sequence, on the boxes for seq but elsewhere on the screen for pattern..?
+-   [x] Need to add options to option buttons for removing patterns or sequence, on the boxes for seq but elsewhere on the screen for pattern..?
 
 ## Things by this week
 
 Console.log over serial
 
--   [ ] More than 1 bank of track data important one, can have them playing after eachother
+-   [x] More than 1 bank of track data important one, can have them playing after eachother
 -   [ ] Want a nice strong evaluation, start thinking about that now
 -   [ ] Intuitiveness, when selecting a note, A to come out of it and B to reset the note to "-"? Or A to reset, B to come out of it
 -   [ ] Pattern at the top of the screen so you can swap straight in the patterns editor
--   [ ] Change size of invisible buttons on confirmation pages
+-   [x] Change size of invisible buttons on confirmation pages
 
 ## Bugs
 
@@ -46,9 +46,9 @@ Console.log over serial
 
 ## General
 
--   [ ] Song list page, make current main page a "pattern editor" can save patterns and order them on the song page
--   [ ] Song screen will have a number of pattern "blocks" and you can click into them to edit them
--   [ ] Each song has patterns; Each pattern has 4 channels; Each channel has a Sample, 64 rows of notes and octaves
+-   [x] Song list page, make current main page a "pattern editor" can save patterns and order them on the song page
+-   [x] Song screen will have a number of pattern "blocks" and you can click into them to edit them
+-   [x] Each song has patterns; Each pattern has 4 channels; Each channel has a Sample, 64 rows of notes and octaves
 -   [ ] Music that repeats notes, select multiple notes at once?
 -   [ ] Copy paste feature, can copy 8 notes on screen and paste into another part of one sample or to another sample's track
 -   [ ] Keyboard screen

@@ -8,13 +8,6 @@ namespace micromusic {
             this._patternSequence = []
             this._patterns = []
             this.patternsMade = 0
-
-            // this._patternSequence[0] = new Pattern(0)
-            // this._patternSequence[1] = new Pattern(1)
-            // this._patternSequence[2] = new Pattern(2)
-            // this._patternSequence[3] = new Pattern(3)
-            // this._patternSequence[4] = new Pattern(4)
-            // this._patternSequence[5] = new Pattern(5)
         }
 
         get patterns(): Pattern[] {
