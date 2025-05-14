@@ -14,6 +14,8 @@ namespace micromusic {
         private song: Song
         private controlBtns: Button[]
         private patternBtns: Button[]
+        private arrow: Button
+        private arrowLocation: number
         private playedNote: number
         private playedPattern: number
         private hasClickedBack: boolean
@@ -40,6 +42,15 @@ namespace micromusic {
             this.playedPattern = 0
 
             this.hasClickedBack = false
+
+            this.arrow = new Button({
+                parent: null,
+                style: ButtonStyles.Transparent,
+                icon: "down_arrow",
+                x: -53,
+                y: -6,
+                onClick: () => {},
+            })
         }
 
         public static getInstance(app?: AppInterface, song?: Song) {
@@ -162,6 +173,22 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
+
+            if (this.isPlaying) {
+                if (this.arrowLocation != -53 + this.playedPattern * 21) {
+                    this.arrow = new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "down_arrow",
+                        x: -53 + this.playedPattern * 21,
+                        y: -6,
+                        onClick: () => {},
+                    })
+                    this.arrowLocation = -53 + this.playedPattern * 21
+                }
+                this.arrow.draw()
+            }
+
             if (this.hasClickedBack) {
                 this.drawBackConfirmation()
                 this.navigator.drawComponents()
@@ -378,6 +405,7 @@ namespace micromusic {
                     }
                 }
                 this.isPlaying = false
+                this.resetNavigator()
                 this.playedNote = 0
                 this.playedPattern = 0
             })
