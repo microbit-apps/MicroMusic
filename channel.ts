@@ -26,6 +26,11 @@ namespace micromusic {
             return this._notes
         }
 
+        public copy(channel: Channel) {
+            this._notes = channel.notes
+            this._octaves = channel.octaves
+        }
+
         public setNote(note: string, index: number, octave?: number): void {
             if (index > MAX_NOTES) {
                 console.error(`Max index for a channel is: ${MAX_NOTES - 1}`)

@@ -9,6 +9,19 @@ namespace micromusic {
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 
+    enum ScreenShown {
+        Default = 0,
+        Back = 1,
+        Pick = 2,
+        Pattern = 3,
+        Plus = 4,
+        Remove = 5,
+        Copy = 6,
+        CopyConfirmation = 7,
+        CopySelection = 8,
+        PatternClickedSwap = 9,
+    }
+
     export class SongComposerScreen extends CursorSceneWithPriorPage {
         private static instance: SongComposerScreen | null = null
         private song: Song
@@ -18,15 +31,10 @@ namespace micromusic {
         private arrowLocation: number
         private playedNote: number
         private playedPattern: number
-        private hasClickedBack: boolean
-        private hasClickedPick: boolean
-        private hasClickedPattern: boolean
-        private hasClickedPlus: boolean
-        private hasClickedRemove: boolean
         private isPlaying: boolean
         private isPaused: boolean
-        private patternClickedSwap: boolean
         private arrowVisible: boolean
+        private screenShown: ScreenShown
 
         private constructor(app: AppInterface) {
             super(
@@ -42,8 +50,6 @@ namespace micromusic {
 
             this.playedNote = 0
             this.playedPattern = 0
-
-            this.hasClickedBack = false
         }
 
         public static getInstance(app?: AppInterface, song?: Song) {
@@ -183,40 +189,48 @@ namespace micromusic {
                 this.arrow.draw()
             }
 
-            if (this.hasClickedBack) {
-                this.drawBackConfirmation()
-                this.navigator.drawComponents()
-                return
-            }
-
-            if (this.hasClickedPattern) {
-                this.drawPatternConfirmation()
-                this.navigator.drawComponents()
-                return
-            }
-
-            if (this.hasClickedPlus) {
-                this.drawPlusConfirmation()
-                this.navigator.drawComponents()
-                return
-            }
-
-            if (this.hasClickedRemove) {
-                this.drawRemoveConfirmation()
-                this.navigator.drawComponents()
-                return
-            }
-
-            if (this.hasClickedPick) {
-                this.drawPick()
-                this.navigator.drawComponents()
-                return
-            }
-
-            if (this.patternClickedSwap) {
-                this.drawPick()
-                this.navigator.drawComponents()
-                return
+            switch (this.screenShown) {
+                case ScreenShown.Default:
+                    break
+                case ScreenShown.Back: {
+                    this.drawBackConfirmation()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.Pick: {
+                    this.drawPick()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.Pattern: {
+                    this.drawPatternConfirmation()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.Plus: {
+                    this.drawPlusConfirmation()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.Remove: {
+                    this.drawRemoveConfirmation()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.Copy: {
+                    this.drawCopyConfirmation()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.CopyConfirmation: {
+                }
+                case ScreenShown.CopySelection: {
+                }
+                case ScreenShown.PatternClickedSwap: {
+                    this.drawPick()
+                    this.navigator.drawComponents()
+                    return
+                }
             }
 
             this.drawBoxes()
@@ -266,6 +280,8 @@ namespace micromusic {
             }
             this.cursor.draw()
         }
+
+        private drawCopyConfirmation() {}
 
         private drawPatternConfirmation() {
             Screen.fillRect(-57, -37, 120, 80, 0)
@@ -337,7 +353,7 @@ namespace micromusic {
             let count = 0
             let len = 0
 
-            if (this.hasClickedPick) {
+            if (this.screenShown == ScreenShown.Pick) {
                 len = this.song.patterns.length
             } else {
                 len = this.song.patternSequence.length
@@ -450,7 +466,7 @@ namespace micromusic {
                 this.isPlaying = false
             }
 
-            this.hasClickedBack = true
+            this.screenShown = ScreenShown.Back
             this.unbindBackButton()
             const ic = icons.get("placeholder")
             this.navigator.setBtns([
@@ -464,7 +480,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(new Home(this.app))
-                            this.hasClickedBack = false
+                            this.resetBooleans()
                         },
                     }),
                     new Button({
@@ -474,7 +490,7 @@ namespace micromusic {
                         x: 21,
                         y: 18,
                         onClick: () => {
-                            this.hasClickedBack = false
+                            this.resetBooleans()
                             this.resetNavigator()
                             this.resetControllerEvents()
                             this.moveCursor(CursorDir.Up)
@@ -487,6 +503,124 @@ namespace micromusic {
             this.moveCursor(CursorDir.Down)
         }
 
+        private copySelected() {}
+
+        private copyClicked() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.unbindBackButton()
+
+            this.screenShown = ScreenShown.Copy
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+            let count = 0
+
+            let patternBtns = []
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patterns.length) {
+                        patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                // this.copySelection(index) //
+
+                                this.resetBooleans()
+                                this.resetNavigator()
+                                this.fillPatternBtns()
+                                this.moveCursor(CursorDir.Left)
+                                this.moveCursor(CursorDir.Right)
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count == this.song.patterns.length) {
+                        break
+                    }
+                }
+                if (count == this.song.patterns.length) {
+                    break
+                }
+            }
+
+            this.navigator.setBtns([
+                // TODO: Make this add enough buttons for the number of patterns available
+                patternBtns,
+            ])
+
+            this.moveCursor(CursorDir.Up)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private fullCopyConfirmation(copyIndex: number) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+            this.screenShown = ScreenShown.CopyConfirmation
+            this.unbindBackButton()
+            const ic = icons.get("placeholder")
+            const ic2 = icons.get("placeholder_long")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        // New
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -31,
+                        y: 18,
+                        onClick: () => {
+                            // Copy to new pattern
+                            let newPat = this.song.newPattern()
+                            for (let i = 0; i < newPat.channels.length; i++) {
+                                newPat.channels[i].copy(
+                                    this.song.patterns[copyIndex].channels[i]
+                                )
+                            }
+                            this.fillPatternBtns()
+                            this.resetBooleans()
+                        },
+                    }),
+                    new Button({
+                        // Existing
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic2.doubledX(),
+                        x: 26,
+                        y: 18,
+                        onClick: () => {
+                            this.copySelection()
+                        },
+                    }),
+                ],
+            ])
+            this.cursor.setOutlineColour(0x2)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private copySelection() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+            this.screenShown = ScreenShown.CopySelection
+        }
+
         private patternClicked(clickedPatternIndex: number) {
             if (this.isPlaying) {
                 this.resetControllerEvents()
@@ -495,7 +629,7 @@ namespace micromusic {
 
             this.unbindBackButton()
 
-            this.hasClickedPattern = true
+            this.screenShown = ScreenShown.Pattern
             const ic = icons.get("placeholder")
             const ic2 = icons.get("placeholder_long")
             this.navigator.setBtns([
@@ -551,7 +685,7 @@ namespace micromusic {
             }
 
             this.resetBooleans()
-            this.hasClickedRemove = true
+            this.screenShown = ScreenShown.Remove
             this.cursor.setOutlineColour(0x2)
 
             this.unbindBackButton()
@@ -604,7 +738,7 @@ namespace micromusic {
                 this.resetControllerEvents()
                 this.isPlaying = false
             }
-            this.hasClickedPlus = true
+            this.screenShown = ScreenShown.Plus
             this.unbindBackButton()
             const ic = icons.get("placeholder")
             const ic2 = icons.get("placeholder_long")
@@ -643,7 +777,7 @@ namespace micromusic {
 
         private pickClicked(clickedPatternIndex: number) {
             this.resetBooleans()
-            this.hasClickedPick = true
+            this.screenShown = ScreenShown.Pick
 
             const startX = -56
             const startY = 0
@@ -669,7 +803,6 @@ namespace micromusic {
                             onClick: () => {
                                 this.song.patternSequence[clickedPatternIndex] =
                                     this.song.patterns[index]
-                                this.hasClickedPick = false
                                 this.resetBooleans()
                                 this.resetNavigator()
                                 this.fillPatternBtns()
@@ -689,10 +822,7 @@ namespace micromusic {
                 }
             }
 
-            this.navigator.setBtns([
-                // TODO: Make this add enough buttons for the number of patterns available
-                patternBtns,
-            ])
+            this.navigator.setBtns([patternBtns])
 
             this.moveCursor(CursorDir.Up)
             this.moveCursor(CursorDir.Down)
@@ -700,7 +830,7 @@ namespace micromusic {
 
         public swapPattern() {
             this.resetBooleans()
-            this.patternClickedSwap = true
+            this.screenShown = ScreenShown.PatternClickedSwap
 
             const startX = -56
             const startY = 0
@@ -724,7 +854,7 @@ namespace micromusic {
                             x: x + 3,
                             y: y + 6,
                             onClick: () => {
-                                this.patternClickedSwap = false
+                                this.resetBooleans()
                                 this.app.popScene()
                                 this.app.pushScene(
                                     PatternScreen.getInstance(
@@ -821,11 +951,7 @@ namespace micromusic {
         }
 
         private resetBooleans() {
-            this.hasClickedBack = false
-            this.hasClickedPattern = false
-            this.hasClickedPlus = false
-            this.hasClickedPick = false
-            this.hasClickedRemove = false
+            this.screenShown = ScreenShown.Default
             this.cursor.setOutlineColour(0x9)
         }
 
