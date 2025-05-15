@@ -1,6 +1,8 @@
 namespace micromusic {
     export type Note = [string, number]
 
+    export const NUM_CHANNELS = 4
+
     export class Pattern {
         private _channels: Channel[]
         private _id: number
