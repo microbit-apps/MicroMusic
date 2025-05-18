@@ -410,6 +410,7 @@ namespace micromusic {
                     this.playedNote += 1
                     if (this.playedNote == MAX_NOTES) {
                         this.playedPattern += 1
+                        this.playedNote = 0
                     }
                 }
                 this.isPlaying = false

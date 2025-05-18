@@ -382,6 +382,7 @@ namespace micromusic {
         private play() {
             if (this.isPlaying == true) return
             music.setVolume((Settings.volume.value / 100) * 255)
+            samples.enable()
             this.isPlaying = true
             this.cursorVisible = true
             control.inBackground(() => {
@@ -449,8 +450,15 @@ namespace micromusic {
 
         private rewind() {
             this.currentStep = this.currentStep - 8
-            if (this.currentStep < 0) {
+            this.playedNote = this.playedNote - 8
+            if (
+                this.currentStep < 0 ||
+                this.currentStep - this.highlightHeight < 0 ||
+                this.playedNote < 0
+            ) {
                 this.currentStep = 0
+                this.highlightHeight = 0
+                this.playedNote = 0
             }
             this.drawGrid()
         }
