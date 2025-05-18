@@ -289,7 +289,7 @@ namespace micromusic {
 
         private drawPastePicker() {
             this.drawText(-44, -60, "Pick a channel")
-            this.drawText(-40, -50, "to copy from")
+            this.drawText(-39, -53, "to copy to")
             this.drawGrid()
             this.cursor.draw()
         }
@@ -401,7 +401,7 @@ namespace micromusic {
 
         private drawCopyChannel() {
             this.drawText(-44, -60, "Pick a channel")
-            this.drawText(-40, -50, "to copy from")
+            this.drawText(-39, -53, "to copy from")
             this.drawGrid()
             this.cursor.draw()
         }
@@ -567,6 +567,21 @@ namespace micromusic {
             const startY = -30
             const cellWidth = 55
             const cellHeight = 11
+
+            this.drawText(
+                -60,
+                -42,
+                this.song.patterns[this.gridPatternIndex].channels[
+                    this.leftTrack
+                ].sample.name
+            )
+            this.drawText(
+                8,
+                -42,
+                this.song.patterns[this.gridPatternIndex].channels[
+                    this.rightTrack
+                ].sample.name
+            )
 
             for (let step = 0; step < NUM_VISIBLE_STEPS; step++) {
                 const y = startY + step * cellHeight
@@ -799,7 +814,7 @@ namespace micromusic {
         }
 
         private copySelected(copyIndex: number) {
-            // Would you like to copy the entire pattern, or a single channel?
+            // Would you like to copy the entire pattern or a single channel?
             if (this.isPlaying) {
                 this.resetControllerEvents()
                 this.isPlaying = false
@@ -807,7 +822,6 @@ namespace micromusic {
 
             this.screenShown = ScreenShown.CopySelection
             this.unbindBackButton()
-            const ic = icons.get("placeholder")
             const ic2 = icons.get("placeholder_long")
             this.navigator.setBtns([
                 [
@@ -815,9 +829,9 @@ namespace micromusic {
                         // Entire
                         parent: null,
                         style: ButtonStyles.Transparent,
-                        icon: ic,
-                        x: -31,
-                        y: 18,
+                        icon: ic2.doubledX(),
+                        x: -25,
+                        y: 19,
                         onClick: () => {
                             this.fullCopyConfirmation(copyIndex)
                         },
@@ -827,8 +841,8 @@ namespace micromusic {
                         parent: null,
                         style: ButtonStyles.Transparent,
                         icon: ic2.doubledX(),
-                        x: 26,
-                        y: 18,
+                        x: 28,
+                        y: 19,
                         onClick: () => {
                             this.gridPatternIndex = copyIndex
                             this.channelCopyConfirmation(copyIndex)
