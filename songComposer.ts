@@ -19,7 +19,12 @@ namespace micromusic {
         Copy = 6,
         CopyConfirmation = 7,
         CopySelection = 8,
-        PatternClickedSwap = 9,
+        CopyChannel = 9,
+        ChannelSelect = 10,
+        PastePattern = 11,
+        PastePicker = 12,
+        FullCopySelection = 13,
+        PatternClickedSwap = 14,
     }
 
     export class SongComposerScreen extends CursorSceneWithPriorPage {
@@ -28,9 +33,15 @@ namespace micromusic {
         private controlBtns: Button[]
         private patternBtns: Button[]
         private arrow: Button
+        private channelCopied: Channel | null
+        private leftTrack: number
+        private rightTrack: number
         private arrowLocation: number
         private playedNote: number
         private playedPattern: number
+        private copiedPatternIndex: number
+        private gridPatternIndex: number
+        private pastedChannel: number
         private isPlaying: boolean
         private isPaused: boolean
         private screenShown: ScreenShown
@@ -202,7 +213,7 @@ namespace micromusic {
                     return
                 }
                 case ScreenShown.Pattern: {
-                    this.drawPatternConfirmation()
+                    this.drawPasteNewOrExisting()
                     this.navigator.drawComponents()
                     return
                 }
@@ -217,13 +228,44 @@ namespace micromusic {
                     return
                 }
                 case ScreenShown.Copy: {
-                    this.drawCopyConfirmation()
+                    this.drawCopy()
                     this.navigator.drawComponents()
                     return
                 }
                 case ScreenShown.CopyConfirmation: {
+                    this.drawFullCopyConfirmation()
+                    this.navigator.drawComponents()
+                    return
                 }
                 case ScreenShown.CopySelection: {
+                    this.drawCopySelection()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.CopyChannel: {
+                    this.drawCopyChannel()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.ChannelSelect: {
+                    this.drawPasteNewOrExisting()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.FullCopySelection: {
+                    this.drawSelectFullCopy()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.PastePattern: {
+                    this.drawPastePattern()
+                    this.navigator.drawComponents()
+                    return
+                }
+                case ScreenShown.PastePicker: {
+                    this.drawPastePicker()
+                    this.navigator.drawComponents()
+                    return
                 }
                 case ScreenShown.PatternClickedSwap: {
                     this.drawPick()
@@ -232,22 +274,27 @@ namespace micromusic {
                 }
             }
 
-            this.drawBoxes()
+            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            this.drawText(-15, -30, "Copy", col)
+
+            this.drawSequence()
 
             this.navigator.drawComponents()
             super.draw()
         }
 
-        private drawPick() {
+        private drawPastePicker() {
+            this.drawText(-30, -30, "Pick a channel to copy to")
+            this.drawGrid()
+        }
+
+        private drawAllPatterns() {
             const startX = -56
             const startY = 0
             const cellWidth = 21
             const cellHeight = 31
 
             let count = 0
-
-            this.drawText(-50, -55, "Select a pattern")
-            this.drawText(-60, -45, "Or press B to cancel")
 
             for (let j = 0; j < 2; j++) {
                 for (let i = 0; i < 6; i++) {
@@ -280,9 +327,102 @@ namespace micromusic {
             this.cursor.draw()
         }
 
-        private drawCopyConfirmation() {}
+        private drawPick() {
+            this.drawText(-50, -55, "Select a pattern")
+            this.drawText(-60, -45, "Or press B to cancel")
 
-        private drawPatternConfirmation() {
+            this.drawAllPatterns()
+        }
+
+        private drawSelectFullCopy() {
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+
+            let count = 0
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+
+                    if (count == this.song.patterns.length) {
+                        break
+                    }
+
+                    if (count == this.copiedPatternIndex) {
+                        continue
+                    }
+
+                    if (count < this.song.patterns.length) {
+                        const x = startX + i * cellWidth
+
+                        Screen.print(
+                            this.song.patterns[count].id.toString(),
+                            x,
+                            y,
+                            0,
+                            bitmaps.font12
+                        )
+                        Screen.drawRect(x - 5, y - 2, 17, 17, 0)
+                    }
+
+                    count += 1
+                }
+                if (count == this.song.patterns.length) {
+                    break
+                }
+            }
+            this.cursor.draw()
+        }
+
+        private drawPastePattern() {
+            this.drawText(-50, -55, "Select a pattern")
+            this.drawText(-40, -45, "to copy to")
+            this.drawText(-60, -35, "Or press B to cancel")
+
+            this.drawAllPatterns()
+        }
+
+        private drawCopy() {
+            this.drawText(-50, -55, "Select a pattern")
+            this.drawText(-45, -45, "to copy from")
+            this.drawText(-60, -35, "Or press B to cancel")
+
+            this.drawAllPatterns()
+        }
+
+        private drawCopyChannel() {
+            this.drawText(-30, -30, "Pick a channel to copy from")
+            this.drawGrid()
+        }
+
+        private drawCopySelection() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-60, -30, "Copy a channel")
+            Screen.print("or an entire", -26, -20, 0)
+            Screen.print("pattern?", -38, -10, 0)
+            this.drawText(-40, 15, "pattern")
+            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            this.drawText(2, 15, "channel", col)
+            this.cursor.draw()
+        }
+
+        private drawFullCopyConfirmation() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-60, -30, "Paste to new pattern")
+            Screen.print("or use an", -26, -20, 0)
+            Screen.print("existing one?", -38, -10, 0)
+            this.drawText(-40, 15, "new")
+            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            this.drawText(2, 15, "existing", col)
+            this.cursor.draw()
+        }
+
+        private drawPasteNewOrExisting() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
             this.drawText(-51, -36, "Would you like to")
@@ -343,7 +483,7 @@ namespace micromusic {
             Screen.print(text, x, y, colour, _font)
         }
 
-        private drawBoxes() {
+        private drawSequence() {
             const startX = -56
             const startY = 0
             const cellWidth = 21
@@ -397,6 +537,59 @@ namespace micromusic {
                 }
                 if (count > this.song.patternSequence.length) {
                     break
+                }
+            }
+        }
+
+        private drawGrid() {
+            const startX = -30
+            const startY = -30
+            const cellWidth = 55
+            const cellHeight = 11
+
+            for (let step = 0; step < NUM_VISIBLE_STEPS; step++) {
+                const y = startY + step * cellHeight
+                const stepString = (step + 1).toString()
+                const digitCount = stepString.length
+                const rightX = 65 - (digitCount - 1) * 6
+
+                Screen.print(stepString, -70, y, 0, font)
+                Screen.print(stepString, rightX, y, 0, font)
+
+                // Draw left track
+                let x = startX + 0 * cellWidth
+                let note =
+                    this.song.patterns[this.gridPatternIndex].channels[
+                        this.leftTrack
+                    ].notes[step]
+
+                if (note == "-") {
+                    Screen.print("-", x, y, 0, font)
+                } else {
+                    note = `${note}${
+                        this.song.patterns[this.gridPatternIndex].channels[
+                            this.leftTrack
+                        ].octaves[step]
+                    }`
+                    Screen.print(note, x, y, 0, font)
+                }
+
+                // Draw right track
+                x = startX + 1 * cellWidth
+
+                note =
+                    this.song.patterns[this.gridPatternIndex].channels[
+                        this.rightTrack
+                    ].notes[step]
+                if (note == "-") {
+                    Screen.print("-", x, y, 0, font)
+                } else {
+                    note = `${note}${
+                        this.song.patterns[this.gridPatternIndex].channels[
+                            this.rightTrack
+                        ].octaves[step]
+                    }`
+                    Screen.print(note, x, y, 0, font)
                 }
             }
         }
@@ -501,7 +694,7 @@ namespace micromusic {
             this.moveCursor(CursorDir.Down)
         }
 
-        private copyClicked(copyIndex: number) {
+        private copyClicked() {
             // Select One to copy from
             if (this.isPlaying) {
                 this.resetControllerEvents()
@@ -533,13 +726,7 @@ namespace micromusic {
                             x: x + 3,
                             y: y + 6,
                             onClick: () => {
-                                // this.copySelection(index) //
-
-                                this.resetEnum()
-                                this.resetNavigator()
-                                this.fillPatternBtns()
-                                this.moveCursor(CursorDir.Left)
-                                this.moveCursor(CursorDir.Right)
+                                this.copySelected(index)
                             },
                         })
                     }
@@ -566,7 +753,100 @@ namespace micromusic {
                 this.resetControllerEvents()
                 this.isPlaying = false
             }
+
             this.screenShown = ScreenShown.CopySelection
+            this.unbindBackButton()
+            const ic = icons.get("placeholder")
+            const ic2 = icons.get("placeholder_long")
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        // Entire
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic,
+                        x: -31,
+                        y: 18,
+                        onClick: () => {
+                            this.fullCopyConfirmation(copyIndex)
+                        },
+                    }),
+                    new Button({
+                        // Channel
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: ic2.doubledX(),
+                        x: 26,
+                        y: 18,
+                        onClick: () => {
+                            this.gridPatternIndex = copyIndex
+                            this.channelCopyConfirmation(copyIndex)
+                        },
+                    }),
+                ],
+            ])
+            this.cursor.setOutlineColour(0x2)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private channelCopyConfirmation(copyIndex: number) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.gridPatternIndex = copyIndex
+
+            this.screenShown = ScreenShown.CopyChannel
+
+            let icon = getIcon("placeholder", true)
+                .doubled()
+                .doubled()
+                .doubledY()
+
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: icon,
+                        x: -36,
+                        y: 12,
+                        onClick: () => {
+                            // left Track
+                            this.channelCopied =
+                                this.song.patterns[copyIndex].channels[
+                                    this.leftTrack
+                                ]
+
+                            this.channelCopySelect()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: icon,
+                        x: 37,
+                        y: 12,
+                        onClick: () => {
+                            // right Track
+                            this.channelCopied =
+                                this.song.patterns[copyIndex].channels[
+                                    this.rightTrack
+                                ]
+                            this.channelCopySelect()
+                        },
+                    }),
+                ],
+            ])
+        }
+
+        private channelCopySelect() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+            this.screenShown = ScreenShown.ChannelSelect
             this.unbindBackButton()
             const ic = icons.get("placeholder")
             const ic2 = icons.get("placeholder_long")
@@ -581,9 +861,13 @@ namespace micromusic {
                         y: 18,
                         onClick: () => {
                             // Copy to new pattern
+                            let newPat = this.song.newPattern()
+
+                            newPat.channels[0].copy(this.channelCopied)
+
+                            this.channelCopied = null
                             this.fillPatternBtns()
                             this.resetEnum()
-                            this.fullCopyConfirmation(copyIndex)
                         },
                     }),
                     new Button({
@@ -594,7 +878,7 @@ namespace micromusic {
                         x: 26,
                         y: 18,
                         onClick: () => {
-                            this.channelCopyConfirmation(copyIndex)
+                            this.channelPastePattern()
                         },
                     }),
                 ],
@@ -603,10 +887,108 @@ namespace micromusic {
             this.moveCursor(CursorDir.Down)
         }
 
-        private channelCopyConfirmation(copyIndex: number) {}
+        private channelPastePattern() {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+            this.screenShown = ScreenShown.PastePattern
+
+            const startX = -56
+            const startY = 0
+            const cellWidth = 21
+            const cellHeight = 31
+            let count = 0
+
+            let patternBtns = []
+
+            for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 6; i++) {
+                    const y = startY + j * cellHeight
+                    const x = startX + i * cellWidth
+                    const index = count
+
+                    if (count < this.song.patterns.length) {
+                        patternBtns[count] = new Button({
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "invisiblePatternButton",
+                            x: x + 3,
+                            y: y + 6,
+                            onClick: () => {
+                                this.gridPatternIndex = index
+                                this.channelPastePicker(
+                                    this.song.patterns[index]
+                                )
+                            },
+                        })
+                    }
+
+                    count += 1
+                    if (count == this.song.patterns.length) {
+                        break
+                    }
+                }
+                if (count == this.song.patterns.length) {
+                    break
+                }
+            }
+
+            this.navigator.setBtns([patternBtns])
+
+            this.moveCursor(CursorDir.Up)
+            this.moveCursor(CursorDir.Down)
+        }
+
+        private channelPastePicker(pattern: Pattern) {
+            if (this.isPlaying) {
+                this.resetControllerEvents()
+                this.isPlaying = false
+            }
+
+            this.screenShown = ScreenShown.PastePicker
+
+            let icon = getIcon("placeholder", true)
+                .doubled()
+                .doubled()
+                .doubledY()
+
+            this.navigator.setBtns([
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: icon,
+                        x: -36,
+                        y: 12,
+                        onClick: () => {
+                            // left Track
+                            pattern.channels[this.leftTrack].copy(
+                                this.channelCopied
+                            )
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: icon,
+                        x: 37,
+                        y: 12,
+                        onClick: () => {
+                            // right Track
+
+                            pattern.channels[this.rightTrack].copy(
+                                this.channelCopied
+                            )
+                            this.channelCopySelect()
+                        },
+                    }),
+                ],
+            ])
+        }
 
         private fullCopyConfirmation(copyIndex: number) {
-            // Copy To a new pattern or an existing one
+            // Copy To a new or existing pattern
             if (this.isPlaying) {
                 this.resetControllerEvents()
                 this.isPlaying = false
@@ -658,7 +1040,9 @@ namespace micromusic {
                 this.resetControllerEvents()
                 this.isPlaying = false
             }
-            this.screenShown = ScreenShown.CopySelection
+
+            this.copiedPatternIndex = copyIndex
+            this.screenShown = ScreenShown.FullCopySelection
             const startX = -56
             const startY = 0
             const cellWidth = 21
@@ -693,7 +1077,6 @@ namespace micromusic {
                                 }
 
                                 this.resetEnum()
-                                this.resetNavigator()
                                 this.fillPatternBtns()
                                 this.moveCursor(CursorDir.Left)
                                 this.moveCursor(CursorDir.Right)
@@ -1043,7 +1426,24 @@ namespace micromusic {
         }
 
         private resetNavigator() {
-            this.navigator.setBtns([this.controlBtns, this.patternBtns])
+            this.navigator.setBtns([
+                this.controlBtns,
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "placeholder_long",
+                        x: -3,
+                        y: -27,
+                        onClick: () => {
+                            if (this.song.patterns.length > 0) {
+                                this.copyClicked()
+                            }
+                        },
+                    }),
+                ],
+                this.patternBtns,
+            ])
         }
 
         private resetEnum() {
@@ -1060,8 +1460,8 @@ namespace micromusic {
                     this.resetControllerEvents()
                     this.resetNavigator()
                     this.cursor.setOutlineColour(0x9)
+                    this.moveCursor(CursorDir.Up)
                     this.moveCursor(CursorDir.Left)
-                    this.moveCursor(CursorDir.Right)
                 }
             )
         }

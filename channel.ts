@@ -29,6 +29,7 @@ namespace micromusic {
         public copy(channel: Channel) {
             this._notes = channel.notes
             this._octaves = channel.octaves
+            this._sample = channel.sample
         }
 
         public setNote(note: string, index: number, octave?: number): void {

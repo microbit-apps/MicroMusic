@@ -9,10 +9,9 @@ namespace micromusic {
     import ButtonStyles = user_interface_base.ButtonStyles
     import font = user_interface_base.font
 
-    const NUM_TRACKS = 4
-    const NUM_VISIBLE_STEPS = 8
-    const LEFT_TRACK_INDEX = 0
-    const RIGHT_TRACK_INDEX = 1
+    export const NUM_VISIBLE_STEPS = 8
+    export const LEFT_TRACK_INDEX = 0
+    export const RIGHT_TRACK_INDEX = 1
     const NOTES = [
         "-",
         "C#",
