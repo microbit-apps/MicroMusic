@@ -90,6 +90,9 @@ namespace micromusic {
             this.playedNote = 0
             this.playedPattern = 0
 
+            this.leftTrack = LEFT_TRACK_INDEX
+            this.rightTrack = RIGHT_TRACK_INDEX
+
             this.cursor.setBorderThickness(1)
 
             this.controlBtns = [
@@ -606,7 +609,7 @@ namespace micromusic {
                     this.isPlaying &&
                     this.playedPattern < this.song.patternSequence.length
                 ) {
-                    for (let i = 0; i < NUM_TRACKS; i++) {
+                    for (let i = 0; i < NUM_CHANNELS; i++) {
                         this.playNote(
                             i,
                             this.song.patterns[this.playedPattern].channels[i]

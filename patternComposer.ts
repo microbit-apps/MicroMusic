@@ -388,7 +388,7 @@ namespace micromusic {
             control.inBackground(() => {
                 const tickSpeed = 60000 / Settings.bpm.value
                 while (this.isPlaying && this.playedNote < MAX_NOTES) {
-                    for (let i = 0; i < NUM_TRACKS; i++) {
+                    for (let i = 0; i < NUM_CHANNELS; i++) {
                         this.playNote(
                             i,
                             this.pattern.channels[i].sample.audioBuffer,
