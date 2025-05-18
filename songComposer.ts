@@ -90,6 +90,9 @@ namespace micromusic {
             this.playedNote = 0
             this.playedPattern = 0
 
+            this.leftTrack = LEFT_TRACK_INDEX
+            this.rightTrack = RIGHT_TRACK_INDEX
+
             this.cursor.setBorderThickness(1)
 
             this.controlBtns = [
@@ -213,7 +216,7 @@ namespace micromusic {
                     return
                 }
                 case ScreenShown.Pattern: {
-                    this.drawPasteNewOrExisting()
+                    this.drawPattern()
                     this.navigator.drawComponents()
                     return
                 }
@@ -244,6 +247,7 @@ namespace micromusic {
                 }
                 case ScreenShown.CopyChannel: {
                     this.drawCopyChannel()
+                    this.cursor.draw()
                     this.navigator.drawComponents()
                     return
                 }
@@ -284,8 +288,10 @@ namespace micromusic {
         }
 
         private drawPastePicker() {
-            this.drawText(-30, -30, "Pick a channel to copy to")
+            this.drawText(-44, -60, "Pick a channel")
+            this.drawText(-40, -50, "to copy from")
             this.drawGrid()
+            this.cursor.draw()
         }
 
         private drawAllPatterns() {
@@ -394,19 +400,21 @@ namespace micromusic {
         }
 
         private drawCopyChannel() {
-            this.drawText(-30, -30, "Pick a channel to copy from")
+            this.drawText(-44, -60, "Pick a channel")
+            this.drawText(-40, -50, "to copy from")
             this.drawGrid()
+            this.cursor.draw()
         }
 
         private drawCopySelection() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
-            this.drawText(-60, -30, "Copy a channel")
-            Screen.print("or an entire", -26, -20, 0)
-            Screen.print("pattern?", -38, -10, 0)
-            this.drawText(-40, 15, "pattern")
+            this.drawText(-40, -30, "Copy a channel")
+            Screen.print("or an entire", -35, -20, 0)
+            Screen.print("pattern?", -24, -10, 0)
+            this.drawText(-45, 15, "pattern")
             let col = this.song.patterns.length > 0 ? 0 : 0xf
-            this.drawText(2, 15, "channel", col)
+            this.drawText(7, 15, "channel", col)
             this.cursor.draw()
         }
 
@@ -422,7 +430,7 @@ namespace micromusic {
             this.cursor.draw()
         }
 
-        private drawPasteNewOrExisting() {
+        private drawPattern() {
             Screen.fillRect(-57, -37, 120, 80, 0)
             Screen.fillRect(-60, -40, 120, 80, 0x6)
             this.drawText(-51, -36, "Would you like to")
@@ -432,6 +440,19 @@ namespace micromusic {
             this.drawText(-40, 14, "Edit")
             this.drawText(2, 14, "Replace")
             this.drawText(-20, 24, "Remove")
+            this.cursor.draw()
+            this.cursor.setOutlineColour(0x2)
+        }
+
+        private drawPasteNewOrExisting() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawText(-60, -30, "Paste to new pattern")
+            Screen.print("or use an", -26, -20, 0)
+            Screen.print("existing one?", -38, -10, 0)
+            this.drawText(-40, 15, "new")
+            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            this.drawText(2, 15, "existing", col)
             this.cursor.draw()
             this.cursor.setOutlineColour(0x2)
         }
@@ -839,6 +860,10 @@ namespace micromusic {
                     }),
                 ],
             ])
+
+            this.moveCursor(CursorDir.Left)
+            this.moveCursor(CursorDir.Right)
+            this.cursor.setOutlineColour(0x9)
         }
 
         private channelCopySelect() {
@@ -868,6 +893,9 @@ namespace micromusic {
                             this.channelCopied = null
                             this.fillPatternBtns()
                             this.resetEnum()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Left)
+                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                     new Button({
@@ -884,6 +912,7 @@ namespace micromusic {
                 ],
             ])
             this.cursor.setOutlineColour(0x2)
+            this.moveCursor(CursorDir.Up)
             this.moveCursor(CursorDir.Down)
         }
 
@@ -938,6 +967,7 @@ namespace micromusic {
 
             this.moveCursor(CursorDir.Up)
             this.moveCursor(CursorDir.Down)
+            this.cursor.setOutlineColour(0x9)
         }
 
         private channelPastePicker(pattern: Pattern) {
@@ -966,6 +996,12 @@ namespace micromusic {
                             pattern.channels[this.leftTrack].copy(
                                 this.channelCopied
                             )
+                            this.channelCopied = null
+                            this.fillPatternBtns()
+                            this.resetEnum()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Left)
+                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                     new Button({
@@ -976,15 +1012,20 @@ namespace micromusic {
                         y: 12,
                         onClick: () => {
                             // right Track
-
                             pattern.channels[this.rightTrack].copy(
                                 this.channelCopied
                             )
-                            this.channelCopySelect()
+                            this.channelCopied = null
+                            this.fillPatternBtns()
+                            this.resetEnum()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Left)
+                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                 ],
             ])
+            this.moveCursor(CursorDir.Left)
         }
 
         private fullCopyConfirmation(copyIndex: number) {
@@ -1016,6 +1057,9 @@ namespace micromusic {
                             }
                             this.fillPatternBtns()
                             this.resetEnum()
+                            this.resetControllerEvents()
+                            this.moveCursor(CursorDir.Left)
+                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                     new Button({
@@ -1078,6 +1122,7 @@ namespace micromusic {
 
                                 this.resetEnum()
                                 this.fillPatternBtns()
+                                this.resetControllerEvents()
                                 this.moveCursor(CursorDir.Left)
                                 this.moveCursor(CursorDir.Right)
                             },
@@ -1154,6 +1199,7 @@ namespace micromusic {
                     }),
                 ],
             ])
+            this.moveCursor(CursorDir.Up)
             this.moveCursor(CursorDir.Down)
         }
 
@@ -1284,6 +1330,7 @@ namespace micromusic {
                                     this.song.patterns[index]
                                 this.resetEnum()
                                 this.resetNavigator()
+                                this.resetControllerEvents()
                                 this.fillPatternBtns()
                                 this.moveCursor(CursorDir.Left)
                                 this.moveCursor(CursorDir.Right)
