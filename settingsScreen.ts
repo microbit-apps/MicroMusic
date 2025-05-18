@@ -58,9 +58,9 @@ namespace micromusic {
                         new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
-                            icon: "volume", // bpm
+                            icon: "bpm", // bpm
                             x: -30,
-                            y: 0,
+                            y: 6,
                             onClick: () => {
                                 this.activateSettingContext(BPM)
                             },

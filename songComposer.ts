@@ -873,6 +873,38 @@ namespace micromusic {
                         },
                     }),
                 ],
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_right",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_left",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
+                        },
+                    }),
+                ],
             ])
 
             this.moveCursor(CursorDir.Left)
@@ -1035,6 +1067,38 @@ namespace micromusic {
                             this.resetControllerEvents()
                             this.moveCursor(CursorDir.Left)
                             this.moveCursor(CursorDir.Right)
+                        },
+                    }),
+                ],
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_right",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_left",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
                         },
                     }),
                 ],
