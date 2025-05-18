@@ -1,12 +1,12 @@
 ### TODO
 
-## Things today (13/05/2025)
+## Final Things
 
 -   [x] Fix all dialogue boxes
 -   [x] Rename temp to pick
 -   [x] Pattern on top of screen to swap out in the pattern viewer - May include passing in song and pattern index instead of just passing in a pattern
 -   [ ] Implement copy-paste
--   [ ] Arrow showing which pattern is being played currently
+-   [x] Arrow showing which pattern is being played currently
 -   [ ] Ensure playing full song works on main, aka, test on microbit
 -   [ ] Fix the way settings work on main
 
@@ -33,6 +33,7 @@ Console.log over serial
 
 -   [x] More than 1 bank of track data important one, can have them playing after eachother
 -   [ ] Want a nice strong evaluation, start thinking about that now
+<<<<<<< HEAD
 -   [ ] Intuitiveness, when selecting a note, A to come out of it and B to reset the note to "-"? Or A to reset, B to come out of it
 <<<<<<< HEAD
 -   [ ] Scrolling over samples plays sample
@@ -42,6 +43,9 @@ Console.log over serial
 -   [ ] Different volumes
 -   [ ] Confirm that changing samples plays a noise
 -   [ ] Confirm that octave changing plays correctly
+=======
+-   [x] Pattern at the top of the screen so you can swap straight in the patterns editor
+>>>>>>> ad5ef3f37aacc887fcbc48efd660e45f680afce4
 -   [x] Change size of invisible buttons on confirmation pages
 
 ## Bugs
