@@ -1631,9 +1631,8 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
-                    this.save()
-                    // this.backConfirmation()
-                    // this.moveCursor(CursorDir.Right)
+                    this.backConfirmation()
+                    this.moveCursor(CursorDir.Right)
                 }
             )
         }

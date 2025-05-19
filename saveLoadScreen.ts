@@ -48,6 +48,7 @@ namespace micromusic {
             this.selectedIndex = 0
             this.saveNames = []
             this.saveExists = []
+            this.songs = []
             this.currentRowOffset = 0
 
             // Initialize save names and check if saves exist
@@ -131,7 +132,7 @@ namespace micromusic {
                     (<SongComposerScreen>this.previousScene).getSong(),
                     this.selectedIndex
                 )
-                this.saveExists[this.selectedIndex] = true
+                // this.saveExists[this.selectedIndex] = true
                 // Show a save confirmation
                 Screen.print("Saved!", 0, 0, 0x2)
                 basic.pause(500)
@@ -150,23 +151,31 @@ namespace micromusic {
         }
 
         private save(song: Song, saveSlot: number) {
-            let cv: ColumnValue[]
-            datalogger.deleteLog(datalogger.DeleteType.Full)
+            let cv: ColumnValue[] = []
+            datalogger.deleteLog(datalogger.DeleteType.Fast)
+
             for (let i = 0; i < this.songs.length; i++) {
                 if (i == saveSlot) {
+                    control.dmesg("filling save")
                     cv[i] = datalogger.createCV(
                         "save" + i,
                         JSON.stringify(song.toJSON())
                     )
+                    control.dmesg("filled save")
                 } else if (this.songs[i] == null) {
+                    control.dmesg("filling null")
                     cv[i] = datalogger.createCV("save" + i, null)
                 } else {
+                    control.dmesg("saving old")
                     cv[i] = datalogger.createCV(
                         "save" + i,
                         JSON.stringify(this.songs[i].toJSON())
                     )
                 }
             }
+            control.dmesg("log start")
+            datalogger.log(cv[0], cv[1], cv[2])
+            control.dmesg("log end")
         }
 
         private loadSave(saveIndex: number) {
@@ -183,11 +192,16 @@ namespace micromusic {
 
             control.dmesg(this.dataLoggerHeader[0])
             if (this.dataLoggerHeader[0] == "") {
+                control.dmesg("saving")
                 datalogger.log(
                     datalogger.createCV("save1", null),
                     datalogger.createCV("save2", null),
                     datalogger.createCV("save3", null)
                 )
+
+                this.songs[0] = null
+                this.songs[1] = null
+                this.songs[2] = null
                 return
             }
 
@@ -197,11 +211,13 @@ namespace micromusic {
 
             for (let i = 0; i < data.length; i++) {
                 if (data[i] == "null") {
+                    control.dmesg("null found")
+                    this.songs[i] = null
                     continue
                 }
                 const fixedDataStr = data[i].split("_").join(",")
 
-                this.songs[0] = Song.fromJSON(JSON.parse(fixedDataStr))
+                this.songs[i] = Song.fromJSON(JSON.parse(fixedDataStr))
                 this.saveExists[i] = true
             }
         }
