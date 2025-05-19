@@ -48,5 +48,26 @@ namespace micromusic {
                 this.patterns.splice(patternIndex, 1)
             }
         }
+
+        toJSON() {
+            return {
+                patterns: this._patterns.map(p => p.toJSON()),
+                patternSequence: this._patternSequence.map(p => p.id),
+                patternsMade: this.patternsMade,
+            }
+        }
+
+        static fromJSON(data: any): Song {
+            const song = new Song()
+            song._patterns = data.patterns.map((p: any) => Pattern.fromJSON(p))
+            song.patternsMade = data.patternsMade
+
+            // Re-link pattern sequence by ID
+            song._patternSequence = data.patternSequence.map((id: number) =>
+                song._patterns.find(p => p.id === id)
+            )
+
+            return song
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace micromusic {
             if (name == "largeDisk") return icondb.largeDisk
 
             if (name == "volume") return icondb.volumeLogo
+            if (name == "bpm") return icondb.bpm
+
             if (name == "invisiblePatternButton")
                 return icondb.invisiblePatternButton
             if (name == "small_pattern_button")
@@ -428,6 +430,25 @@ namespace icondb {
         c c f f f f f f f f
         c c c f f f c f f f
         c c c c f f c c f f
+    `
+
+    export const bpm = bmp`
+    ........................................
+    ....11111......11111.....11.......11....
+    ...1bbbbbbf...1bbbbbbf..1bbbf....1bbb...
+    ...1bbbbbbbf..1bbbbbbbf.1bbbbf..11bbbf..
+    ...1bbffffbbf.1bbfffbbf.1bbbbbf.1bbbbf..
+    ...1bbf...bbf.1bbf..1bf.1bbbbbbbbbbbbf..
+    ...1bbf...1bf.1bbbb1bff.1bbbfbbbbfbbbf..
+    ...1bbbb11bff.1bbbbbff..1bbbf.bbf.bbbf..
+    ...1bbbbbbbf..1bbffff...1bbbf.bbf.bbbf..
+    ...1bbffffbbf.1bbf......1bbbf..ff.bbbf..
+    ...1bbf...bbf.1bbf......1bbbf.....bbbf..
+    ...1bbf...1bf.1bbf......1bbbf.....bbbf..
+    ...1bbbb11bff.1bbf......1bbbf.....bbbf..
+    ....bbbbbbff...bbf.......bbbf.....bbbf..
+    .....ffffff.....ff........fff......fff..
+    ........................................
     `
 
     //-------------

@@ -26,7 +26,7 @@ namespace micromusic {
         FullCopySelection = 13,
         PatternClickedSwap = 14,
     }
-
+    // TODO: SAVE AND LOADING, SAVE NULL TO 3 SLOTS, CHECK IF NULL AND THEN JUST PULL THE INFORMATION IN IF NOT NULL, EASY PEASY
     export class SongComposerScreen extends CursorSceneWithPriorPage {
         private static instance: SongComposerScreen | null = null
         private song: Song
@@ -903,6 +903,38 @@ namespace micromusic {
                         },
                     }),
                 ],
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_right",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_left",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
+                        },
+                    }),
+                ],
             ])
 
             this.moveCursor(CursorDir.Left)
@@ -1065,6 +1097,38 @@ namespace micromusic {
                             this.resetControllerEvents()
                             this.moveCursor(CursorDir.Left)
                             this.moveCursor(CursorDir.Right)
+                        },
+                    }),
+                ],
+                [
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_right",
+                        x: 70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack++
+                            this.rightTrack++
+
+                            if (this.leftTrack > 3) this.leftTrack = 0
+                            if (this.rightTrack > 3) this.rightTrack = 0
+
+                            this.drawGrid()
+                        },
+                    }),
+                    new Button({
+                        parent: null,
+                        style: ButtonStyles.Transparent,
+                        icon: "sample_selection_arrow_left",
+                        x: -70,
+                        y: -40,
+                        onClick: () => {
+                            this.leftTrack--
+                            this.rightTrack--
+
+                            if (this.leftTrack < 0) this.leftTrack = 3
+                            if (this.rightTrack < 0) this.rightTrack = 3
                         },
                     }),
                 ],
@@ -1591,6 +1655,23 @@ namespace micromusic {
                     this.moveCursor(CursorDir.Right)
                 },
             )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.A.id,
+                () => {
+                    this.save()
+                    // this.backConfirmation()
+                    // this.moveCursor(CursorDir.Right)
+                }
+            )
+        }
+
+        public save() {
+            const jsonStr = JSON.stringify(this.song)
+
+            const loadedSong = Song.fromJSON(JSON.parse(jsonStr))
+
+            console.log(loadedSong.patterns)
         }
     }
 }

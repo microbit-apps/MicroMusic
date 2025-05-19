@@ -37,5 +37,20 @@ namespace micromusic {
         public playAsync() {
             // starts playing on all channels, each one has their own control.inbackground?
         }
+
+        toJSON() {
+            return {
+                id: this._id,
+                channels: this._channels.map(c => c.toJSON()),
+            }
+        }
+
+        static fromJSON(data: any): Pattern {
+            const pattern = new Pattern(data.id)
+            pattern._channels = data.channels.map((c: any) =>
+                Channel.fromJSON(c)
+            )
+            return pattern
+        }
     }
 }

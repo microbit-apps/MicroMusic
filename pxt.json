@@ -26,7 +26,8 @@
         "song.ts",
         "pattern.ts",
         "channel.ts",
-        "settings.ts"
+        "settings.ts",
+        "saveLoadScreen.ts"
     ],
     "testFiles": [],
     "targetVersions": {
