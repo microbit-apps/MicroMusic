@@ -151,7 +151,7 @@ namespace micromusic {
 
         private save(song: Song, saveSlot: number) {
             let cv: ColumnValue[]
-
+            datalogger.deleteLog(datalogger.DeleteType.Full)
             for (let i = 0; i < this.songs.length; i++) {
                 if (i == saveSlot) {
                     cv[i] = datalogger.createCV(
@@ -181,7 +181,8 @@ namespace micromusic {
                 .split("\n")[0]
                 .split(",")
 
-            if (this.dataLoggerHeader.length < 1) {
+            control.dmesg(this.dataLoggerHeader[0])
+            if (this.dataLoggerHeader[0] == "") {
                 datalogger.log(
                     datalogger.createCV("save1", null),
                     datalogger.createCV("save2", null),
@@ -195,7 +196,7 @@ namespace micromusic {
             let data = rawData.split(",")
 
             for (let i = 0; i < data.length; i++) {
-                if (data[i] == null) {
+                if (data[i] == "null") {
                     continue
                 }
                 const fixedDataStr = data[i].split("_").join(",")
