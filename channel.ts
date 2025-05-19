@@ -72,5 +72,22 @@ namespace micromusic {
             this._notes[index] = note
             this._octaves[index] = octave
         }
+
+        toJSON() {
+            return {
+                notes: this._notes,
+                octaves: this._octaves,
+                sample: this._sample.toJSON(),
+                id: this._id,
+            }
+        }
+
+        static fromJSON(data: any): Channel {
+            const ch = new Channel(data.id)
+            ch._notes = data.notes
+            ch._octaves = data.octaves
+            ch._sample = Sample.fromJSON(data.sample)
+            return ch
+        }
     }
 }

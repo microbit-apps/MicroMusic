@@ -26,7 +26,7 @@ namespace micromusic {
         FullCopySelection = 13,
         PatternClickedSwap = 14,
     }
-
+    // TODO: SAVE AND LOADING, SAVE NULL TO 3 SLOTS, CHECK IF NULL AND THEN JUST PULL THE INFORMATION IN IF NOT NULL, EASY PEASY
     export class SongComposerScreen extends CursorSceneWithPriorPage {
         private static instance: SongComposerScreen | null = null
         private song: Song
@@ -1625,6 +1625,23 @@ namespace micromusic {
                     this.moveCursor(CursorDir.Right)
                 }
             )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.A.id,
+                () => {
+                    this.save()
+                    // this.backConfirmation()
+                    // this.moveCursor(CursorDir.Right)
+                }
+            )
+        }
+
+        public save() {
+            const jsonStr = JSON.stringify(this.song)
+
+            const loadedSong = Song.fromJSON(JSON.parse(jsonStr))
+
+            console.log(loadedSong.patterns)
         }
     }
 }
