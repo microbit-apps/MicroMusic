@@ -44,6 +44,8 @@ namespace micromusic {
         private pastedChannel: number
         private isPlaying: boolean
         private isPaused: boolean
+        private drawSomething: string | null = null
+        private dataLoggerHeader: string[]
         private screenShown: ScreenShown
 
         private constructor(app: AppInterface) {
@@ -79,7 +81,11 @@ namespace micromusic {
             return SongComposerScreen.instance
         }
 
-        private setSong(song: Song) {
+        public getSong() {
+            return this.song
+        }
+
+        public setSong(song: Song) {
             this.song = song
         }
 
@@ -185,6 +191,10 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc
             )
+
+            if (this.dataLoggerHeader != null) {
+                this.drawText(0, 0, this.dataLoggerHeader[0])
+            }
 
             if (this.isPlaying || this.isPaused) {
                 if (this.arrowLocation != -53 + (this.playedPattern % 6) * 21) {
@@ -1629,16 +1639,31 @@ namespace micromusic {
         }
 
         public save() {
-            const jsonStr = JSON.stringify(this.song.toJSON())
-            // datalogger.log(
-            //     datalogger.createCV("s1", JSON.stringify(this.song.toJSON())),
-            //     datalogger.createCV("s2", null),
-            //     datalogger.createCV("s3", null)
-            // )
+            datalogger.log(
+                datalogger.createCV("s1", JSON.stringify(this.song.toJSON())),
+                datalogger.createCV("s2", null),
+                datalogger.createCV("s3", null)
+            )
 
-            // datalogger.getRows(1, 1)
+            this.dataLoggerHeader = datalogger
+                .getRows(0, 1)
+                .split("\n")[0]
+                .split(",")
 
-            let song = Song.fromJSON(JSON.parse(jsonStr))
+            let rawData = datalogger.getRows(1, 1)
+
+            rawData = rawData.split(",")[0]
+
+            const fixedDataStr = rawData.split("_").join(",")
+
+            datalogger.log(
+                datalogger.createCV("test", fixedDataStr),
+                datalogger.createCV("test2", ",")
+            )
+
+            let song = Song.fromJSON(JSON.parse(fixedDataStr))
+
+            control.dmesg(song.patterns[0].channels[0].notes[0])
         }
     }
 }
