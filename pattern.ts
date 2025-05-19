@@ -9,10 +9,10 @@ namespace micromusic {
 
         constructor(id: number) {
             this._channels = [
-                new Channel(0),
-                new Channel(1),
-                new Channel(2),
-                new Channel(3),
+                new Channel(),
+                new Channel(),
+                new Channel(),
+                new Channel(),
             ]
 
             this._id = id
@@ -47,7 +47,7 @@ namespace micromusic {
 
         static fromJSON(data: any): Pattern {
             const pattern = new Pattern(data.id)
-            pattern._channels = data.channels.map((c: any) =>
+            pattern._channels = (<Array<Channel>>data.channels).map((c: any) =>
                 Channel.fromJSON(c)
             )
             return pattern

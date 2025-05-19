@@ -71,6 +71,50 @@ namespace micromusic {
                     ],
                     [
                         new Button({
+                            // save button
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "save_button_small",
+                            ariaId: "save",
+                            x: -40,
+                            y: 30,
+                            onClick: () => {
+                                // Go to Save screen
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    SaveLoadScreen.getInstance(
+                                        this.app,
+                                        <SongComposerScreen>this.previousScene,
+                                        SaveLoadMode.SAVE
+                                    )
+                                )
+                                // ;(<SoundTrackerScreen>(
+                                //     this.previousScene
+                                // )).openSaveScreen()
+                            },
+                        }),
+                        new Button({
+                            // load button
+                            parent: null,
+                            style: ButtonStyles.Transparent,
+                            icon: "save_button_small",
+                            ariaId: "load",
+                            x: 40,
+                            y: 30,
+                            onClick: () => {
+                                this.app.popScene()
+                                this.app.pushScene(
+                                    SaveLoadScreen.getInstance(
+                                        this.app,
+                                        <SongComposerScreen>this.previousScene,
+                                        SaveLoadMode.LOAD
+                                    )
+                                )
+                            },
+                        }),
+                    ],
+                    [
+                        new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
                             icon: "back_button",

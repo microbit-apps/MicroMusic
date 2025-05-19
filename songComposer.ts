@@ -44,6 +44,8 @@ namespace micromusic {
         private pastedChannel: number
         private isPlaying: boolean
         private isPaused: boolean
+        private drawSomething: string | null = null
+        private dataLoggerHeader: string[]
         private screenShown: ScreenShown
 
         private constructor(app: AppInterface) {
@@ -79,7 +81,11 @@ namespace micromusic {
             return SongComposerScreen.instance
         }
 
-        private setSong(song: Song) {
+        public getSong() {
+            return this.song
+        }
+
+        public setSong(song: Song) {
             this.song = song
         }
 
@@ -185,6 +191,10 @@ namespace micromusic {
                 Screen.HEIGHT,
                 0xc,
             )
+
+            if (this.dataLoggerHeader != null) {
+                this.drawText(0, 0, this.dataLoggerHeader[0])
+            }
 
             if (this.isPlaying || this.isPaused) {
                 if (this.arrowLocation != -53 + (this.playedPattern % 6) * 21) {
@@ -573,14 +583,14 @@ namespace micromusic {
                 -42,
                 this.song.patterns[this.gridPatternIndex].channels[
                     this.leftTrack
-                ].sample.name
+                ].sample.name,
             )
             this.drawText(
                 8,
                 -42,
                 this.song.patterns[this.gridPatternIndex].channels[
                     this.rightTrack
-                ].sample.name
+                ].sample.name,
             )
 
             for (let step = 0; step < NUM_VISIBLE_STEPS; step++) {
@@ -1655,23 +1665,6 @@ namespace micromusic {
                     this.moveCursor(CursorDir.Right)
                 },
             )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
-                    this.save()
-                    // this.backConfirmation()
-                    // this.moveCursor(CursorDir.Right)
-                }
-            )
-        }
-
-        public save() {
-            const jsonStr = JSON.stringify(this.song)
-
-            const loadedSong = Song.fromJSON(JSON.parse(jsonStr))
-
-            console.log(loadedSong.patterns)
         }
     }
 }
