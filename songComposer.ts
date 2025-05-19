@@ -1621,14 +1621,6 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
-                    this.backConfirmation()
-                    this.moveCursor(CursorDir.Right)
-                }
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
                     this.save()
                     // this.backConfirmation()
                     // this.moveCursor(CursorDir.Right)
@@ -1637,11 +1629,16 @@ namespace micromusic {
         }
 
         public save() {
-            const jsonStr = JSON.stringify(this.song)
+            const jsonStr = JSON.stringify(this.song.toJSON())
+            // datalogger.log(
+            //     datalogger.createCV("s1", JSON.stringify(this.song.toJSON())),
+            //     datalogger.createCV("s2", null),
+            //     datalogger.createCV("s3", null)
+            // )
 
-            const loadedSong = Song.fromJSON(JSON.parse(jsonStr))
+            // datalogger.getRows(1, 1)
 
-            console.log(loadedSong.patterns)
+            let song = Song.fromJSON(JSON.parse(jsonStr))
         }
     }
 }

@@ -5,9 +5,8 @@ namespace micromusic {
         private _notes: string[]
         private _octaves: number[]
         private _sample: Sample
-        private _id: number
 
-        constructor(id: number) {
+        constructor() {
             this._notes = []
             this._octaves = []
 
@@ -16,10 +15,6 @@ namespace micromusic {
                 this._octaves[i] = 3
             }
             this._sample = new Sample("ShortB")
-        }
-
-        public get id() {
-            return this._id
         }
 
         public get notes() {
@@ -75,19 +70,18 @@ namespace micromusic {
 
         toJSON() {
             return {
-                notes: this._notes,
-                octaves: this._octaves,
-                sample: this._sample.toJSON(),
-                id: this._id,
+                notes: this._notes, // flatten array to string
+                octaves: this._octaves, // flatten array to string
+                sampleName: this._sample.name, // flatten object to string
             }
         }
 
         static fromJSON(data: any): Channel {
-            const ch = new Channel(data.id)
-            ch._notes = data.notes
-            ch._octaves = data.octaves
-            ch._sample = Sample.fromJSON(data.sample)
-            return ch
+            const channel = new Channel()
+            channel._notes = <Array<string>>data.notes
+            channel._octaves = <Array<number>>data.octaves
+            channel._sample = new Sample(data.sampleName)
+            return channel
         }
     }
 }
