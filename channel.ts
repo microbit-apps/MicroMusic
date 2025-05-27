@@ -4,7 +4,7 @@ namespace micromusic {
     export class Channel {
         private _notes: string[]
         private _octaves: number[]
-        private _sample: Sample
+        private _sample: string
 
         constructor() {
             this._notes = []
@@ -14,7 +14,8 @@ namespace micromusic {
                 this._notes[i] = "-"
                 this._octaves[i] = 3
             }
-            this._sample = new Sample("ShortB")
+
+            this._sample = "acpiano1"
         }
 
         public get notes() {
@@ -51,14 +52,14 @@ namespace micromusic {
             return this._sample
         }
 
-        public set sample(sample: Sample) {
+        public set sample(sample: string) {
             this._sample = sample
         }
 
         public setNoteAndOctave(
             note: string,
             octave: number,
-            index: number
+            index: number,
         ): void {
             if (index > MAX_NOTES) {
                 console.error(`Max index for a channel is: ${MAX_NOTES - 1}`)
@@ -72,7 +73,7 @@ namespace micromusic {
             return {
                 notes: this._notes, // flatten array to string
                 octaves: this._octaves, // flatten array to string
-                sampleName: this._sample.name, // flatten object to string
+                sampleName: this._sample, // flatten object to string
             }
         }
 
@@ -80,7 +81,7 @@ namespace micromusic {
             const channel = new Channel()
             channel._notes = <Array<string>>data.notes
             channel._octaves = <Array<number>>data.octaves
-            channel._sample = new Sample(data.sampleName)
+            channel._sample = data.sampleName
             return channel
         }
     }

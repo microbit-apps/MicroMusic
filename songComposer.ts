@@ -433,8 +433,9 @@ namespace micromusic {
             this.drawText(-60, -30, "Paste to new pattern")
             Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
-            this.drawText(-40, 15, "new")
-            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            let col = this.song.patterns.length > 5 ? 0xf : 0
+            this.drawText(-40, 15, "new", col)
+            col = this.song.patterns.length > 0 ? 0 : 0xf
             this.drawText(2, 15, "existing", col)
             this.cursor.draw()
         }
@@ -457,8 +458,9 @@ namespace micromusic {
             this.drawText(-60, -30, "Paste to new pattern")
             Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
-            this.drawText(-40, 15, "new")
-            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            let col = this.song.patterns.length > 5 ? 0xf : 0
+            this.drawText(-40, 15, "new", col)
+            col = this.song.patterns.length > 0 ? 0 : 0xf
             this.drawText(2, 15, "existing", col)
             this.cursor.draw()
             this.cursor.setOutlineColour(0x2)
@@ -469,8 +471,9 @@ namespace micromusic {
             this.drawText(-54, -30, "Create new pattern")
             Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
-            this.drawText(-40, 15, "new")
-            let col = this.song.patterns.length > 0 ? 0 : 0xf
+            let col = this.song.patterns.length > 5 ? 0xf : 0
+            this.drawText(-40, 15, "new", col)
+            col = this.song.patterns.length > 0 ? 0 : 0xf
             this.drawText(2, 15, "existing", col)
             this.cursor.draw()
         }
@@ -535,7 +538,6 @@ namespace micromusic {
 
                     if (count < this.song.patternSequence.length) {
                         const x = startX + i * cellWidth
-
                         Screen.print(
                             this.song.patternSequence[count].id.toString(),
                             x,
@@ -582,14 +584,14 @@ namespace micromusic {
                 -42,
                 this.song.patterns[this.gridPatternIndex].channels[
                     this.leftTrack
-                ].sample.name,
+                ].sample,
             )
             this.drawText(
                 8,
                 -42,
                 this.song.patterns[this.gridPatternIndex].channels[
                     this.rightTrack
-                ].sample.name,
+                ].sample,
             )
 
             for (let step = 0; step < NUM_VISIBLE_STEPS; step++) {
@@ -654,8 +656,11 @@ namespace micromusic {
                     for (let i = 0; i < NUM_CHANNELS; i++) {
                         this.playNote(
                             i,
-                            this.song.patterns[this.playedPattern].channels[i]
-                                .sample.audioBuffer,
+                            getSample(
+                                this.song.patterns[this.playedPattern].channels[
+                                    i
+                                ].sample,
+                            ),
                         )
                     }
                     basic.pause(tickSpeed)
@@ -971,17 +976,19 @@ namespace micromusic {
                         x: -31,
                         y: 18,
                         onClick: () => {
-                            // Copy to new pattern
-                            let newPat = this.song.newPattern()
+                            if (this.song.patterns.length < 6) {
+                                // Copy to new pattern
+                                let newPat = this.song.newPattern()
 
-                            newPat.channels[0].copy(this.channelCopied)
+                                newPat.channels[0].copy(this.channelCopied)
 
-                            this.channelCopied = null
-                            this.fillPatternBtns()
-                            this.resetEnum()
-                            this.resetControllerEvents()
-                            this.moveCursor(CursorDir.Left)
-                            this.moveCursor(CursorDir.Right)
+                                this.channelCopied = null
+                                this.fillPatternBtns()
+                                this.resetEnum()
+                                this.resetControllerEvents()
+                                this.moveCursor(CursorDir.Left)
+                                this.moveCursor(CursorDir.Right)
+                            }
                         },
                     }),
                     new Button({
@@ -1167,17 +1174,25 @@ namespace micromusic {
                         y: 18,
                         onClick: () => {
                             // Copy to new pattern
-                            let newPat = this.song.newPattern()
-                            for (let i = 0; i < newPat.channels.length; i++) {
-                                newPat.channels[i].copy(
-                                    this.song.patterns[copyIndex].channels[i],
-                                )
+                            if (this.song.patterns.length < 6) {
+                                let newPat = this.song.newPattern()
+                                for (
+                                    let i = 0;
+                                    i < newPat.channels.length;
+                                    i++
+                                ) {
+                                    newPat.channels[i].copy(
+                                        this.song.patterns[copyIndex].channels[
+                                            i
+                                        ],
+                                    )
+                                }
+                                this.fillPatternBtns()
+                                this.resetEnum()
+                                this.resetControllerEvents()
+                                this.moveCursor(CursorDir.Left)
+                                this.moveCursor(CursorDir.Right)
                             }
-                            this.fillPatternBtns()
-                            this.resetEnum()
-                            this.resetControllerEvents()
-                            this.moveCursor(CursorDir.Left)
-                            this.moveCursor(CursorDir.Right)
                         },
                     }),
                     new Button({
@@ -1395,8 +1410,10 @@ namespace micromusic {
                         x: -31,
                         y: 18,
                         onClick: () => {
-                            this.newPattern(clickedPatternIndex)
-                            this.resetEnum()
+                            if (this.song.patterns.length < 6) {
+                                this.newPattern(clickedPatternIndex)
+                                this.resetEnum()
+                            }
                         },
                     }),
                     new Button({

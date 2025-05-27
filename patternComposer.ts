@@ -394,7 +394,7 @@ namespace micromusic {
                     for (let i = 0; i < NUM_CHANNELS; i++) {
                         this.playNote(
                             i,
-                            this.pattern.channels[i].sample.audioBuffer,
+                            getSample(this.pattern.channels[i].sample),
                         )
                     }
                     basic.pause(tickSpeed)
@@ -533,13 +533,9 @@ namespace micromusic {
             this.drawText(
                 -60,
                 -44,
-                this.pattern.channels[this.leftTrack].sample.name,
+                this.pattern.channels[this.leftTrack].sample,
             )
-            this.drawText(
-                8,
-                -44,
-                this.pattern.channels[this.rightTrack].sample.name,
-            )
+            this.drawText(8, -44, this.pattern.channels[this.rightTrack].sample)
             Screen.drawLine(0, -44, 0, -36, 0xb)
             Screen.drawLine(0, -20, 0, 42, 0xb)
         }
@@ -680,7 +676,7 @@ namespace micromusic {
             samples.setSampleRate(0, rate)
             samples.playAsync(
                 0,
-                this.pattern.channels[this.selectedTrack].sample.audioBuffer,
+                getSample(this.pattern.channels[this.selectedTrack].sample),
             )
         }
 

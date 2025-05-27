@@ -13,7 +13,8 @@ namespace micromusic {
         private previousScene: PatternScreen
         private sampleNames: string[]
         private selectedIndex: number
-        private currentSample: Sample
+        private currentSample: string
+        private startingSample: string
         private channel: Channel
 
         constructor(
@@ -33,10 +34,9 @@ namespace micromusic {
             this.sampleNames = listSamples()
             this.channel = channel
             this.currentSample = channel.sample
+            this.startingSample = channel.sample
             this.previousScene = previousScene
-            this.selectedIndex = this.sampleNames.indexOf(
-                this.currentSample.name,
-            )
+            this.selectedIndex = this.sampleNames.indexOf(this.currentSample)
         }
 
         /* override */ startup() {
@@ -44,7 +44,6 @@ namespace micromusic {
             basic.pause(1)
 
             this.cursor.setBorderThickness(1)
-            console.log(this.sampleNames)
             this.resetNavigator()
             this.setControllerEvents()
         }
@@ -59,6 +58,7 @@ namespace micromusic {
                         x: -60,
                         y: -50,
                         onClick: () => {
+                            this.channel.sample = this.startingSample
                             this.app.popScene()
                             this.app.pushScene(this.previousScene)
                         },
@@ -102,15 +102,9 @@ namespace micromusic {
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
-                controller.A.id,
-                () => {
-                    this.selectSample()
-                },
-            )
-            control.onEvent(
-                ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
+                    this.channel.sample = this.startingSample
                     this.app.popScene()
                     this.app.pushScene(this.previousScene)
                 },
@@ -119,8 +113,7 @@ namespace micromusic {
 
         private selectSample() {
             const sampleName = this.sampleNames[this.selectedIndex]
-            const sample = new Sample(sampleName)
-            this.channel.sample = sample
+            this.channel.sample = sampleName
             this.app.popScene()
             this.app.pushScene(this.previousScene)
         }
