@@ -11,7 +11,6 @@ namespace micromusic {
     // Number of save slots available
     const NUM_SAVE_SLOTS = 3
     const NUM_SLOTS_SHOWN = 3
-
     export enum SaveLoadMode {
         SAVE,
         LOAD,
@@ -19,7 +18,7 @@ namespace micromusic {
 
     export class SaveLoadScreen extends CursorSceneWithPriorPage {
         private previousScene: CursorScene
-        private static mode: SaveLoadMode
+        private mode: SaveLoadMode
         private selectedIndex: number
         private saveNames: string[]
         private saveExists: boolean[]
@@ -27,6 +26,7 @@ namespace micromusic {
         private static instance: SaveLoadScreen | null = null
         private currentRowOffset: number
         private dataLoggerHeader: string[]
+        private static loadedFromFlash: boolean
 
         private constructor(
             app: AppInterface,
@@ -42,9 +42,14 @@ namespace micromusic {
                 },
                 new GridNavigator()
             )
+            basic.pause(10)
 
+            if (!mode) {
+                this.mode = SaveLoadMode.LOAD
+            }
+
+            SaveLoadScreen.loadedFromFlash = false
             this.previousScene = previousScene
-            SaveLoadScreen.mode = mode
             this.selectedIndex = 0
             this.saveNames = []
             this.saveExists = []
@@ -59,10 +64,11 @@ namespace micromusic {
             }
 
             this.loadSaves()
+            SaveLoadScreen.loadedFromFlash = true
         }
 
-        private static setMode(mode: SaveLoadMode) {
-            SaveLoadScreen.mode = mode
+        private setMode(mode: SaveLoadMode) {
+            this.mode = mode
         }
 
         public static getInstance(
@@ -84,8 +90,8 @@ namespace micromusic {
                 )
             }
 
-            if (mode) {
-                SaveLoadScreen.setMode(mode)
+            if (mode != null) {
+                SaveLoadScreen.instance.setMode(mode)
             }
 
             return SaveLoadScreen.instance
@@ -93,7 +99,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
-            this.loadSaves()
+            // this.loadSaves()
             this.resetNavigator()
         }
 
@@ -126,7 +132,7 @@ namespace micromusic {
         }
 
         private processSlotAction() {
-            if (SaveLoadScreen.mode === SaveLoadMode.SAVE) {
+            if (this.mode === SaveLoadMode.SAVE) {
                 // Save the current track data to the selected slot
                 this.save(
                     (<SongComposerScreen>this.previousScene).getSong(),
@@ -152,30 +158,26 @@ namespace micromusic {
 
         private save(song: Song, saveSlot: number) {
             let cv: ColumnValue[] = []
-            datalogger.deleteLog(datalogger.DeleteType.Fast)
-
+            let test = []
+            datalogger.deleteLog(datalogger.DeleteType.Full)
+            basic.pause(10)
             for (let i = 0; i < this.songs.length; i++) {
+                basic.pause(10)
                 if (i == saveSlot) {
-                    control.dmesg("filling save")
                     cv[i] = datalogger.createCV(
                         "save" + i,
                         JSON.stringify(song.toJSON())
                     )
-                    control.dmesg("filled save")
                 } else if (this.songs[i] == null) {
-                    control.dmesg("filling null")
                     cv[i] = datalogger.createCV("save" + i, null)
                 } else {
-                    control.dmesg("saving old")
                     cv[i] = datalogger.createCV(
                         "save" + i,
                         JSON.stringify(this.songs[i].toJSON())
                     )
                 }
             }
-            control.dmesg("log start")
             datalogger.log(cv[0], cv[1], cv[2])
-            control.dmesg("log end")
         }
 
         private loadSave(saveIndex: number) {
@@ -190,9 +192,7 @@ namespace micromusic {
                 .split("\n")[0]
                 .split(",")
 
-            control.dmesg(this.dataLoggerHeader[0])
             if (this.dataLoggerHeader[0] == "") {
-                control.dmesg("saving")
                 datalogger.log(
                     datalogger.createCV("save1", null),
                     datalogger.createCV("save2", null),
@@ -208,6 +208,19 @@ namespace micromusic {
             let rawData = datalogger.getRows(1, 1)
 
             let data = rawData.split(",")
+
+            if (data[0] == "" || data[1] == "" || data[2] == "") {
+                datalogger.log(
+                    datalogger.createCV("save1", null),
+                    datalogger.createCV("save2", null),
+                    datalogger.createCV("save3", null)
+                )
+
+                this.songs[0] = null
+                this.songs[1] = null
+                this.songs[2] = null
+                return
+            }
 
             for (let i = 0; i < data.length; i++) {
                 if (data[i] == "null") {
@@ -232,7 +245,7 @@ namespace micromusic {
             )
 
             const title =
-                SaveLoadScreen.mode === SaveLoadMode.SAVE
+                this.mode === SaveLoadMode.SAVE
                     ? "Save Composition"
                     : "Load Composition"
             Screen.print(title, -40, -50, 0x1)
@@ -262,7 +275,7 @@ namespace micromusic {
                 let slotText = this.saveNames[slotIndex]
                 if (this.saveExists[slotIndex]) {
                     slotText += " [Saved]"
-                } else if (SaveLoadScreen.mode === SaveLoadMode.LOAD) {
+                } else if (this.mode === SaveLoadMode.LOAD) {
                     slotText += " [Empty]"
                 }
 
@@ -279,10 +292,6 @@ namespace micromusic {
             //         ? "Press A to save"
             //         : "Press A to load"
             // Screen.print(instruction, -36, 40, 0)
-
-            if (this.dataLoggerHeader) {
-                Screen.print(this.dataLoggerHeader[0], 0, 0)
-            }
 
             // Draw the cursor
             this.cursor.draw()
