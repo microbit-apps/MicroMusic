@@ -2,7 +2,7 @@ namespace micromusic {
     export class Song {
         private _patterns: Pattern[]
         private _patternSequence: Pattern[]
-        private patternsMade: number
+        public patternsMade: number
 
         constructor() {
             this._patternSequence = []
@@ -40,7 +40,7 @@ namespace micromusic {
          */
         public deletePattern(pattern: Pattern) {
             this._patternSequence = this.patternSequence.filter(
-                p => p !== pattern
+                p => p !== pattern,
             )
 
             const patternIndex = this.patterns.indexOf(pattern)
@@ -61,10 +61,10 @@ namespace micromusic {
             const song = new Song()
             song.patternsMade = data.patternsMade
             song._patterns = (<Array<Pattern>>data.patterns).map((p: any) =>
-                Pattern.fromJSON(p)
+                Pattern.fromJSON(p),
             )
             song._patternSequence = (<Array<number>>data.patternSequence).map(
-                (id: number) => song._patterns.find(p => p.id === id)
+                (id: number) => song._patterns.find(p => p.id === id),
             )
             return song
         }
