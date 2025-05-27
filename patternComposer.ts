@@ -450,6 +450,9 @@ namespace micromusic {
             this.isPlaying = false
             this.stopped = true
             this.cursorVisible = false
+            this.playedNote = 0
+            this.currentStep = 0
+            this.highlightHeight = 0
         }
 
         private rewind() {
@@ -667,6 +670,22 @@ namespace micromusic {
                 octave,
                 this.currentStep,
             )
+
+            const offset =
+                SEMITONE_OFFSETS[
+
+                ]
+            if (offset == null) return // "-" or invalid note
+
+            const multiplier =
+                2 **
+                (octave -
+                    3 +
+                    offset / 12)
+            const rate = 8800 * multiplier
+
+            samples.setSampleRate(0, rate)
+            samples.playAsync(0, this.pattern.channels[this.selectedTrack].sample.audioBuffer)
         }
 
         private activateNoteSelection() {

@@ -707,6 +707,8 @@ namespace micromusic {
         private stop() {
             this.isPlaying = false
             this.stopped = true
+            this.playedNote = 0
+            this.playedPattern = 0
         }
 
         private fastForward() {
