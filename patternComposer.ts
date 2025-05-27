@@ -88,6 +88,7 @@ namespace micromusic {
         private cursorVisible: boolean
         private playedNote: number
         private hasClickedBack: boolean
+        private stopped: boolean
 
         private pattern: Pattern
 
@@ -131,6 +132,7 @@ namespace micromusic {
             this.isSelectingSample = false
             this.playedNote = 0
             this.hasClickedBack = false
+            this.stopped = false
         }
 
         public static getInstance(
@@ -381,6 +383,7 @@ namespace micromusic {
 
         private play() {
             if (this.isPlaying == true) return
+            this.stopped = false
             music.setVolume((Settings.volume.value / 100) * 255)
             samples.enable()
             this.isPlaying = true
@@ -413,6 +416,11 @@ namespace micromusic {
                     this.playedNote += 1
                 }
                 this.isPlaying = false
+                if (this.stopped) {
+                    this.playedNote = 0
+                    this.highlightHeight = 0
+                    this.currentStep = 0
+                }
             })
         }
 
@@ -440,12 +448,8 @@ namespace micromusic {
 
         private stop() {
             this.isPlaying = false
+            this.stopped = true
             this.cursorVisible = false
-            basic.pause(200)
-            this.playedNote = 0
-            this.highlightHeight = 0
-            this.currentStep = 0
-            this.drawGrid()
         }
 
         private rewind() {

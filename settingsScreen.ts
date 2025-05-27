@@ -6,6 +6,7 @@ namespace micromusic {
     import Button = user_interface_base.Button
     import ButtonStyles = user_interface_base.ButtonStyles
     import Screen = user_interface_base.Screen
+    import CursorDir = user_interface_base.CursorDir
 
     const VOLUME_INCREASE = 0
     const VOLUME_DECREASE = 1
@@ -27,7 +28,7 @@ namespace micromusic {
                     this.app.popScene()
                     this.app.pushScene(this.previousScene)
                 },
-                new GridNavigator()
+                new GridNavigator(),
             )
 
             this.settings = [Settings.volume, Settings.bpm]
@@ -85,12 +86,9 @@ namespace micromusic {
                                     SaveLoadScreen.getInstance(
                                         this.app,
                                         <SongComposerScreen>this.previousScene,
-                                        SaveLoadMode.SAVE
-                                    )
+                                        SaveLoadMode.SAVE,
+                                    ),
                                 )
-                                // ;(<SoundTrackerScreen>(
-                                //     this.previousScene
-                                // )).openSaveScreen()
                             },
                         }),
                         new Button({
@@ -107,8 +105,8 @@ namespace micromusic {
                                     SaveLoadScreen.getInstance(
                                         this.app,
                                         <SongComposerScreen>this.previousScene,
-                                        SaveLoadMode.LOAD
-                                    )
+                                        SaveLoadMode.LOAD,
+                                    ),
                                 )
                             },
                         }),
@@ -126,18 +124,18 @@ namespace micromusic {
                             },
                         }),
                     ],
-                ])
+                ]),
             )
         }
 
         public static getInstance(
             previousScene: CursorScene,
-            app?: AppInterface
+            app?: AppInterface,
         ) {
             if (!SettingsScreen.instance) {
                 if (app === undefined) {
                     console.error(
-                        "Singleton not initialized. Call with parameters first."
+                        "Singleton not initialized. Call with parameters first.",
                     )
                 }
                 SettingsScreen.instance = new SettingsScreen(app, previousScene)
@@ -153,14 +151,14 @@ namespace micromusic {
         private activateSettingContext(setting: number) {
             this.isSettingChanging = true
             this.navigator.setBtns([this.allBtns[setting]])
-            this.cursor.setOutlineColour(0xd)
+            this.cursor.setOutlineColour(0x2)
 
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
                     this.resetContext()
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -170,7 +168,7 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.right.id,
-                        () => (tick = false)
+                        () => (tick = false),
                     )
                     let counter = 0
                     let _setting = this.settings[setting]
@@ -202,9 +200,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.right.id,
-                        () => {}
+                        () => {},
                     )
-                }
+                },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -214,7 +212,7 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.left.id,
-                        () => (tick = false)
+                        () => (tick = false),
                     )
                     let counter = 0
                     let _setting = this.settings[setting]
@@ -237,9 +235,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.left.id,
-                        () => {}
+                        () => {},
                     )
-                }
+                },
             )
         }
 
@@ -247,6 +245,29 @@ namespace micromusic {
             this.navigator.setBtns(this.allBtns)
             this.cursor.setOutlineColour(9)
             this.isSettingChanging = false
+
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.left.id,
+                () => {
+                    this.moveCursor(CursorDir.Left)
+                },
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => {
+                    this.moveCursor(CursorDir.Right)
+                },
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.app.popScene()
+                    this.app.pushScene(this.previousScene)
+                },
+            )
         }
 
         draw() {
@@ -255,7 +276,7 @@ namespace micromusic {
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc
+                0xc,
             )
             for (let btns of this.allBtns) {
                 for (let btn of btns) {
@@ -268,7 +289,7 @@ namespace micromusic {
                 44 - (this.settings[VOLUME].value.toString().length - 1) * 6,
                 -26,
                 0xd,
-                bitmaps.doubledFont(bitmaps.font8)
+                bitmaps.doubledFont(bitmaps.font8),
             )
 
             Screen.print(
@@ -276,7 +297,7 @@ namespace micromusic {
                 44 - (this.settings[BPM].value.toString().length - 1) * 6,
                 -1,
                 0xd,
-                bitmaps.doubledFont(bitmaps.font8)
+                bitmaps.doubledFont(bitmaps.font8),
             )
 
             this.navigator.drawComponents()

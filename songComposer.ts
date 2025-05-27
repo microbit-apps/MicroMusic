@@ -26,7 +26,7 @@ namespace micromusic {
         FullCopySelection = 13,
         PatternClickedSwap = 14,
     }
-    // TODO: SAVE AND LOADING, SAVE NULL TO 3 SLOTS, CHECK IF NULL AND THEN JUST PULL THE INFORMATION IN IF NOT NULL, EASY PEASY
+
     export class SongComposerScreen extends CursorSceneWithPriorPage {
         private static instance: SongComposerScreen | null = null
         private song: Song
@@ -43,6 +43,7 @@ namespace micromusic {
         private gridPatternIndex: number
         private pastedChannel: number
         private isPlaying: boolean
+        private stopped: boolean
         private isPaused: boolean
         private drawSomething: string | null = null
         private dataLoggerHeader: string[]
@@ -417,8 +418,7 @@ namespace micromusic {
         }
 
         private drawCopySelection() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-40, -30, "Copy a channel")
             Screen.print("or an entire", -35, -20, 0)
             Screen.print("pattern?", -24, -10, 0)
@@ -429,8 +429,7 @@ namespace micromusic {
         }
 
         private drawFullCopyConfirmation() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-60, -30, "Paste to new pattern")
             Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
@@ -441,8 +440,7 @@ namespace micromusic {
         }
 
         private drawPattern() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-51, -36, "Would you like to")
             Screen.print("edit, replace", -40, -26, 0)
             Screen.print("or remove", -26, -16, 0)
@@ -455,8 +453,7 @@ namespace micromusic {
         }
 
         private drawPasteNewOrExisting() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-60, -30, "Paste to new pattern")
             Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
@@ -468,8 +465,7 @@ namespace micromusic {
         }
 
         private drawPlusConfirmation() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-54, -30, "Create new pattern")
             Screen.print("or use an", -26, -20, 0)
             Screen.print("existing one?", -38, -10, 0)
@@ -480,11 +476,10 @@ namespace micromusic {
         }
 
         private drawRemoveConfirmation() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-44, -30, "Delete pattern", 0x2)
-            Screen.print("or remove from", -44, -20, 0x2)
-            Screen.print("the sequence?", -40, -10, 0x2)
+            this.drawText(-44, -20, "or remove from", 0x2)
+            this.drawText(-40, -10, "the sequence?", 0x2)
             this.drawText(-39, 0, "(B to cancel)", 0, bitmaps.font5)
             this.drawText(-50, 15, "Fully")
             this.drawText(0, 15, "Sequence")
@@ -492,14 +487,18 @@ namespace micromusic {
         }
 
         private drawBackConfirmation() {
-            Screen.fillRect(-57, -37, 120, 80, 0)
-            Screen.fillRect(-60, -40, 120, 80, 0x6)
+            this.drawChoiceBoxBackground()
             this.drawText(-36, -30, "Return Home?")
             Screen.print("Any unsaved work", -48, -20, 0x2)
             Screen.print("will be lost", -38, -10, 0x2)
             this.drawText(-30, 15, "Yes")
             this.drawText(15, 15, "No")
             this.cursor.draw()
+        }
+
+        private drawChoiceBoxBackground() {
+            Screen.fillRect(-57, -37, 120, 80, 0)
+            Screen.fillRect(-60, -40, 120, 80, 0x6)
         }
 
         private drawText(
@@ -669,8 +668,10 @@ namespace micromusic {
                 }
                 this.isPlaying = false
                 this.resetNavigator()
-                this.playedNote = 0
-                this.playedPattern = 0
+                if (this.stopped) {
+                    this.playedNote = 0
+                    this.playedPattern = 0
+                }
             })
         }
 
@@ -705,10 +706,7 @@ namespace micromusic {
 
         private stop() {
             this.isPlaying = false
-            this.isPaused = false
-            basic.pause(200)
-            this.playedNote = 0
-            this.playedPattern = 0
+            this.stopped = true
         }
 
         private fastForward() {
