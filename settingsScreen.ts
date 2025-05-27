@@ -6,6 +6,7 @@ namespace micromusic {
     import Button = user_interface_base.Button
     import ButtonStyles = user_interface_base.ButtonStyles
     import Screen = user_interface_base.Screen
+    import CursorDir = user_interface_base.CursorDir
 
     const VOLUME_INCREASE = 0
     const VOLUME_DECREASE = 1
@@ -85,9 +86,6 @@ namespace micromusic {
                                         SaveLoadMode.SAVE
                                     )
                                 )
-                                // ;(<SoundTrackerScreen>(
-                                //     this.previousScene
-                                // )).openSaveScreen()
                             },
                         }),
                         new Button({
@@ -149,7 +147,7 @@ namespace micromusic {
 
         private activateSettingContext(setting: number) {
             this.navigator.setBtns([this.allBtns[setting]])
-            this.cursor.setOutlineColour(0xd)
+            this.cursor.setOutlineColour(0x2)
 
             control.onEvent(
                 ControllerButtonEvent.Pressed,
@@ -242,6 +240,29 @@ namespace micromusic {
         private resetContext() {
             this.navigator.setBtns(this.allBtns)
             this.cursor.setOutlineColour(9)
+
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.left.id,
+                () => {
+                    this.moveCursor(CursorDir.Left)
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => {
+                    this.moveCursor(CursorDir.Right)
+                }
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.B.id,
+                () => {
+                    this.app.popScene()
+                    this.app.pushScene(this.previousScene)
+                }
+            )
         }
 
         draw() {
