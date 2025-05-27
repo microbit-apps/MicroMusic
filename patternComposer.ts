@@ -14,27 +14,27 @@ namespace micromusic {
     export const RIGHT_TRACK_INDEX = 1
     const NOTES = [
         "-",
-        "C#",
         "C",
-        "Cb",
-        "D#",
-        "D",
+        "C#",
         "Db",
-        "E#",
-        "E",
+        "D",
+        "D#",
         "Eb",
-        "F#",
-        "F",
+        "E",
         "Fb",
-        "G#",
-        "G",
+        "E#",
+        "F",
+        "F#",
         "Gb",
-        "A#",
-        "A",
+        "G",
+        "G#",
         "Ab",
-        "B#",
-        "B",
+        "A",
+        "A#",
         "Bb",
+        "B",
+        "Cb",
+        "B#",
     ]
 
     export const SEMITONE_OFFSETS: { [key: string]: number | null } = {
@@ -671,21 +671,17 @@ namespace micromusic {
                 this.currentStep,
             )
 
-            const offset =
-                SEMITONE_OFFSETS[
-
-                ]
+            const offset = SEMITONE_OFFSETS[NOTES[noteIndex]]
             if (offset == null) return // "-" or invalid note
 
-            const multiplier =
-                2 **
-                (octave -
-                    3 +
-                    offset / 12)
+            const multiplier = 2 ** (octave - 3 + offset / 12)
             const rate = 8800 * multiplier
 
             samples.setSampleRate(0, rate)
-            samples.playAsync(0, this.pattern.channels[this.selectedTrack].sample.audioBuffer)
+            samples.playAsync(
+                0,
+                this.pattern.channels[this.selectedTrack].sample.audioBuffer,
+            )
         }
 
         private activateNoteSelection() {
