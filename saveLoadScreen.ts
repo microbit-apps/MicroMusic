@@ -31,7 +31,7 @@ namespace micromusic {
         private constructor(
             app: AppInterface,
             previousScene: SongComposerScreen,
-            mode: SaveLoadMode
+            mode: SaveLoadMode,
         ) {
             super(
                 app,
@@ -40,7 +40,7 @@ namespace micromusic {
                     this.previousScene.navigator = new GridNavigator()
                     this.app.pushScene(this.previousScene)
                 },
-                new GridNavigator()
+                new GridNavigator(),
             )
             basic.pause(10)
 
@@ -74,19 +74,19 @@ namespace micromusic {
         public static getInstance(
             app?: AppInterface,
             previousScene?: CursorScene,
-            mode?: SaveLoadMode
+            mode?: SaveLoadMode,
         ) {
             if (!SaveLoadScreen.instance) {
                 if (!app) {
                     console.error(
-                        "SaveLoadScreen singleton not initialized. Call with parameters first."
+                        "SaveLoadScreen singleton not initialized. Call with parameters first.",
                     )
                 }
 
                 SaveLoadScreen.instance = new SaveLoadScreen(
                     app,
                     <SongComposerScreen>previousScene,
-                    mode
+                    mode,
                 )
             }
 
@@ -136,7 +136,7 @@ namespace micromusic {
                 // Save the current track data to the selected slot
                 this.save(
                     (<SongComposerScreen>this.previousScene).getSong(),
-                    this.selectedIndex
+                    this.selectedIndex,
                 )
                 // this.saveExists[this.selectedIndex] = true
                 // Show a save confirmation
@@ -158,22 +158,21 @@ namespace micromusic {
 
         private save(song: Song, saveSlot: number) {
             let cv: ColumnValue[] = []
-            let test = []
             datalogger.deleteLog(datalogger.DeleteType.Full)
-            basic.pause(10)
+
+            this.saveExists[saveSlot] = true
             for (let i = 0; i < this.songs.length; i++) {
-                basic.pause(10)
                 if (i == saveSlot) {
                     cv[i] = datalogger.createCV(
                         "save" + i,
-                        JSON.stringify(song.toJSON())
+                        JSON.stringify(song.toJSON()),
                     )
                 } else if (this.songs[i] == null) {
                     cv[i] = datalogger.createCV("save" + i, null)
                 } else {
                     cv[i] = datalogger.createCV(
                         "save" + i,
-                        JSON.stringify(this.songs[i].toJSON())
+                        JSON.stringify(this.songs[i].toJSON()),
                     )
                 }
             }
@@ -182,7 +181,7 @@ namespace micromusic {
 
         private loadSave(saveIndex: number) {
             ;(<SongComposerScreen>this.previousScene).setSong(
-                this.songs[saveIndex]
+                this.songs[saveIndex],
             )
         }
 
@@ -196,7 +195,7 @@ namespace micromusic {
                 datalogger.log(
                     datalogger.createCV("save1", null),
                     datalogger.createCV("save2", null),
-                    datalogger.createCV("save3", null)
+                    datalogger.createCV("save3", null),
                 )
 
                 this.songs[0] = null
@@ -209,11 +208,11 @@ namespace micromusic {
 
             let data = rawData.split(",")
 
-            if (data[0] == "" || data[1] == "" || data[2] == "") {
+            if (data[0] == "" && data[1] == "" && data[2] == "") {
                 datalogger.log(
                     datalogger.createCV("save1", null),
                     datalogger.createCV("save2", null),
-                    datalogger.createCV("save3", null)
+                    datalogger.createCV("save3", null),
                 )
 
                 this.songs[0] = null
@@ -223,7 +222,7 @@ namespace micromusic {
             }
 
             for (let i = 0; i < data.length; i++) {
-                if (data[i] == "null") {
+                if (data[i] == "null" || data[i] == "") {
                     control.dmesg("null found")
                     this.songs[i] = null
                     continue
@@ -241,7 +240,7 @@ namespace micromusic {
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc
+                0xc,
             )
 
             const title =

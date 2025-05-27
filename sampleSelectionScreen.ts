@@ -119,11 +119,10 @@ namespace micromusic {
         }
 
         private playNote(sampleName: string) {
-            const sample = new Sample(sampleName)
             samples.enable()
             music.setVolume(255)
             samples.setSampleRate(1, 8800)
-            samples.playAsync(1, sample.audioBuffer)
+            samples.playAsync(1, getSample(sampleName))
         }
 
         draw() {

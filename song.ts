@@ -1,4 +1,44 @@
 namespace micromusic {
+    // const NOTE_TO_INT: { [note: string]: number } = {
+    //     "-": 255,
+    //     C: 0,
+    //     "C#": 1,
+    //     D: 2,
+    //     "D#": 3,
+    //     E: 4,
+    //     F: 5,
+    //     "F#": 6,
+    //     G: 7,
+    //     "G#": 8,
+    //     A: 9,
+    //     "A#": 10,
+    //     B: 11,
+    // }
+
+    // const INT_TO_NOTE: string[] = [
+    //     "C",
+    //     "C#",
+    //     "D",
+    //     "D#",
+    //     "E",
+    //     "F",
+    //     "F#",
+    //     "G",
+    //     "G#",
+    //     "A",
+    //     "A#",
+    //     "B",
+    // ]
+
+    // export function noteToInt(note: string): number {
+    //     return NOTE_TO_INT[note] ?? 255
+    // }
+
+    // export function intToNote(i: number): string {
+    //     if (i === 255) return "-"
+    //     return INT_TO_NOTE[i] ?? "-"
+    // }
+
     export class Song {
         private _patterns: Pattern[]
         private _patternSequence: Pattern[]

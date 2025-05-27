@@ -48,7 +48,7 @@ namespace micromusic {
         static fromJSON(data: any): Pattern {
             const pattern = new Pattern(data.id)
             pattern._channels = (<Array<Channel>>data.channels).map((c: any) =>
-                Channel.fromJSON(c)
+                Channel.fromJSON(c),
             )
             return pattern
         }
