@@ -92,7 +92,7 @@ namespace micromusic {
 
         /*override*/ startup() {
             super.startup()
-            basic.pause(1)
+            basic.pause(10)
 
             this.playedNote = 0
             this.playedPattern = 0
