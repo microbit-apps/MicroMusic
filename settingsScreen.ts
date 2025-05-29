@@ -19,6 +19,7 @@ namespace micromusic {
         private allBtns: Button[][]
         private settings: Setting[]
         private isSettingChanging: boolean
+        private tick: boolean
         private static instance: SettingsScreen | null = null
 
         private constructor(app: AppInterface, previousScene: CursorScene) {
@@ -32,7 +33,8 @@ namespace micromusic {
             )
 
             this.settings = [Settings.volume, Settings.bpm]
-
+            this.isSettingChanging = false
+            this.tick = false
             this.previousScene = previousScene
         }
 
@@ -52,8 +54,10 @@ namespace micromusic {
                             x: -30,
                             y: -20,
                             onClick: () => {
-                                if (!this.isSettingChanging)
+                                if (!this.isSettingChanging) {
+                                    this.isSettingChanging = true
                                     this.activateSettingContext(VOLUME)
+                                }
                             },
                         }),
                     ],
@@ -65,52 +69,54 @@ namespace micromusic {
                             x: -30,
                             y: 6,
                             onClick: () => {
-                                if (!this.isSettingChanging)
+                                if (!this.isSettingChanging) {
+                                    this.isSettingChanging = true
                                     this.activateSettingContext(BPM)
+                                }
                             },
                         }),
                     ],
-                    [
-                        new Button({
-                            // save button
-                            parent: null,
-                            style: ButtonStyles.Transparent,
-                            icon: "save_button_small",
-                            ariaId: "save",
-                            x: -40,
-                            y: 30,
-                            onClick: () => {
-                                // Go to Save screen
-                                this.app.popScene()
-                                this.app.pushScene(
-                                    SaveLoadScreen.getInstance(
-                                        this.app,
-                                        <SongComposerScreen>this.previousScene,
-                                        SaveLoadMode.SAVE,
-                                    ),
-                                )
-                            },
-                        }),
-                        new Button({
-                            // load button
-                            parent: null,
-                            style: ButtonStyles.Transparent,
-                            icon: "save_button_small",
-                            ariaId: "load",
-                            x: 40,
-                            y: 30,
-                            onClick: () => {
-                                this.app.popScene()
-                                this.app.pushScene(
-                                    SaveLoadScreen.getInstance(
-                                        this.app,
-                                        <SongComposerScreen>this.previousScene,
-                                        SaveLoadMode.LOAD,
-                                    ),
-                                )
-                            },
-                        }),
-                    ],
+                    // [
+                    //     new Button({
+                    //         // save button
+                    //         parent: null,
+                    //         style: ButtonStyles.Transparent,
+                    //         icon: "save_button_small",
+                    //         ariaId: "save",
+                    //         x: -40,
+                    //         y: 30,
+                    //         onClick: () => {
+                    //             // Go to Save screen
+                    //             this.app.popScene()
+                    //             this.app.pushScene(
+                    //                 SaveLoadScreen.getInstance(
+                    //                     this.app,
+                    //                     <SongComposerScreen>this.previousScene,
+                    //                     SaveLoadMode.SAVE,
+                    //                 ),
+                    //             )
+                    //         },
+                    //     }),
+                    //     new Button({
+                    //         // load button
+                    //         parent: null,
+                    //         style: ButtonStyles.Transparent,
+                    //         icon: "save_button_small",
+                    //         ariaId: "load",
+                    //         x: 40,
+                    //         y: 30,
+                    //         onClick: () => {
+                    //             this.app.popScene()
+                    //             this.app.pushScene(
+                    //                 SaveLoadScreen.getInstance(
+                    //                     this.app,
+                    //                     <SongComposerScreen>this.previousScene,
+                    //                     SaveLoadMode.LOAD,
+                    //                 ),
+                    //             )
+                    //         },
+                    //     }),
+                    // ],
                     [
                         new Button({
                             parent: null,
@@ -157,23 +163,31 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
+                    control.raiseEvent(
+                        ControllerButtonEvent.Released,
+                        controller.up.id,
+                    )
+                    control.raiseEvent(
+                        ControllerButtonEvent.Released,
+                        controller.down.id,
+                    )
                     this.resetContext()
                 },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
-                controller.right.id,
+                controller.up.id,
                 () => {
-                    let tick = true
+                    this.tick = true
                     control.onEvent(
                         ControllerButtonEvent.Released,
-                        controller.right.id,
-                        () => (tick = false),
+                        controller.up.id,
+                        () => (this.tick = false),
                     )
                     let counter = 0
                     let _setting = this.settings[setting]
                     // Control logic:
-                    while (tick) {
+                    while (this.tick) {
                         switch (setting) {
                             case VOLUME: {
                                 if (_setting.value < 100) _setting.value++
@@ -199,25 +213,27 @@ namespace micromusic {
                     // Reset binding
                     control.onEvent(
                         ControllerButtonEvent.Released,
-                        controller.right.id,
-                        () => {},
+                        controller.up.id,
+                        () => {
+                            this.tick = false
+                        },
                     )
                 },
             )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
-                controller.left.id,
+                controller.down.id,
                 () => {
-                    let tick = true
+                    this.tick = true
                     control.onEvent(
                         ControllerButtonEvent.Released,
-                        controller.left.id,
-                        () => (tick = false),
+                        controller.down.id,
+                        () => (this.tick = false),
                     )
                     let counter = 0
                     let _setting = this.settings[setting]
                     // Control logic:
-                    while (tick) {
+                    while (this.tick) {
                         if (_setting.value > 0) _setting.value--
 
                         if (counter < 10) {
@@ -234,10 +250,27 @@ namespace micromusic {
                     // Reset binding
                     control.onEvent(
                         ControllerButtonEvent.Released,
-                        controller.left.id,
-                        () => {},
+                        controller.down.id,
+                        () => {
+                            this.tick = false
+                        },
                     )
                 },
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.A.id,
+                () => {},
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.left.id,
+                () => {},
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.right.id,
+                () => {},
             )
         }
 
@@ -246,6 +279,22 @@ namespace micromusic {
             this.cursor.setOutlineColour(9)
             this.isSettingChanging = false
 
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.up.id,
+                () => {
+                    this.moveCursor(CursorDir.Up)
+                    this.tick = false
+                },
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.down.id,
+                () => {
+                    this.moveCursor(CursorDir.Down)
+                    this.tick = false
+                },
+            )
             control.onEvent(
                 ControllerButtonEvent.Pressed,
                 controller.left.id,
@@ -258,6 +307,13 @@ namespace micromusic {
                 controller.right.id,
                 () => {
                     this.moveCursor(CursorDir.Right)
+                },
+            )
+            control.onEvent(
+                ControllerButtonEvent.Pressed,
+                controller.A.id,
+                () => {
+                    this.cursor.click()
                 },
             )
             control.onEvent(

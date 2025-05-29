@@ -69,6 +69,7 @@ namespace micromusic {
 
     export class PatternScreen extends CursorSceneWithPriorPage {
         private static instance: PatternScreen | null = null
+        private tick: boolean
         private currentStep: number
         private currentTrack: number
         private controlBtns: Button[]
@@ -700,19 +701,21 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.up.id,
                 () => {
-                    let tick = true
+                    this.tick = true
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.up.id,
-                        () => (tick = false),
+                        () => (this.tick = false),
                     )
                     let counter = 0
                     // Control logic:
-                    while (tick) {
+                    while (this.tick) {
                         if (this.highlightHeight > 0) this.highlightHeight--
-                        if (this.currentStep != 0)
+                        if (this.currentStep != 0) {
                             this.currentStep =
                                 (this.currentStep - 1) % MAX_NOTES
+                            this.playedNote = (this.playedNote - 1) % MAX_NOTES
+                        }
 
                         if (counter < 10) {
                             counter++
@@ -729,7 +732,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.up.id,
-                        () => {},
+                        () => {
+                            this.tick = false
+                        },
                     )
                 },
             )
@@ -737,15 +742,15 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.down.id,
                 () => {
-                    let tick = true
+                    this.tick = true
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.down.id,
-                        () => (tick = false),
+                        () => (this.tick = false),
                     )
                     let counter = 0
                     // Control logic:
-                    while (tick) {
+                    while (this.tick) {
                         if (this.highlightHeight < 3) this.highlightHeight++
                         else if (
                             this.currentStep > MAX_NOTES - 6 &&
@@ -757,9 +762,12 @@ namespace micromusic {
                             }
                         }
 
-                        if (this.currentStep != MAX_NOTES - 1)
+                        if (this.currentStep != MAX_NOTES - 1) {
                             this.currentStep =
                                 Math.abs(this.currentStep + 1) % MAX_NOTES
+                            this.playedNote =
+                                Math.abs(this.playedNote + 1) % MAX_NOTES
+                        }
 
                         if (counter < 10) {
                             counter++
@@ -776,7 +784,9 @@ namespace micromusic {
                     control.onEvent(
                         ControllerButtonEvent.Released,
                         controller.down.id,
-                        () => {},
+                        () => {
+                            this.tick = false
+                        },
                     )
                 },
             )
@@ -784,9 +794,18 @@ namespace micromusic {
                 ControllerButtonEvent.Pressed,
                 controller.B.id,
                 () => {
+                    control.raiseEvent(
+                        ControllerButtonEvent.Released,
+                        controller.down.id,
+                    )
+                    control.raiseEvent(
+                        ControllerButtonEvent.Released,
+                        controller.up.id,
+                    )
                     this.resetControllerEvents()
                     this.isSelectingNote = false
                     this.currentStep = this.currentStep - this.highlightHeight
+                    this.playedNote = this.playedNote - this.highlightHeight
                     this.highlightHeight = 0
                     // Code for setting the buttons again
                 },

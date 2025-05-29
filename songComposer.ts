@@ -369,6 +369,7 @@ namespace micromusic {
                     }
 
                     if (count == this.copiedPatternIndex) {
+                        count += 1
                         continue
                     }
 
@@ -1219,13 +1220,12 @@ namespace micromusic {
             }
 
             this.copiedPatternIndex = copyIndex
-            this.screenShown = ScreenShown.FullCopySelection
             const startX = -56
             const startY = 0
             const cellWidth = 21
             const cellHeight = 31
             let count = 0
-
+            let tempCount = 0
             let patternBtns = []
 
             for (let j = 0; j < 2; j++) {
@@ -1234,11 +1234,8 @@ namespace micromusic {
                     const x = startX + i * cellWidth
                     const index = count
 
-                    if (
-                        count < this.song.patterns.length &&
-                        count != copyIndex
-                    ) {
-                        patternBtns[count] = new Button({
+                    if (count != copyIndex) {
+                        patternBtns[tempCount] = new Button({
                             parent: null,
                             style: ButtonStyles.Transparent,
                             icon: "invisiblePatternButton",
@@ -1260,8 +1257,11 @@ namespace micromusic {
                                 this.moveCursor(CursorDir.Right)
                             },
                         })
+                    } else {
+                        tempCount = count - 1
                     }
 
+                    tempCount += 1
                     count += 1
                     if (count == this.song.patterns.length) {
                         break
@@ -1273,6 +1273,7 @@ namespace micromusic {
             }
 
             this.navigator.setBtns([patternBtns])
+            this.screenShown = ScreenShown.FullCopySelection
 
             this.moveCursor(CursorDir.Up)
             this.moveCursor(CursorDir.Down)
