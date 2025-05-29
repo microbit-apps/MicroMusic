@@ -19,7 +19,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
-            basic.pause(1)
+            basic.pause(10)
             this.cursor.setBorderThickness(2)
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
             this.navigator.setBtns([
@@ -34,7 +34,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                SongComposerScreen.getInstance(this.app)
+                                SongComposerScreen.getInstance(this.app),
                             )
                         },
                     })),
@@ -57,7 +57,7 @@ namespace micromusic {
                         onClick: () => {
                             this.app.popScene()
                             this.app.pushScene(
-                                SettingsScreen.getInstance(this, this.app)
+                                SettingsScreen.getInstance(this, this.app),
                             )
                         },
                     })),
@@ -72,7 +72,7 @@ namespace micromusic {
                 Screen.RIGHT_EDGE - font.charWidth * "v0.1".length,
                 Screen.BOTTOM_EDGE - font.charHeight - 2,
                 0xb,
-                font
+                font,
             )
         }
 
@@ -83,7 +83,7 @@ namespace micromusic {
                 Screen.TOP_EDGE,
                 Screen.WIDTH,
                 Screen.HEIGHT,
-                0xc
+                0xc,
             )
 
             this.yOffset = Math.min(0, this.yOffset + 2)
@@ -95,14 +95,14 @@ namespace micromusic {
             Screen.drawTransparentImage(
                 wordLogo,
                 Screen.LEFT_EDGE + ((Screen.WIDTH - wordLogo.width) >> 1), // + dy
-                y + this.yOffset
+                y + this.yOffset,
             )
             Screen.drawTransparentImage(
                 microbitLogo,
                 Screen.LEFT_EDGE +
                     ((Screen.WIDTH - microbitLogo.width) >> 1) +
                     dy,
-                y - wordLogo.height + this.yOffset + margin
+                y - wordLogo.height + this.yOffset + margin,
             )
 
             if (!this.yOffset) {
@@ -120,7 +120,7 @@ namespace micromusic {
                         this.yOffset +
                         1,
                     0xb,
-                    font
+                    font,
                 )
             }
 

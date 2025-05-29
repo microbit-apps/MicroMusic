@@ -41,7 +41,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
-            basic.pause(1)
+            basic.pause(10)
 
             this.cursor.setBorderThickness(1)
             this.resetNavigator()

@@ -161,7 +161,7 @@ namespace micromusic {
 
         /* override */ startup() {
             super.startup()
-            basic.pause(1)
+            basic.pause(10)
 
             this.icon = getIcon("placeholder", true)
                 .doubled()
@@ -455,7 +455,6 @@ namespace micromusic {
             this.currentStep = 0
             this.highlightHeight = 0
         }
-
         private rewind() {
             this.currentStep = this.currentStep - 8
             this.playedNote = this.playedNote - 8
@@ -473,8 +472,12 @@ namespace micromusic {
 
         private fastForward() {
             this.currentStep = this.currentStep + 8
+            this.playedNote = this.playedNote + 8
             if (this.currentStep > MAX_NOTES - 8) {
                 this.currentStep = MAX_NOTES - 8
+            }
+            if (this.playedNote > MAX_NOTES - 1) {
+                this.playedNote = MAX_NOTES - 1
             }
             this.drawGrid()
         }

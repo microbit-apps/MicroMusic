@@ -15,7 +15,7 @@ namespace micromusic {
                 this._octaves[i] = 3
             }
 
-            this._sample = "acpiano1"
+            this._sample = "piano2" // Change to be different ones
         }
 
         public get notes() {
