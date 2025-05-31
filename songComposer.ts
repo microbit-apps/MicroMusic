@@ -658,9 +658,8 @@ namespace micromusic {
                         this.playNote(
                             i,
                             getSample(
-                                this.song.patterns[this.playedPattern].channels[
-                                    i
-                                ].sample,
+                                this.song.patternSequence[this.playedPattern]
+                                    .channels[i].sample,
                             ),
                         )
                     }
@@ -684,17 +683,15 @@ namespace micromusic {
         private playNote(src: number, buf: Buffer) {
             const offset =
                 SEMITONE_OFFSETS[
-                    this.song.patterns[this.playedPattern].channels[src].notes[
-                        this.playedNote
-                    ]
+                    this.song.patternSequence[this.playedPattern].channels[src]
+                        .notes[this.playedNote]
                 ]
             if (offset == null) return // "-" or invalid note
 
             const multiplier =
                 2 **
-                (this.song.patterns[this.playedPattern].channels[src].octaves[
-                    this.playedNote
-                ] -
+                (this.song.patternSequence[this.playedPattern].channels[src]
+                    .octaves[this.playedNote] -
                     3 +
                     offset / 12)
             const rate = 8800 * multiplier
