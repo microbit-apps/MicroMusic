@@ -39,9 +39,10 @@ namespace micromusic {
             this.selectedIndex = this.sampleNames.indexOf(this.currentSample)
         }
 
-        /* override */ startup() {
+
+        /* override */ startup(controlSetupFn: () => void) {
             super.startup()
-            basic.pause(10)
+            basic.pause(50)
 
             this.cursor.setBorderThickness(1)
             this.resetNavigator()

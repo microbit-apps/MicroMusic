@@ -1,14 +1,13 @@
 {
     "name": "MicroMusic",
-    "version": "0.0.01",
+    "version": "0.0.1",
     "description": "Making music with micro:bit v2",
     "dependencies": {
         "core": "*",
         "radio": "*",
         "microphone": "*",
         "datalogger": "*",
-        "user-interface-base": "github:microbit-apps/user-interface-base#589d51e8901fe16bc4c1dfb6c81d3ffc86edb2fe",
-        "microgui": "github:microbit-apps/microgui#cd5827ba0a3b8e87c12750612218aea7b320b98d",
+        "user-interface-base": "github:microbit-apps/user-interface-base#v0.0.23",
         "audio-samples": "*"
     },
     "files": [

@@ -159,9 +159,9 @@ namespace micromusic {
             return PatternScreen.instance
         }
 
-        /* override */ startup() {
+        /* override */ startup(controlSetupFn: () => void) {
             super.startup()
-            basic.pause(10)
+            basic.pause(50)
 
             this.icon = getIcon("placeholder", true)
                 .doubled()

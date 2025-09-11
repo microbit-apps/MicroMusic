@@ -97,8 +97,10 @@ namespace micromusic {
             return SaveLoadScreen.instance
         }
 
-        /* override */ startup() {
+
+        /* override */ startup(controlSetupFn: () => void) {
             super.startup()
+            basic.pause(50)
             // this.loadSaves()
             this.resetNavigator()
         }

@@ -4,63 +4,59 @@ namespace micromusic {
     import Button = user_interface_base.Button
     import ButtonStyles = user_interface_base.ButtonStyles
     import AppInterface = user_interface_base.AppInterface
-    import CursorSceneEnum = user_interface_base.CursorSceneEnum
     import font = user_interface_base.font
     import resolveTooltip = user_interface_base.resolveTooltip
 
     export class Home extends CursorScene {
-        private liveDataBtn: Button
-        private recordDataBtn: Button
-        private distributedLoggingBtn: Button
-
         constructor(app: AppInterface) {
             super(app)
         }
 
-        /* override */ startup() {
+        /* override */ startup(controlSetupFn: () => void) {
             super.startup()
-            basic.pause(10)
+            basic.pause(50)
+
             this.cursor.setBorderThickness(2)
             const y = Screen.HEIGHT * 0.234 // y = 30 on an Arcade Shield of height 128 pixels
             this.navigator.setBtns([
                 [
-                    (this.liveDataBtn = new Button({
-                        parent: null,
-                        style: ButtonStyles.Transparent,
-                        icon: "edit_program",
-                        ariaId: "New Song",
-                        x: -40,
-                        y,
-                        onClick: () => {
-                            this.app.popScene()
-                            this.app.pushScene(
-                                SongComposerScreen.getInstance(this.app),
-                            )
-                        },
-                    })),
-                    (this.recordDataBtn = new Button({
-                        parent: null,
-                        style: ButtonStyles.Transparent,
-                        icon: "largeDisk",
-                        ariaId: "Saved Songs",
-                        x: 0,
-                        y,
-                        onClick: () => {},
-                    })),
-                    (this.distributedLoggingBtn = new Button({
-                        parent: null,
-                        style: ButtonStyles.Transparent,
-                        icon: "largeSettingsGear",
-                        ariaId: "Settings",
-                        x: 40,
-                        y,
-                        onClick: () => {
-                            this.app.popScene()
-                            this.app.pushScene(
-                                SettingsScreen.getInstance(this, this.app),
-                            )
-                        },
-                    })),
+                  new Button({
+                      parent: null,
+                      style: ButtonStyles.Transparent,
+                      icon: "edit_program",
+                      ariaId: "New Song",
+                      x: -40,
+                      y,
+                      onClick: () => {
+                          this.app.popScene()
+                          this.app.pushScene(
+                              SongComposerScreen.getInstance(this.app),
+                          )
+                      },
+                  }),
+                  new Button({
+                      parent: null,
+                      style: ButtonStyles.Transparent,
+                      icon: "largeDisk",
+                      ariaId: "Saved Songs",
+                      x: 0,
+                      y,
+                      onClick: () => {},
+                  }),
+                  new Button({
+                      parent: null,
+                      style: ButtonStyles.Transparent,
+                      icon: "largeSettingsGear",
+                      ariaId: "Settings",
+                      x: 40,
+                      y,
+                      onClick: () => {
+                          this.app.popScene()
+                          this.app.pushScene(
+                              SettingsScreen.getInstance(this, this.app),
+                          )
+                      },
+                  }),
                 ],
             ])
         }
@@ -68,8 +64,8 @@ namespace micromusic {
         private drawVersion() {
             const font = bitmaps.font5
             Screen.print(
-                "v0.1",
-                Screen.RIGHT_EDGE - font.charWidth * "v0.1".length,
+                "v0.2",
+                Screen.RIGHT_EDGE - font.charWidth * "v0.2".length,
                 Screen.BOTTOM_EDGE - font.charHeight - 2,
                 0xb,
                 font,
@@ -124,10 +120,7 @@ namespace micromusic {
                 )
             }
 
-            this.liveDataBtn.draw()
-            this.recordDataBtn.draw()
-            this.distributedLoggingBtn.draw()
-
+            this.navigator.drawComponents();
             this.drawVersion()
             super.draw()
         }
