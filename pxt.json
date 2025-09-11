@@ -1,6 +1,6 @@
 {
     "name": "MicroMusic",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Making music with micro:bit v2",
     "dependencies": {
         "core": "*",
